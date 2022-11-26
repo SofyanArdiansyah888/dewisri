@@ -19,7 +19,6 @@ const schema = yup
   .required();
 
 function ResetPassword({ modal, setModal }) {
-  const navigate = useNavigate();
   const auth = useAuth();
   const {
     register,

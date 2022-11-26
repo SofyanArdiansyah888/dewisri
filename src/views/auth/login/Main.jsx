@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useAuth } from "../../../hooks/useAuth";
+import { getUser } from "../../../services/database";
 const schema = yup.object({
   email: yup.string().required(),
   password: yup.string().required(),
@@ -26,17 +27,19 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-
-
+ 
+  const user = getUser()
 
   useEffect(() => {
+
     if(auth.error){
       setError('email',{message: auth.error})
     }
-    if(auth.isSuccess){
+    if(user){
       navigate('/',{replace: true})
     }
-  },[auth.error,auth.isSuccess])
+    return () => {}
+  },[user, auth.error])
 
  
 

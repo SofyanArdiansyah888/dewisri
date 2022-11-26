@@ -58,6 +58,7 @@ import { useAuth } from "../hooks/useAuth";
 
 function Router() {
   const auth = useAuth()
+
   const routes = [
     {
       path: "/",

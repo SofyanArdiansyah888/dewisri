@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { helper as $h } from "@/utils";
 import { sideMenu as useSideMenuStore } from "@/stores/side-menu";
-import { useRecoilValue } from "recoil";
+import { atom, useRecoilValue } from "recoil";
 import { linkTo, nestedMenu, enter, leave } from "./index";
 import { Lucide } from "@/base-components";
 import classnames from "classnames";
@@ -12,13 +12,22 @@ import MobileMenu from "@/components/mobile-menu/Main";
 import MainColorSwitcher from "@/components/main-color-switcher/Main";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main";
 import SideMenuTooltip from "@/components/side-menu-tooltip/Main";
+import { checkMenu } from "../../stores/side-menu";
+import { getUser } from "../../services/database";
 
 function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const [formattedMenu, setFormattedMenu] = useState([]);
+
   const sideMenuStore = useRecoilValue(useSideMenuStore);
   const sideMenu = () => nestedMenu($h.toRaw(sideMenuStore.menu), location);
+
+  useEffect(() => {
+    setFormattedMenu(checkMenu())
+  },[
+    getUser()
+  ])
 
   useEffect(() => {
     dom("body").removeClass("error-page").removeClass("login").addClass("main");
