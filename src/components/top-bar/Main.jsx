@@ -1,28 +1,29 @@
+import logoUrl from "@/assets/images/logo.svg";
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownDivider,
+  DropdownHeader,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Lucide,
+} from "@/base-components";
+import { faker as $f } from "@/utils";
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Lucide,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownContent,
-  DropdownItem,
-  DropdownHeader,
-  DropdownDivider,
-} from "@/base-components";
-import logoUrl from "@/assets/images/logo.svg";
-import { faker as $f } from "@/utils";
-import * as $_ from "lodash";
-import classnames from "classnames";
-import PropTypes from "prop-types";
+import { useAuth } from "../../hooks/useAuth";
+import ResetPassword from "./ResetPassword";
 
 function Main(props) {
-  const [searchDropdown, setSearchDropdown] = useState(false);
-  const showSearchDropdown = () => {
-    setSearchDropdown(true);
-  };
-  const hideSearchDropdown = () => {
-    setSearchDropdown(false);
+  const auth = useAuth();
+  const [modal, setModal] = useState(false);
+
+  let user = auth.authUser;
+
+  const handleLogout = () => {
+    auth.logout();
   };
 
   return (
@@ -47,19 +48,19 @@ function Main(props) {
           {/* END: Logo */}
           {/* BEGIN: Breadcrumb */}
           <nav aria-label="breadcrumb" className="-intro-x h-[45px] mr-auto">
-            <ol className="breadcrumb breadcrumb-light">
+            {/* <ol className="breadcrumb breadcrumb-light">
               <li className="breadcrumb-item">
                 <a href="#">Application</a>
               </li>
               <li className="breadcrumb-item active" aria-current="page">
                 Dashboard
               </li>
-            </ol>
+            </ol> */}
           </nav>
           {/* END: Breadcrumb */}
           {/* BEGIN: Search */}
           <div className="intro-x relative mr-3 sm:mr-6">
-            <div className="search hidden sm:block">
+            {/* <div className="search hidden sm:block">
               <input
                 type="text"
                 className="search__input form-control border-transparent"
@@ -145,11 +146,11 @@ function Main(props) {
                   </a>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
           {/* END: Search */}
           {/* BEGIN: Notifications */}
-          <Dropdown className="intro-x mr-4 sm:mr-6">
+          {/* <Dropdown className="intro-x mr-4 sm:mr-6">
             <DropdownToggle
               tag="div"
               role="button"
@@ -196,7 +197,7 @@ function Main(props) {
                 ))}
               </DropdownContent>
             </DropdownMenu>
-          </Dropdown>
+          </Dropdown> */}
           {/* END: Notifications */}
           {/* BEGIN: Account Menu */}
           <Dropdown className="intro-x w-8 h-8">
@@ -213,26 +214,30 @@ function Main(props) {
             <DropdownMenu className="w-56">
               <DropdownContent className="bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
                 <DropdownHeader tag="div" className="!font-normal">
-                  <div className="font-medium">{$f()[0].users[0].name}</div>
+                  <div className="font-medium capitalize">{user?.name}</div>
                   <div className="text-xs text-white/70 mt-0.5 dark:text-slate-500">
-                    {$f()[0].jobs[0]}
+                    {user?.email}
                   </div>
                 </DropdownHeader>
                 <DropdownDivider className="border-white/[0.08]" />
-                <DropdownItem className="hover:bg-white/5">
+                {/* <DropdownItem className="hover:bg-white/5">
                   <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
-                </DropdownItem>
-                <DropdownItem className="hover:bg-white/5">
+                </DropdownItem> */}
+                {/* <DropdownItem className="hover:bg-white/5">
                   <Lucide icon="Edit" className="w-4 h-4 mr-2" /> Add Account
+                </DropdownItem> */}
+                <DropdownItem className="hover:bg-white/5" onClick={() => setModal(true)}>
+                  <Lucide icon="Lock" className="w-4 h-4 mr-2" /> Change
+                  Password
                 </DropdownItem>
-                <DropdownItem className="hover:bg-white/5">
-                  <Lucide icon="Lock" className="w-4 h-4 mr-2" /> Reset Password
-                </DropdownItem>
-                <DropdownItem className="hover:bg-white/5">
+                {/* <DropdownItem className="hover:bg-white/5">
                   <Lucide icon="HelpCircle" className="w-4 h-4 mr-2" /> Help
-                </DropdownItem>
+                </DropdownItem> */}
                 <DropdownDivider className="border-white/[0.08]" />
-                <DropdownItem className="hover:bg-white/5">
+                <DropdownItem
+                  className="hover:bg-white/5"
+                  onClick={handleLogout}
+                >
                   <Lucide icon="ToggleRight" className="w-4 h-4 mr-2" /> Logout
                 </DropdownItem>
               </DropdownContent>
@@ -242,6 +247,7 @@ function Main(props) {
         </div>
       </div>
       {/* END: Top Bar */}
+      <ResetPassword modal={modal} setModal={setModal} />
     </>
   );
 }

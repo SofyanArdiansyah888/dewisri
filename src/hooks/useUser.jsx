@@ -41,3 +41,4 @@ export function useDeleteUser(userId, onSuccess) {
     onError: () => {},
   });
 }
+
