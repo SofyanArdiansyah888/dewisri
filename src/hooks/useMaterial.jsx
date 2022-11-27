@@ -1,6 +1,30 @@
 import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 
+export function useRawMaterial(onSuccess) {
+  function fetchdMaterial() {
+    return () => api.get(`materials?type=RAW`);
+  }
+  return useQuery(["raw-materials"], fetchdMaterial(), {
+    onSuccess,
+    onError: () => {},
+    select: (data) => data.data,
+  });
+}
+
+export function useSupportMaterial(onSuccess) {
+  function fetchdMaterial() {
+    return () => api.get(`materials?type=SUPPORT`);
+  }
+  return useQuery(["support-materials"], fetchdMaterial(), {
+    onSuccess,
+    onError: () => {},
+    select: (data) => data.data,
+  });
+}
+
+
+
 export function useMaterial(onSuccess) {
   function fetchdMaterial() {
     return () => api.get(`materials`);

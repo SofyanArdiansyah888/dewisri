@@ -39,7 +39,7 @@ function Main() {
 
   const splitArray = location.pathname.split("/");
   const { data: product } = useProduct(splitArray[3]);
-  
+
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
       acceptedFiles.map((file) => {
@@ -58,7 +58,7 @@ function Main() {
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    maxFiles:1,
+    maxFiles: 1,
     accept: {
       "image/*": [".jpg", ".jpeg", ".png"],
     },
@@ -66,7 +66,17 @@ function Main() {
 
   useEffect(() => {
     if (product) {
-      let { code, name, category_id, description,isFavourite,price,uom,variants,materials } = product;
+      let {
+        code,
+        name,
+        category_id,
+        description,
+        isFavourite,
+        price,
+        uom,
+        variants,
+        materials,
+      } = product;
       setValue("code", code);
       setValue("name", name);
       setValue("category_id", category_id);
@@ -74,10 +84,10 @@ function Main() {
       setValue("isFavourite", isFavourite);
       setValue("price", price);
       setValue("uom", uom);
-      setTempPhoto(`${baseUrlImage}products/${product.photo}`)
-      variantForm.replace(variants)
-      materialForm.replace(materials)
-      setEditorData(description)
+      setTempPhoto(`${baseUrlImage}products/${product.photo}`);
+      variantForm.replace(variants);
+      materialForm.replace(materials);
+      setEditorData(description);
     }
   }, [product]);
 
@@ -107,15 +117,26 @@ function Main() {
   });
 
   const handleUpdate = async (data) => {
-    let variants = data?.variants;
-    // variants.map((variant) => )
-    let materials = data?.materials;
-    
-    console.log(data)
-    // updateProduct({
-    //   productId: product.id,
-    //   data,
-    // });
+    data.variant.map((variant) => {
+      if (!variant.variant_code) {
+        variant.variant_code = `PRO/${helper.sanitizeString(
+          data.name
+        )}/${helper.sanitizeString(variant.name)}/${Math.floor(
+          Date.now() / 1000
+        )}`;
+         variant.product_id = product.id;
+      }
+      return  variant
+    });
+    data?.material?.map((material) => {
+      material.product_id = product.id
+      return material
+    });
+  
+    updateProduct({
+      productId: product.id,
+      data,
+    });
   };
 
   return (
@@ -162,35 +183,31 @@ function Main() {
                       </div>
                       <div className="w-full mt-3 xl:mt-0 flex-1 border-2 border-dashed dark:border-darkmode-400 rounded-md pt-4">
                         <div className="grid grid-cols-10 gap-5 pl-4 pr-5">
-                          {files.length>0 && files.map((file, key) => (
-                            <div
-                              key={key}
-                              className="col-span-5 md:col-span-2 h-28 relative image-fit cursor-pointer zoom-in"
-                            >
-                              <img
-                                className="rounded-md"
-                                alt="Picture of product"
-                                src={file.preview}
-                                onLoad={() => {
-                                  URL.revokeObjectURL(file.preview);
-                                }}
-                              />
-                            </div>
-                          ))}
-                          {
-                            (files.length === 0 && tempPhoto) && (
+                          {files.length > 0 &&
+                            files.map((file, key) => (
                               <div
-                              className="col-span-5 md:col-span-2 h-28 relative image-fit cursor-pointer zoom-in"
-                            >
+                                key={key}
+                                className="col-span-5 md:col-span-2 h-28 relative image-fit cursor-pointer zoom-in"
+                              >
+                                <img
+                                  className="rounded-md"
+                                  alt="Picture of product"
+                                  src={file.preview}
+                                  onLoad={() => {
+                                    URL.revokeObjectURL(file.preview);
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          {files.length === 0 && tempPhoto && (
+                            <div className="col-span-5 md:col-span-2 h-28 relative image-fit cursor-pointer zoom-in">
                               <img
                                 className="rounded-md"
                                 alt="Picture of product"
                                 src={tempPhoto}
-                                
                               />
                             </div>
-                            )
-                          }
+                          )}
                         </div>
                         <div
                           className="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative"
@@ -203,8 +220,7 @@ function Main() {
                             </p>
                           ) : (
                             <p className="text-primary mr-1">
-                              Drag 'n' drop a file here or click to select
-                              files
+                              Drag 'n' drop a file here or click to select files
                             </p>
                           )}
                           <input
@@ -446,12 +462,14 @@ function Main() {
               <Material {...materialForm} />
 
               <div className="flex justify-end flex-col md:flex-row gap-2 mt-5">
+                <Link to="/produk/produk">
                 <button
                   type="button"
                   className="btn py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 w-full md:w-52"
                 >
                   Cancel
                 </button>
+                </Link>
                 <button
                   type="submit"
                   className="btn py-3 btn-primary w-full md:w-52"

@@ -55,8 +55,8 @@ export function useCreateProduct(onSuccess) {
 }
 
 export function useUpdateProduct( onSuccess) {
-  function updatedProduct({data, userId}) {
-    return api.put(`products/${userId}`, data);
+  function updatedProduct({data, productId}) {
+    return api.put(`products/${productId}`, data);
   }
   return useMutation(updatedProduct, {
     onSuccess,

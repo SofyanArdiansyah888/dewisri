@@ -23,11 +23,11 @@ function Main() {
   const sideMenuStore = useRecoilValue(useSideMenuStore);
   const sideMenu = () => nestedMenu($h.toRaw(sideMenuStore.menu), location);
 
-  useEffect(() => {
-    setFormattedMenu(checkMenu())
-  },[
-    getUser()
-  ])
+  // useEffect(() => {
+  //   setFormattedMenu(checkMenu())
+  // },[
+  //   getUser()
+  // ])
 
   useEffect(() => {
     dom("body").removeClass("error-page").removeClass("login").addClass("main");

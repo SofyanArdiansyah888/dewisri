@@ -8,7 +8,19 @@ export function useReservation(onSuccess) {
   return useQuery(["reservations"], fetchReservations(), {
     onSuccess,
     onError: () => {},
-    select: (data) => data.data,
+    select: (data) => {
+      let temp = data.data
+      return temp.map((result) => {
+        if(result?.table){
+          let tableName = result?.table?.map(table => table.name)
+          result.table_name = tableName.toString();
+        }else{
+          result.table_name = ""
+        }
+        return result;
+      })
+      
+    },
   });
 }
 
@@ -32,11 +44,11 @@ export function useUpdateReservation(userId, onSuccess) {
   });
 }
 
-export function useDeleteReservation(userId, onSuccess) {
-  function deleteReservations() {
-    return api.delete(`reservations/${userId}`);
+export function useCancelReservation(reservationId, onSuccess) {
+  function cancelReservation(data) {
+    return api.put(`reservations/${reservationId}/`,data);
   }
-  return useMutation(deleteReservations, {
+  return useMutation(cancelReservation, {
     onSuccess,
     onError: () => {},
   });

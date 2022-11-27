@@ -137,10 +137,12 @@ function Main() {
                   <div className="block font-light mt-4 text-left truncate">
                     Waktu : {secondToHourMinute(table?.order?.diff_time ?? 0)}
                     <br />
-                    Total Belanja : {formatRupiah(table?.order?.total_payment,"Rp.")}
+                    Total Belanja :{" "}
+                    {formatRupiah(table?.order?.total_payment, "Rp.")}
                   </div>
                   <div className="flex justify-end mt-4">
-                    {(table.status === "ORDERED" || table.status === "OPEN")  && (
+                    {(table.status === "ORDERED" ||
+                      table.status === "OPEN") && (
                       <Link to={`/meja/${table.id}/pos`}>
                         <a className="btn btn-info mr-2">ORDER</a>
                       </Link>
@@ -162,6 +164,12 @@ function Main() {
                         <DropdownToggle className="btn btn-warning">
                           RESERVASI
                         </DropdownToggle>
+                      )}
+
+                      {table.status === "ORDERED" && (
+                        <button className="btn btn-primary">
+                          MENGORDER
+                        </button>
                       )}
                       <DropdownMenu className="w-40">
                         <DropdownContent>

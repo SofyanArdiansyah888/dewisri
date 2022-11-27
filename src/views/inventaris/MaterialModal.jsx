@@ -4,21 +4,12 @@ import {
   ModalFooter,
   ModalHeader
 } from "@/base-components";
-import { useEffect, useState } from "react";
-import api from "../../services/api";
+import { useState } from "react";
+import { useRawMaterial } from "../../hooks/useMaterial";
 
 function MaterialModal({ showModal, modal, append, additionalAppend }) {
-  const [materials, setMaterials] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState([]);
-  useEffect(() => {
-    getMaterials();
-    return () => {};
-  }, []);
-
-  const getMaterials = async () => {
-    const result = await api.get(`materials?type=RAW`);
-    setMaterials(result.data);
-  };
+  const {data} = useRawMaterial()
 
   const handleChange = (data, material) => {
     if (data.target.checked) {
@@ -53,7 +44,7 @@ function MaterialModal({ showModal, modal, append, additionalAppend }) {
               </tr>
             </thead>
             <tbody>
-              {materials.map((material, index) => (
+              {data && data.map((material, index) => (
                 <tr key={index} className="intro-x">
                   <td>
                     <input

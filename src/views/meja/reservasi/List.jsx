@@ -4,24 +4,18 @@ import { useReservation } from "../../../hooks/useReservation";
 import EmptyData from "../../../components/EmptyData";
 import { Link } from "react-router-dom";
 import { helper } from "../../../utils/helper";
+import CancelModal from "./CancelModal";
 
 function Main() {
   const [modal, setModal] = useState(false);
-  const [modalEdit, setmodalEdit] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-  const [setselectedReservation, setsetselectedReservation] = useState();
+  const [selectedReservation, setSelectedReservation] = useState();
 
   const { loading, data } = useReservation();
   const [search, setSearch] = useState("");
 
-  const handleEdit = (reservation) => {
-    setsetselectedReservation(reservation);
-    setmodalEdit(true);
-  };
-
-  const handleDelete = (reservation) => {
-    setsetselectedReservation(reservation);
-    setModalDelete(true);
+  const handleCancel = (reservation) => {
+    setSelectedReservation(reservation);
+    setModal(true);
   };
 
   const filterData = () => {
@@ -98,16 +92,16 @@ function Main() {
                     </td>
                     <td>
                       <a href="" className="font-light whitespace-nowrap">
-                        {reservation.reservation_number}
+                        {reservation?.customer?.name}
                       </a>
                     </td>
                     <td>
                       <a href="" className="font-light whitespace-nowrap">
-                        {reservation.reservation_number}
+                        {reservation?.table_name}
                       </a>
                     </td>
                     <td>
-                      <a href="" className="font-light whitespace-nowrap">
+                      <a href="" className={`font-light whitespace-nowrap ${reservation.status === 'RESERVED' ? 'bg-green-500' :'bg-red-500' }  p-2 rounded-lg text-white`}>
                         {reservation.status}
                       </a>
                     </td>
@@ -121,14 +115,16 @@ function Main() {
                     </td>
                     <td className="table-report__action w-56">
                       <div className="flex justify-center items-center">
-                        <a
-                          className="flex items-center text-danger"
-                          href="#"
-                          onClick={() => handleDelete(reservation)}
-                        >
-                          <Lucide icon="XSquare" className="w-4 h-4 mr-1" />{" "}
-                          Cancel
-                        </a>
+                        {reservation.status === "RESERVED" && (
+                          <a
+                            className="flex items-center text-danger"
+                            href="#"
+                            onClick={() => handleCancel(reservation)}
+                          >
+                            <Lucide icon="XSquare" className="w-4 h-4 mr-1" />{" "}
+                            Cancel
+                          </a>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -137,6 +133,11 @@ function Main() {
             </table>
           )}
         </div>
+        <CancelModal
+          setModal={setModal}
+          modal={modal}
+          reservation={selectedReservation}
+        />
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
         {/* {categories.length > 10 ? (

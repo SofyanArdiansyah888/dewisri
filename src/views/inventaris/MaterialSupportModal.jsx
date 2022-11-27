@@ -5,20 +5,13 @@ import {
   ModalHeader
 } from "@/base-components";
 import { useEffect, useState } from "react";
+import { useSupportMaterial } from "../../hooks/useMaterial";
 import api from "../../services/api";
 
 function MaterialSupportModal({ showModal, modal, append, additionalAppend }) {
-  const [materials, setMaterials] = useState([]);
+  const {data} = useSupportMaterial()
   const [selectedMaterial, setSelectedMaterial] = useState([]);
-  useEffect(() => {
-    getMaterials();
-    return () => {};
-  }, []);
-
-  const getMaterials = async () => {
-    const result = await api.get(`materials?type=SUPPORT`);
-    setMaterials(result.data);
-  };
+  
 
   const handleChange = (data, material) => {
     if (data.target.checked) {
@@ -53,7 +46,7 @@ function MaterialSupportModal({ showModal, modal, append, additionalAppend }) {
               </tr>
             </thead>
             <tbody>
-              {materials.map((material, index) => (
+              {data && data.map((material, index) => (
                 <tr key={index} className="intro-x">
                   <td>
                     <input

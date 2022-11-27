@@ -9,6 +9,8 @@ import { useFreeTables } from "../../../hooks/useTable";
 import { useCreateReservation } from "../../../hooks/useReservation";
 import { useQueryClient } from "react-query";
 import {Link, useNavigate} from 'react-router-dom'
+// import DateTimePicker from 'react-datetime-picker'
+
 const schema = yup.object({
   name: yup.string().required().min(2),
   email: yup.string().email(),
@@ -56,7 +58,6 @@ function Create() {
   };
 
   const handleCreate = (data) => {
-   
     mutate({ ...data });
   };
 
@@ -150,12 +151,14 @@ function Create() {
                 Tanggal Reservasi
               </label>
 
+              {/* <DateTimePicker onChange={setDate} value={date} /> */}
+
               <Litepicker
                 value={date}
                 onChange={setDate}
                 options={{
                   format: "DD MMMM YYYY",
-                  autoApply: false,
+                  autoApply: true,
                   showWeekNumbers: false,
 
                   dropdowns: {
