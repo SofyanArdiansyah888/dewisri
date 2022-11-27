@@ -1,24 +1,18 @@
 import { Litepicker } from "@/base-components";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import api from "../../../services/api";
-// const [incomingStock, setincomingStock] = useState({});
-// const [loading, setLoading] = useState(false);
-
-// useEffect(() => {
-//   getIncomingStock();
-//   return () => {};
-// }, []);
-
-// async function getIncomingStock() {
-//   setLoading(true);
-//   let response = await api.get(`incoming-stocks/${1}`);
-//   setincomingStock(response.data);
-//   setLoading(false);
-// }
+import { Link, useParams } from "react-router-dom";
+import { useIncomingStock } from "../../../hooks/useIncomingStock";
+import { helper } from "../../../utils/helper";
 
 function Detail() {
   const [date, setDate] = useState("");
+  let {id} = useParams();
+  const {data} = useIncomingStock(id)
+
+  useEffect(() => {
+    if(data)
+    setDate(data.incoming_date)
+  },[data])
   return (
     <>
       <div>
@@ -37,31 +31,19 @@ function Detail() {
                   id="crud-form-1"
                   type="text"
                   className="form-control w-full"
+                  value={data?.invoice_number}
                   disabled
                 />
               </div>
               <div className="col-span-12 sm:col-span-6 mt-3">
-                <label htmlFor="modal-datepicker-1" className="form-label">
+                <label className="form-label">
                   Tanggal Masuk
                 </label>
-
-                <Litepicker
-                  id="modal-datepicker-2"
-                  value={date}
-                  onChange={setDate}
-                  options={{
-                    format: "DD MMMM YYYY",
-                    autoApply: false,
-                    showWeekNumbers: false,
-
-                    dropdowns: {
-                      minYear: 1990,
-                      maxYear: null,
-                      months: true,
-                      years: true,
-                    },
-                  }}
-                  className="form-control"
+                <input
+                  type="text"
+                  className="form-control w-full"
+                  value={helper.formatDate(data?.incoming_date, "DD MMMM YYYY")}
+                  disabled
                 />
               </div>
               <div className="text-right mt-5">
@@ -91,48 +73,41 @@ function Detail() {
                 </tr>
               </thead>
               <tbody>
-                {/* {fields.map((field, index) => (
+                {data?.materials?.map((field, index) => (
                     <>
                       <tr key={field.id}>
                         <td>
                           <input
                             type="text"
-                            {...register(`material.${index}.name`)}
                             readOnly
+                            value={field?.name}
                           />
                         </td>
                         <td>
                           <input
                             type="number"
-                            {...register(`material.${index}.capital`)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            {...register(`material.${index}.stock`)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            {...register(`material.${index}.total_capital`)}
-                            value={watchFieldArray[index].total_capital}
                             readOnly
+                            value={field?.pivot?.capital}
                           />
                         </td>
                         <td>
-                          <a
-                            className="flex items-center text-danger"
-                            onClick={() => remove(index)}
-                          >
-                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
-                            Delete
-                          </a>
+                          <input
+                            type="number"
+                            readOnly
+                            value={field?.pivot?.stock}
+                          />
                         </td>
+                        <td>
+                          <input
+                            type="number"
+                            readOnly
+                            value={field?.pivot?.total_capital}
+                          />
+                        </td>
+                        
                       </tr>
                     </>
-                  ))} */}
+                  ))}
               </tbody>
             </table>
           </div>

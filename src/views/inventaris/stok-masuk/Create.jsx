@@ -22,7 +22,6 @@ function Main() {
   const [modal, showModal] = useState(false);
   const [supportModal, showsupportModal] = useState(false);
   const [nomorFaktur, setNomorFaktur] = useState("");
-
   const navigate = useNavigate();
   const {
     register,

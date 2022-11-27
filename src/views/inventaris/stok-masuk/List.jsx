@@ -1,35 +1,21 @@
-import { Litepicker, Lucide } from "@/base-components";
+import { Lucide } from "@/base-components";
 import { pipe, pluck, sum } from "ramda";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../../../services/api";
+import { useIncomingStocks } from "../../../hooks/useIncomingStock";
 
 import { helper } from "../../../utils/helper";
 
 function Main() {
   const [daterange, setDaterange] = useState("");
-
-  const [incomingStocks, setIncomingStocks] = useState([]);
-  const [selectedIncomingStock, setSelectedIncomingStock] = useState();
-  const [loading, setLoading] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
-
-  useEffect(() => {
-    getIncomingStocks();
-    return () => {};
-  }, []);
-
-  useEffect(() => {
-    isChanged && getIncomingStocks();
-  }, [isChanged]);
-
-  async function getIncomingStocks() {
-    setLoading(true);
-    let response = await api.get("incoming-stocks");
-    setIncomingStocks(response.data);
-    setLoading(false);
-    setIsChanged(false);
-  }
+  const {data} = useIncomingStocks();
+  const [search, setSearch] = useState('');
+  
+  const filterData = () => {
+    return data?.filter((item) =>
+      item.invoice_number.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    );
+  };
 
   return (
     <>
@@ -47,13 +33,13 @@ function Main() {
             </Link>
           </div>
           <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-            <Litepicker
+            {/* <Litepicker
               value={daterange}
               onChange={setDaterange}
               options={{
                 autoApply: false,
                 singleMode: false,
-                numberOfColumns: 2,
+                numberOfColumns: 4,
                 numberOfMonths: 2,
                 showWeekNumbers: true,
                 dropdowns: {
@@ -64,12 +50,13 @@ function Main() {
                 },
               }}
               className="form-control w-56 block mx-auto mb-4"
-            />
+            /> */}
             <div className="w-56 relative text-slate-500">
               <input
                 type="text"
                 className="form-control w-56 box pr-10"
                 placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
               />
               <Lucide
                 icon="Search"
@@ -92,7 +79,7 @@ function Main() {
               </tr>
             </thead>
             <tbody>
-              {incomingStocks.map((stock, index) => (
+              {filterData()?.map((stock, index) => (
                 <tr key={index} className="intro-x">
                   <td>
                     <a>
