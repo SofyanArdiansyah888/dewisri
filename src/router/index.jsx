@@ -37,8 +37,10 @@ import StokMasuk from "../views/inventaris/stok-masuk/List";
 import DetailStokMasuk from "../views/inventaris/stok-masuk/Detail";
 import CreateStokOpname from "../views/inventaris/stok-opname/Create";
 import StokOpname from "../views/inventaris/stok-opname/List";
+import DetailStokOpname from "../views/inventaris/stok-opname/Detail";
 
 import CreateStokWasted from "../views/inventaris/stok-wasted/Create";
+import DetailStokWasted from "../views/inventaris/stok-wasted/Detail";
 import StokWasted from "../views/inventaris/stok-wasted/List";
 
 // MEJA
@@ -146,6 +148,10 @@ function Router() {
           path: "/inventori/stok-opname/create",
           element: <RequireAuth><CreateStokOpname /></RequireAuth>,
         },
+        {
+          path: "/inventori/stok-opname/:id",
+          element: <RequireAuth><DetailStokOpname /></RequireAuth>,
+        },
 
         {
           path: "/inventori/stok-wasted",
@@ -154,6 +160,10 @@ function Router() {
         {
           path: "/inventori/stok-wasted/create",
           element: <RequireAuth><CreateStokWasted /></RequireAuth>,
+        },
+        {
+          path: "/inventori/stok-wasted/:id",
+          element: <RequireAuth><DetailStokWasted /></RequireAuth>,
         },
 
         {

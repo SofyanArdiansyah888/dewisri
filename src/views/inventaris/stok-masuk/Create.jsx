@@ -1,10 +1,10 @@
-import { Litepicker, Lucide } from "@/base-components";
+import { Alert, Litepicker, Lucide } from "@/base-components";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
-import api from "../../../services/api";
+import { useCreateIncomingStock } from "../../../hooks/useIncomingStock";
 import { helper } from "../../../utils/helper";
 import MaterialModal from "../MaterialModal";
 import MaterialSupportModal from "../MaterialSupportModal";
@@ -21,7 +21,10 @@ function Main() {
   const [date, setDate] = useState("");
   const [modal, showModal] = useState(false);
   const [supportModal, showsupportModal] = useState(false);
-  const [nomorFaktur, setNomorFaktur] = useState("");
+  const [errorMessage, setErrorMessage] = useState();
+  const { mutate } = useCreateIncomingStock(() => {
+    navigate("/inventori/stok-masuk");
+  });
   const navigate = useNavigate();
   const {
     register,
@@ -32,6 +35,7 @@ function Main() {
     control,
     setValue,
     watch,
+    error,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -44,34 +48,36 @@ function Main() {
     control,
     name: "material",
   });
-  const watchFieldArray = watch('material').map((test,index) => {
+  const watchFieldArray = watch("material").map((test, index) => {
     test.total_capital = test.capital * test.stock;
-    return test
+    return test;
   });
-  
 
   useEffect(() => {
     let date = new Date();
     let timestamp = helper.timeStampNow().toString();
-    setNomorFaktur(
+    setValue(
+      "invoice_number",
       `FAK/${date.getDay()}${date.getMonth()}${date.getFullYear()}/${timestamp.substring(
         timestamp.length - 3
       )}`
     );
+    setValue("incoming_date", new Date());
   }, []);
 
   const handleCreate = async (data) => {
-    try {
-      await api.post("incoming-stocks", {
-        ...data,
-        incoming_date: date,
-      });
-      navigate("/inventori/stok-masuk");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    let isZero = data.material.some((material) => material.total_capital == 0);
 
+    if (isZero) {
+      setErrorMessage("Nilai Material Tidak Boleh Kosong");
+      return;
+    }
+    if (data.material.length === 0) {
+      setErrorMessage("Material harus diisi");
+      return;
+    }
+    mutate(data);
+  };
 
   return (
     <>
@@ -79,6 +85,7 @@ function Main() {
         <div className="intro-y flex items-center mt-8">
           <h2 className="text-lg font-medium mr-auto">Tambah Stok Masuk</h2>
         </div>
+
         <form className="validate-form" onSubmit={handleSubmit(handleCreate)}>
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="intro-y col-span-12 lg:col-span-4">
@@ -94,18 +101,24 @@ function Main() {
                     className="form-control w-full"
                     {...register(`invoice_number`)}
                     readOnly
-                    value={nomorFaktur}
                   />
                 </div>
                 <div className="col-span-12 sm:col-span-6 mt-3">
                   <label htmlFor="modal-datepicker-1" className="form-label">
                     Tanggal Masuk
                   </label>
-
+                  <input
+                    type="hidden"
+                    {...register(`incoming_date`)}
+                    readOnly
+                  />
                   <Litepicker
                     id="modal-datepicker-2"
                     value={date}
-                    onChange={setDate}
+                    onChange={(e) => {
+                      setDate(e);
+                      setValue("incoming_date", e);
+                    }}
                     options={{
                       format: "DD MMMM YYYY",
                       autoApply: false,
@@ -153,7 +166,28 @@ function Main() {
               >
                 Tambah Bahan Pendukung
               </button>
+              {errorMessage && (
+                <Alert className="box intro-y bg-red-500 text-white flex items-center mt-4">
+                  {({ dismiss }) => (
+                    <>
+                      <span>{errorMessage}</span>
+                      <button
+                        type="button"
+                        className="btn-close text-white"
+                        onClick={() => {
+                          dismiss();
+                          setErrorMessage(null);
+                        }}
+                        aria-label="Close"
+                      >
+                        <Lucide icon="X" className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                </Alert>
+              )}
             </div>
+
             <div className="intro-y col-span-12  overflow-auto bg-white px-4 pb-4">
               <table className="table table-report">
                 <thead>
@@ -189,7 +223,9 @@ function Main() {
                         <td>
                           <input
                             type="number"
-                            {...register(`material.${index}.stock`)}
+                            {...register(`material.${index}.stock`, {
+                              min: 1,
+                            })}
                           />
                         </td>
                         <td>

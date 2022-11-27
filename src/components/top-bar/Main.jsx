@@ -200,16 +200,21 @@ function Main(props) {
           </Dropdown> */}
           {/* END: Notifications */}
           {/* BEGIN: Account Menu */}
-          <Dropdown className="intro-x w-8 h-8">
+          <Dropdown className="intro-x  w-10 h-10">
             <DropdownToggle
               tag="div"
               role="button"
-              className="w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in"
+              className="justify-center items-center w-10 h-10 bg-gray-100 rounded-full"
             >
-              <img
-                alt="Midone Tailwind HTML Admin Template"
-                src={$f()[9].photos[0]}
-              />
+                   <p class="font-medium text-center justify-center items-center pt-2 ">
+                      {user.name
+                        ? user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join(".")
+                            .toUpperCase()
+                        : ""}
+                    </p>
             </DropdownToggle>
             <DropdownMenu className="w-56">
               <DropdownContent className="bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">

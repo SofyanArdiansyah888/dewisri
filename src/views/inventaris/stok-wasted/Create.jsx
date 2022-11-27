@@ -1,18 +1,16 @@
-import { Litepicker, Lucide } from "@/base-components";
+import { Alert, Lucide, Litepicker } from "@/base-components";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { useCreateWastedStock } from "../../../hooks/useWastedStock";
 import { helper } from "../../../utils/helper";
 import MaterialModal from "../MaterialModal";
 import MaterialSupportModal from "../MaterialSupportModal";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { getVariable } from "eslint-plugin-react/lib/util/variable";
-import api from "../../../services/api";
 const schema = yup.object({
   // wasted_number: yup.string().required(),
   description: yup.string().required(),
-
 });
 const additionalAppend = {
   capital: 0,
@@ -24,7 +22,11 @@ function Main() {
   const [date, setDate] = useState("");
   const [modal, showModal] = useState(false);
   const [supportModal, showsupportModal] = useState(false);
-  const [wastedNumber, setwastedNumber] = useState("");
+  const [errorMessage, setErrorMessage] = useState();
+  const { mutate } = useCreateWastedStock(() => {
+    navigate("/inventori/stok-wasted");
+  });
+
   const navigate = useNavigate();
   const {
     register,
@@ -50,23 +52,34 @@ function Main() {
   useEffect(() => {
     let date = new Date();
     let timestamp = helper.timeStampNow().toString();
-    setwastedNumber(
+    setValue(
+      "wasted_number",
       `WST/${date.getDay()}${date.getMonth()}${date.getFullYear()}/${timestamp.substring(
         timestamp.length - 3
       )}`
     );
+    setValue('wasted_date',date)
   }, []);
 
   const handleCreate = async (data) => {
     
-    try {
-      await api.post("wasted-stocks", {
-        ...data,
-      });
-      navigate("/inventori/stok-wasted");
-    } catch (error) {
-      console.log(error);
+    let isZero = data.material.some((material) => material.wasted_stock == 0);
+    if (isZero) {
+      setErrorMessage("Stok Terbuang Tidak Boleh Kosong");
+      return;
     }
+    
+    if (data.material.length === 0) {
+      setErrorMessage("Material harus diisi");
+      return;
+    }
+    let isEmpty = data.material.some((material) => material.description == '')
+    if(isEmpty){
+      setErrorMessage("Deskripsi Material harus diisi");
+      return;
+    }
+    
+    mutate(data);
   };
 
   return (
@@ -90,9 +103,40 @@ function Main() {
                     className="form-control w-full"
                     {...register(`wasted_number`)}
                     readOnly
-                    value={wastedNumber}
                   />
                 </div>
+                <div className="col-span-12 sm:col-span-6 mt-3">
+                  <label htmlFor="modal-datepicker-1" className="form-label">
+                    Tanggal Terbuang
+                  </label>
+                  <input
+                    type="hidden"
+                    {...register(`wasted_date`)}
+                    readOnly
+                  />
+                  <Litepicker
+                    id="modal-datepicker-2"
+                    value={date}
+                    onChange={(e) => {
+                      setDate(e);
+                      setValue("wasted_date", e);
+                    }}
+                    options={{
+                      format: "DD MMMM YYYY",
+                      autoApply: false,
+                      showWeekNumbers: false,
+
+                      dropdowns: {
+                        minYear: 1990,
+                        maxYear: null,
+                        months: true,
+                        years: true,
+                      },
+                    }}
+                    className="form-control"
+                  />
+                </div>
+
                 <div className="mt-3">
                   <label htmlFor="crud-form-1" className="form-label">
                     Catatan
@@ -105,7 +149,7 @@ function Main() {
                   />
                 </div>
                 <div className="text-right mt-5">
-                  <Link to="/inventori/stok-masuk">
+                  <Link to="/inventori/stok-wasted">
                     <button
                       type="button"
                       className="btn btn-outline-secondary w-24 mr-1"
@@ -136,6 +180,26 @@ function Main() {
               >
                 Tambah Bahan Pendukung
               </button>
+              {errorMessage && (
+                <Alert className="box intro-y bg-red-500 text-white flex items-center mt-4">
+                  {({ dismiss }) => (
+                    <>
+                      <span>{errorMessage}</span>
+                      <button
+                        type="button"
+                        className="btn-close text-white"
+                        onClick={() => {
+                          dismiss();
+                          setErrorMessage(null);
+                        }}
+                        aria-label="Close"
+                      >
+                        <Lucide icon="X" className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                </Alert>
+              )}
             </div>
             <div className="intro-y col-span-12  overflow-auto  bg-white px-4 pb-4">
               <table className="table table-report">
@@ -191,7 +255,6 @@ function Main() {
                           <input
                             type="number"
                             {...register(`material.${index}.capital`)}
-                            
                           />
                         </td>
                         <td>

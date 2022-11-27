@@ -6,32 +6,17 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../../services/api";
 import { helper } from "../../../utils/helper";
-
+import { useOpnameStocks } from "../../../hooks/useOpnameStock";
 function Main() {
-  const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const [daterange, setDaterange] = useState("");
-
-  const [opnameStocks, setOpnameStocks] = useState([]);
-  const [selectedOpnameStock, setSelectedOpnameStock] = useState();
-  const [loading, setLoading] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
-
-  useEffect(() => {
-    getOpnameStocks();
-    return () => {};
-  }, []);
-
-  useEffect(() => {
-    isChanged && getOpnameStocks();
-  }, [isChanged]);
-
-  async function getOpnameStocks() {
-    setLoading(true);
-    let response = await api.get("opname-stocks");
-    setOpnameStocks(response.data);
-    setLoading(false);
-    setIsChanged(false);
-  }
+  const {data} = useOpnameStocks();
+  const [search, setSearch] = useState('');
+  
+  const filterData = () => {
+    return data?.filter((item) =>
+      item.opname_number.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    );
+  };
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">Data List Layout</h2>
@@ -49,7 +34,7 @@ function Main() {
            
           </div>
           <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-            <Litepicker
+            {/* <Litepicker
               value={daterange}
               onChange={setDaterange}
               options={{
@@ -66,12 +51,13 @@ function Main() {
                 },
               }}
               className="form-control w-56 block mx-auto mb-4"
-            />
+            /> */}
             <div className="w-56 relative text-slate-500">
               <input
                 type="text"
                 className="form-control w-56 box pr-10"
                 placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
               />
               <Lucide
                 icon="Search"
@@ -88,11 +74,12 @@ function Main() {
                 <th className="whitespace-nowrap">Tanggal</th>
                 <th className="whitespace-nowrap">Nomor</th>
                 <th className="whitespace-nowrap">User</th>
+                <th className="whitespace-nowrap">Aksi</th>
                 
               </tr>
             </thead>
             <tbody>
-              {opnameStocks.map((stock, index) => (
+              {filterData()?.map((stock, index) => (
                 <tr key={index} className="intro-x">
                   <td>
                     <a href="" className="font-medium whitespace-nowrap">
@@ -106,6 +93,14 @@ function Main() {
                   </td>
                   <td>
                       {stock.user}
+                  </td>
+                  <td>
+                    <Link to={`/inventori/stok-opname/${stock.id}`}>
+                      <a className="flex items-center mr-3 text-center">
+                        <Lucide icon="Eye" className="w-4 h-4 mr-1" />{" "}
+                        Detail
+                      </a>
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -174,7 +169,7 @@ function Main() {
         {/* END: Pagination */}
       </div>
       {/* BEGIN: Delete Confirmation Modal */}
-      <Modal
+      {/* <Modal
         show={deleteConfirmationModal}
         onHidden={() => {
           setDeleteConfirmationModal(false);
@@ -207,7 +202,7 @@ function Main() {
             </button>
           </div>
         </ModalBody>
-      </Modal>
+      </Modal> */}
       {/* END: Delete Confirmation Modal */}
     </>
   );

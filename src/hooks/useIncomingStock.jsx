@@ -1,5 +1,15 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
+
+export function useCreateIncomingStock(onSuccess) {
+  function createIncomingStocks(data) {
+    return api.post(`incoming-stocks`, data);
+  }
+  return useMutation(createIncomingStocks, {
+    onSuccess,
+    onError: () => {},
+  });
+}
 
 export function useIncomingStocks(onSuccess) {
   function fetchIncomingStocks() {

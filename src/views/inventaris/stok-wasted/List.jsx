@@ -1,51 +1,21 @@
 import {
-  Lucide,
-  Tippy,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownContent,
-  DropdownItem,
-  Modal,
-  ModalBody,
-  Litepicker,
+  Lucide
 } from "@/base-components";
-import { faker as $f } from "@/utils";
-import * as $_ from "lodash";
-import { useEffect, useState } from "react";
-import classnames from "classnames";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../../../services/api";
+import { useWastedStocks } from "../../../hooks/useWastedStock";
 import { helper } from "../../../utils/helper";
-import { pipe, pluck, values } from "ramda";
-import { flatten } from "lodash";
 
 function Main() {
-  const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const [daterange, setDaterange] = useState("");
-
+  const {data} = useWastedStocks();
+  const [search, setSearch] = useState('');
   
-  const [wastedStocks, setWastedStocks] = useState([]);
-  const [selectedWastedStock, setSelectedWastedStock] = useState();
-  const [loading, setLoading] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
-
-  useEffect(() => {
-    getWastedStocks();
-    return () => {}
-  }, []);
-
-  useEffect(() => {
-    isChanged && getWastedStocks();
-  }, [isChanged]);
-
-  async function getWastedStocks() {
-    setLoading(true);
-    let response = await api.get("wasted-stocks");
-    setWastedStocks(response.data);
-    setLoading(false);
-    setIsChanged(false);
-  }
+  const filterData = () => {
+    return data?.filter((item) =>
+      item.wasted_number.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    );
+  };
   
   return (
     <>
@@ -63,7 +33,7 @@ function Main() {
             </Link>
           </div>
           <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-            <Litepicker
+            {/* <Litepicker
               value={daterange}
               onChange={setDaterange}
               options={{
@@ -80,12 +50,13 @@ function Main() {
                 },
               }}
               className="form-control w-56 block mx-auto mb-4"
-            />
+            /> */}
             <div className="w-56 relative text-slate-500">
               <input
                 type="text"
                 className="form-control w-56 box pr-10"
                 placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
               />
               <Lucide
                 icon="Search"
@@ -103,10 +74,11 @@ function Main() {
                 <th className="whitespace-nowrap">Nomor</th>
                 <th className="whitespace-nowrap">Deskripsi</th>
                 <th className="whitespace-nowrap">User</th>
+                <th className="whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {wastedStocks.map((wasted, index) => (
+              {filterData()?.map((wasted, index) => (
                 <tr key={index} className="intro-x">
                   <td>
                     <a href="" className="font-medium whitespace-nowrap">
@@ -124,6 +96,14 @@ function Main() {
                   </td>
                   <td>
                     {wasted.user}
+                  </td>
+                  <td>
+                    <Link to={`/inventori/stok-wasted/${wasted.id}`}>
+                      <a className="flex items-center mr-3">
+                        <Lucide icon="Eye" className="w-4 h-4 mr-1" />{" "}
+                        Detail
+                      </a>
+                    </Link>
                   </td>
 
                   {/* <td>
@@ -199,7 +179,7 @@ function Main() {
         {/* END: Pagination */}
       </div>
       {/* BEGIN: Delete Confirmation Modal */}
-      <Modal
+      {/* <Modal
         show={deleteConfirmationModal}
         onHidden={() => {
           setDeleteConfirmationModal(false);
@@ -232,7 +212,7 @@ function Main() {
             </button>
           </div>
         </ModalBody>
-      </Modal>
+      </Modal> */}
       {/* END: Delete Confirmation Modal */}
     </>
   );
