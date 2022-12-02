@@ -1,4 +1,4 @@
-import { useRoutes } from "react-router-dom";
+import { useLocation, useRoutes } from "react-router-dom";
 import SideMenu from "../layouts/side-menu/Main";
 import Login from "../views/auth/login/Main";
 import Register from "../views/auth/register/Main";
@@ -58,9 +58,10 @@ import RequireAuth from "../components/RequireAuth";
 import { useAuth } from "../hooks/useAuth";
 
 
-function Router() {
+function Router() {   
   const auth = useAuth()
-
+  const {pathname} = useLocation()
+  
   const routes = [
     {
       path: "/",
@@ -223,7 +224,7 @@ function Router() {
  
     {
       path: "/login",
-      element: auth.authUser ? <Navigate to="/" /> : <Login />,
+      element:  <Login />,
     },
     {
       path: "*",

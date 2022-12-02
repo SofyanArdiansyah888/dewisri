@@ -14,7 +14,13 @@ export function useOrderTable(tableId, onSuccess) {
         onError: () => {
             
         },
-        select: (data) => data.data
+        select: (data) => {
+            return {
+                ...data,
+                products: data.products.map((item) => item.pivot),
+            
+            }
+        }
     })
 
 }

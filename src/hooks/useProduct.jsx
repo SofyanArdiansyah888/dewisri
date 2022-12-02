@@ -22,6 +22,35 @@ export function useProducts(onSuccess) {
   });
 }
 
+// export function useProducts() {
+//   const [present] =  useIonAlert();
+//   function fetchProducts() {
+//       return () => apiService.get(`products`);
+//   }
+//   return useQuery(['products'], fetchProducts(), {
+//       onError: () => {
+//           present('Silahkan Cek Koneksi Anda !')
+//       },
+//       select: (data) => {
+//          let products =  data?.data?.data
+//          return products.map((product: any) => {
+//           if(!product.materials){
+//               product.available = true;
+//           }else{
+//               product.materials.sort(( a:any, b:any ) =>  a.stock - b.stock )
+//               if(product.materials[0].stock > 0){
+//                   product.available = true;
+//               }else{
+//                   product.available = false;
+//               }
+//           }
+//           return product
+//          })
+//       }
+//   })
+
+// }
+
 export function useProduct(productId,onSuccess) {
   function fetchProduct({queryKey}) {
     const [_, productId] = queryKey

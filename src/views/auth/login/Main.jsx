@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import dom from "@left4code/tw-starter/dist/js/dom";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useAuth } from "../../../hooks/useAuth";
 import { getUser } from "../../../services/database";
@@ -29,14 +29,16 @@ function Main() {
   });
  
   const user = getUser()
-
+  const location = useLocation()
+  const redirectPath = location.state?.path || '/'
+ 
   useEffect(() => {
-
+ 
     if(auth.error){
       setError('email',{message: auth.error})
     }
     if(user){
-      navigate('/',{replace: true})
+      navigate(redirectPath,{replace: true})
     }
     return () => {}
   },[user, auth.error])

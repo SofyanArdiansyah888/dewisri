@@ -15,7 +15,7 @@ function TaxInfo({ taxes, order }) {
           <div className="mr-auto mb-4">Total</div>
           <div className="font-medium">{formatRupiah (order?.total_payment,"Rp.")}</div>
         </div>
-        {taxes.map((tax) => (
+        {taxes?.map((tax) => (
           <div className="flex">
             <div className="mr-auto mb-4">{tax.name}</div>
             <div className="font-medium">{tax.amount} %</div>

@@ -8,12 +8,16 @@ import {
   TabGroup,
   TabList,
   TabPanel,
-  TabPanels
+  TabPanels,
 } from "@/base-components";
 import { faker as $f } from "@/utils";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useCategory } from "../../hooks/useCategory";
+import { useOrderTable } from "../../hooks/useOrderTable";
+import { useProducts } from "../../hooks/useProduct";
+import { useTaxes } from "../../hooks/useTaxes";
 import api from "../../services/api";
 import { baseUrlImage } from "../../utils/constant";
 import { formatRupiah } from "../../utils/formatter";
@@ -21,60 +25,40 @@ import CustomerInfo from "./CustomerInfo";
 import TaxInfo from "./TaxInfo";
 
 function Main() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   const [newOrderModal, setNewOrderModal] = useState(false);
   const [addItemModal, setAddItemModal] = useState(false);
-  const [categories, setCategories] = useState([]);
+
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [products, setProducts] = useState([]);
-  const [taxes, setTaxes] = useState([]);
-  const [tableOrders, setTableOrders] = useState([]);
-  const [order, setOrder] = useState();
+  const { data: products } = useProducts();
+  const { data: categories } = useCategory();
+  const { data: taxes } = useTaxes();
+  const { data: tableOrder } = useOrderTable(id);
+  
+  // const [tableOrder, setTableOrders] = useState([]);
+  // const [order, setOrder] = useState();
   const [search, setSearch] = useState("");
-  const location = useLocation();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      let result = await api.get("categories");
-      setCategories(result.data);
-    })();
-
-    (async () => {
-      let result = await api.get("products");
-      setProducts(result.data);
-    })();
-
-    (async () => {
-      let result = await api.get("taxes");
-      setTaxes(result.data);
-    })();
-
-    (async () => {
-      const splitArray = location.pathname.split("/");
-      let result = await api.get(`tables/${splitArray[2]}/orders`);
-      
-      let temp = result.products.map((item) => item.pivot);
-      setTableOrders(temp);
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (tableOrders.length > 0) {
-        const orderId = tableOrders[0]?.order_id;
-        let result = await api.get(`orders/${orderId}`);
-        console.log(result.data)
-        setOrder(result.data);
-      }
-    })();
-  }, [tableOrders]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (tableOrder.length > 0) {
+  //       const orderId = tableOrder[0]?.order_id;
+  //       let result = await api.get(`orders/${orderId}`);
+  //       setOrder(result.data);
+  //     }
+  //   })();
+  // }, [tableOrder]);
 
   const filteredData = () => {
-    let filterProducts = products.filter((item) =>
-      item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()) && item.id !== 1
+    let filterProducts = products?.filter(
+      (item) =>
+        item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()) &&
+        item.id !== 1
     );
     if (selectedCategory !== "All") {
-      filterProducts = filterProducts.filter((item) =>
+      filterProducts = filterProducts?.filter((item) =>
         item.category.name
           .toLocaleLowerCase()
           .includes(selectedCategory.toLocaleLowerCase())
@@ -104,7 +88,7 @@ function Main() {
       </div>
 
       <div className="intro-y grid grid-cols-12 gap-5 mt-5 overflow-hidden max-h-[72vh]">
-        {/* BEGIN: Item List */}
+        {/* LEFT SIDE CONTENT */}
         <TabGroup className="intro-y col-span-8 ">
           <div className="intro-y pr-1">
             <div className=" p-2 bg-transparent">
@@ -117,38 +101,36 @@ function Main() {
                 </Tab>
               </TabList>
               <TabPanels>
-                <TabPanel >
+                {/* PRODUCT PANEL */}
+                <TabPanel>
                   <div className="lg:flex intro-y mt-4">
+                    {/* SEARCH */}
                     <div className="relative">
                       <input
                         type="text"
-                        className="form-control py-3 px-4 w-full lg:w-64 box pr-10"
+                        className="form-control py-3 px-4 w-full lg:w-48 box pr-10"
                         placeholder="Search item..."
                         onChange={(event) => setSearch(event.target.value)}
                       />
-                      <Lucide
-                        icon="Search"
-                        className="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0 text-slate-500"
-                      />
                     </div>
-                    <select
-                      className="form-select py-3 px-4 box w-full lg:w-auto mt-3 lg:mt-0 ml-auto"
-                      onChange={(event) =>
-                        setSelectedCategory(event.target.value)
-                      }
-                    >
-                      <option>All</option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.name}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex flex-row gap-3 ml-2 py-1 w-auto overflow-x-auto min-w-2xl">
+                      {categories
+                        ? categories.map((category) => (
+                            <div
+                              key={category.id}
+                              className={`box px-4 py-3 cursor-pointer ${selectedCategory === category.name ? "bg-secondary" : "bg-base"}`}
+                              onClick={() => setSelectedCategory(category.name)}
+                            >
+                              {category.name}
+                            </div>
+                          ))
+                        : null}
+                    </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-1 mt-5 pt-5 border-t overflow-y-scroll h-[450px] pb-14">
-                    {filteredData().map((product, index) => (
-                      <div className=" flex flex-row justify-between gap-4  m-2 bg-gray-50 hover:bg-secondary rounded-md p-2 ">
+                  {/* PRODUCTS  */}
+                  <div className="grid grid-cols-2 gap-1 mt-5 pt-5 border-t overflow-y-auto max-h-[450px] pb-14">
+                    {filteredData()?.map((product, index) => (
+                      <div className=" flex flex-row justify-between gap-4 max-h-[90px]  m-2 bg-gray-50 hover:bg-secondary rounded-md p-2 ">
                         <div className="flex">
                           <img
                             className="h-[48px] w-[48px] rounded-md"
@@ -178,6 +160,7 @@ function Main() {
                   </div>
                 </TabPanel>
 
+                {/* MANUAL PANEL  */}
                 <TabPanel>
                   <div className="w-1/2 flex flex-col gap-4">
                     {/* NAMA PRODUK */}
@@ -280,14 +263,12 @@ function Main() {
           </div>
         </TabGroup>
 
-        {/* END: Item List */}
-
         <div className="flex flex-col col-span-4 overflow-scroll h-[550px] pb-12 ">
           {/* CUSTOMER */}
-          <CustomerInfo order={order} />
-
+          <CustomerInfo order={tableOrder} />
+ 
           <div className="box p-2 mt-5   h-[300px]">
-            {tableOrders.map((tableOrder) => (
+            {tableOrder && tableOrder?.products?.map((tableOrder) => (
               <a
                 key={tableOrder.id}
                 onClick={() => {
@@ -314,7 +295,7 @@ function Main() {
                 />
                 <button className="btn btn-primary ml-2">Apply</button>
               </div> */}
-          <TaxInfo taxes={taxes} order={order} />
+          <TaxInfo taxes={taxes} order={tableOrder} />
 
           <div className="flex mt-5">
             <button className="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500">
