@@ -3,7 +3,7 @@ import { formatRupiah } from "../../utils/formatter";
 function TaxInfo({ taxes, order }) {
   let totalPayment = 0;
 
-  if (order && taxes.length === 2) {
+  if (order && taxes?.length === 2) {
     const taxPPN = order?.total_payment * (taxes[0].amount / 100);
     const taxService = order?.total_payment * (taxes[1].amount / 100);
     totalPayment = order?.total_payment + (taxPPN + taxService);

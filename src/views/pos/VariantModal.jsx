@@ -31,17 +31,19 @@ export default function VariantModal({
     formState: { errors },
     reset,
     setValue,
+    getValues,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  console.log(selectedProduct);
   const [selectedVariant, setSelectedVariant] = useState();
 
+  console.log(selectedMenus, "selectedMenus");
   useEffect(() => {
     setValue("product_name", selectedProduct?.name);
     setValue("item_price", selectedProduct?.price);
-  }, []);
+    setValue("quantity", 1);
+  }, [selectedProduct]);
 
   const onSubmit = (data) => {
     if (selectedVariant) {
@@ -65,7 +67,7 @@ export default function VariantModal({
         setSelectedMenus(temp);
       } else {
         setSelectedMenus([
-          ...selectedMenu,
+          ...selectedMenus,
           {
             product_id: selectedProduct.id,
             product_name: selectedProduct.name,
@@ -79,7 +81,7 @@ export default function VariantModal({
         ]);
       }
     } else {
-      let isExist = selectedMenu.some((menu) => {
+      let isExist = selectedMenus.some((menu) => {
         return menu.product_id === selectedProduct.id;
       });
       if (isExist) {
@@ -93,7 +95,7 @@ export default function VariantModal({
         setSelectedMenus(temp);
       } else {
         setSelectedMenus([
-          ...selectedMenu,
+          ...selectedMenus,
           {
             product_id: selectedProduct.id,
             product_name: selectedProduct.name,
@@ -107,7 +109,7 @@ export default function VariantModal({
         ]);
       }
     }
-
+    reset();
     setVariantModal(false);
   };
 
@@ -118,19 +120,17 @@ export default function VariantModal({
   return (
     <Modal
       show={variantModal}
-      onHidden={() => {
-        setAddItemModal(false);
-      }}
+      onHidden={() => setVariantModal(false)}
       size="modal-lg"
     >
-      <ModalHeader>
-        <h2 className="font-medium text-base mr-auto">
-          {selectedProduct?.name}
-        </h2>
-      </ModalHeader>
-      <ModalBody>
-        <div className="col-span-12">
-          <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <ModalHeader>
+          <h2 className="font-medium text-base mr-auto">
+            {selectedProduct?.name}
+          </h2>
+        </ModalHeader>
+        <ModalBody>
+          <div className="col-span-12">
             <div className="m-4 flex flex-row gap-3">
               {selectedProduct?.variants?.length > 0 && (
                 <div className="flex-1">
@@ -182,11 +182,38 @@ export default function VariantModal({
                 </div>
                 <div className="form-control">
                   <label className="font-medium mb-2">Jumlah</label>
-                  <input
-                    type="text"
-                    {...register("quantity", { required: true })}
-                    className="input input-bordered input-md w-full "
-                  />
+                  <div className="flex flex-row gap-2">
+                    <input
+                      type="number"
+                      {...register("quantity", { required: true })}
+                      className="input input-bordered input-md w-full "
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        let quantity = getValues("quantity");
+                        --quantity;
+                        if (quantity < 1) {
+                          quantity = 1;
+                        }
+                        setValue("quantity",quantity);
+                      }}
+                    >
+                      -
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => {
+                        let quantity = getValues("quantity");
+                        setValue("quantity", ++quantity);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+
                   {errors.quantity && (
                     <span className="text-xs text-red-700 mt-1 font-semibold">
                       This field is required
@@ -207,18 +234,21 @@ export default function VariantModal({
                 </div>
               </div>
             </div>
-          </form>
-        </div>
-      </ModalBody>
-      <ModalFooter className="text-right">
-        <button className="btn btn-outline btn-md flex-1">Tambah Item</button>
-        <button
-          className="btn btn-primary btn-md flex-1 ml-2"
-          onClick={() => setVariantModal(false)}
-        >
-          Kembali
-        </button>
-      </ModalFooter>
+          </div>
+        </ModalBody>
+        <ModalFooter className="text-right">
+          <button
+            type="button"
+            className="btn  btn-md flex-1  btn-outline "
+            onClick={() => setVariantModal(false)}
+          >
+            Kembali
+          </button>
+          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2">
+            Tambah Item
+          </button>
+        </ModalFooter>
+      </form>
     </Modal>
   );
 }

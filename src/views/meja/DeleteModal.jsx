@@ -1,18 +1,15 @@
 import { Lucide, Modal, ModalBody } from "@/base-components";
-import api from "../../services/api";
+import { useDeleteTable } from "../../hooks/useTable";
 
 function DeleteModal({ modal, setModal, table }) {
-  
-  const handleDelete = async () => {
-    try {
-      await api.delete(`tables/${table.id}`);
-      setModal(false);
-    } catch (error) {}
-  };
+  const tableId = table && table.id;
+  const { mutate: deleteTable } = useDeleteTable(tableId, () => {
+    setModal(false);
+  });
   return (
     <>
       <Modal
-       show={modal}
+        show={modal}
         onHidden={() => {
           setModal(false);
         }}
@@ -26,7 +23,7 @@ function DeleteModal({ modal, setModal, table }) {
             <div className="text-3xl mt-5">Are you sure?</div>
             <div className="text-slate-500 mt-2">
               Do you really want to delete this table? <br />
-              <strong className="capitalize">{table ? table.name : ''}</strong>
+              <strong className="capitalize">{table ? table.name : ""}</strong>
             </div>
           </div>
           <div className="px-5 pb-8 text-center">
@@ -42,7 +39,7 @@ function DeleteModal({ modal, setModal, table }) {
             <button
               type="button"
               className="btn btn-danger w-24"
-              onClick={handleDelete}
+              onClick={() => deleteTable()}
             >
               Delete
             </button>

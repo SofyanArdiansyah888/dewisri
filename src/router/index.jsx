@@ -56,7 +56,7 @@ import CreateReservation from "../views/meja/reservasi/Create";
 import ListReservation from "../views/meja/reservasi/List";
 import RequireAuth from "../components/RequireAuth";
 import { useAuth } from "../hooks/useAuth";
-import { User } from "lucide";
+import TransferOrder from "../views/pos/TransferOrder";
 
 
 function Router() {   
@@ -202,6 +202,10 @@ function Router() {
         {
           path: "/meja/:id/pos",
           element: <RequireAuth><PointOfSale /></RequireAuth>,
+        },
+        {
+          path: "/meja/:id/transfer-order",
+          element: <RequireAuth><TransferOrder /></RequireAuth>,
         },
         {
           path: "/reservasi/create",

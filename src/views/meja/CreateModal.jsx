@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import classnames from "classnames";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import api from "../../services/api";
+import { useCreateTable } from "../../hooks/useTable";
 const schema = yup.object({
   name: yup.string().required(),
 });
@@ -19,19 +19,11 @@ function CreateModal({ modal, setModal }) {
     resolver: yupResolver(schema),
   });
 
-  const handleCreate = async (data) => {
-    const result = await trigger();
+  const { mutate: createTable } = useCreateTable(() => {
+    reset(() => ({ name: "" }));
+    setModal(false);
+  });
 
-    if (result) {
-      try {
-        await api.post("tables", { ...data, status: "CLOSED" });
-        reset(() => ({
-          name: "",
-        }));
-        setModal(false);
-      } catch (error) {}
-    }
-  };
   return (
     <>
       <Modal
@@ -40,7 +32,12 @@ function CreateModal({ modal, setModal }) {
           setModal(false);
         }}
       >
-        <form className="validate-form" onSubmit={handleSubmit(handleCreate)}>
+        <form
+          className="validate-form"
+          onSubmit={handleSubmit((data) => {
+            createTable({ ...data });
+          })}
+        >
           <ModalHeader>
             <h2 className="font-medium text-base mr-auto">Buat Meja Baru</h2>
           </ModalHeader>

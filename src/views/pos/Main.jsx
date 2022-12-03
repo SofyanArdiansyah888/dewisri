@@ -13,7 +13,7 @@ import {
 import { faker as $f } from "@/utils";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCategory } from "../../hooks/useCategory";
 import { useOrderTable } from "../../hooks/useOrderTable";
 import { useProducts } from "../../hooks/useProduct";
@@ -37,7 +37,28 @@ function Main() {
   const { data: products } = useProducts();
   const { data: categories } = useCategory();
   const { data: taxes } = useTaxes();
-  const { data: tableOrder } = useOrderTable(id);
+
+  const handleGetData = (data) => {
+    let temp = [];
+
+    data?.products?.map((item) => {
+      temp.push({
+        product_id: item.id,
+        product_name: item.pivot.product_name,
+        variant_id: item.pivot.variant_id,
+        variant_name: item.pivot.variant_name,
+        quantity: item.pivot.quantity,
+        item_price: item.pivot.item_price,
+        description: item.pivot.description,
+        created_at: item.pivot.created_at,
+      });
+      return item;
+    });
+
+    setSelectedMenus([...temp]);
+  };
+
+  const { data: tableOrder } = useOrderTable(id, handleGetData);
 
   const [search, setSearch] = useState("");
 
@@ -73,8 +94,11 @@ function Main() {
   };
   return (
     <>
-      <div className="intro-y  flex flex-col sm:flex-row items-center mt-8">
+      <div className="intro-y  flex flex-col sm:flex-row justify-between mt-8">
         <h2 className="text-lg font-medium mr-auto">Point of Sale</h2>
+        <Link to="/meja">
+          <button className="btn btn-primary">Kembali</button>
+        </Link>
       </div>
 
       <div className="intro-y grid grid-cols-12 gap-5 mt-5 overflow-hidden max-h-[72vh]">
@@ -104,6 +128,17 @@ function Main() {
                       />
                     </div>
                     <div className="flex flex-row gap-3 ml-2 py-1 w-auto overflow-x-auto min-w-2xl">
+                      <div
+                        key="Allxxx"
+                        className={`box px-4 py-3 cursor-pointer ${
+                          selectedCategory === "All"
+                            ? "bg-secondary"
+                            : "bg-base"
+                        }`}
+                        onClick={() => setSelectedCategory("All")}
+                      >
+                        All
+                      </div>
                       {categories
                         ? categories.map((category) => (
                             <div
@@ -124,12 +159,17 @@ function Main() {
                   {/* PRODUCTS  */}
                   <div className="grid grid-cols-2 gap-1 mt-5 pt-5 border-t overflow-y-auto max-h-[450px] pb-14">
                     {filteredData()?.map((product, index) => (
-                      <div onClick={() => {
-                        if (product.available){
-                          setSelectedProduct(product)
-                          setVariantModal(true)
-                        }
-                      }} className=" flex flex-row justify-between gap-4 max-h-[90px]  m-2 bg-gray-50 hover:bg-secondary rounded-md p-2 ">
+                      <div
+                        onClick={() => {
+                          if (product.available) {
+                            setSelectedProduct(product);
+                            setVariantModal(true);
+                          }
+                        }}
+                        className={`flex flex-row justify-between gap-4 max-h-[90px]  m-2 ${
+                          product.available ? "bg-gray-50" : "bg-red-200"
+                        }  hover:bg-secondary rounded-md p-2`}
+                      >
                         <div className="flex">
                           <img
                             className="h-[48px] w-[48px] rounded-md"
@@ -267,28 +307,27 @@ function Main() {
           <CustomerInfo order={tableOrder} />
 
           <div className="box p-2 mt-5   h-[300px]">
-            {tableOrder &&
-              tableOrder?.products?.map((tableOrder) => (
-                <a
-                  key={tableOrder.id}
-                  onClick={() => {
-                    // if (product.available){
-                      // setSelectedProduct(product)
-                      setVariantModal(true)
-                    // }
-                  }}
-                  className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
-                >
-                  <div className="max-w-[50%] truncate mr-1">
-                    {tableOrder.product_name}
-                  </div>
-                  <div className="text-slate-500">x {tableOrder.quantity}</div>
-                  <Lucide icon="Edit" className="w-4 h-4 text-slate-500 ml-2" />
-                  <div className="ml-auto font-medium">
-                    {formatRupiah(tableOrder.item_price)}
-                  </div>
-                </a>
-              ))}
+            {selectedMenus?.map((selectedMenu) => (
+              <a
+                key={selectedMenu.id}
+                onClick={() => {
+                  // if (product.available){
+                  setSelectedProduct({ ...selectedMenu });
+                  setVariantModal(true);
+                  // }
+                }}
+                className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
+              >
+                <div className="max-w-[50%] truncate mr-1">
+                  {selectedMenu.product_name}
+                </div>
+                <div className="text-slate-500">x {selectedMenu.quantity}</div>
+                <Lucide icon="Edit" className="w-4 h-4 text-slate-500 ml-2" />
+                <div className="ml-auto font-medium">
+                  {formatRupiah(selectedMenu.item_price)}
+                </div>
+              </a>
+            ))}
           </div>
           {/* <div className="box flex p-5 mt-5">
                 <input
@@ -301,9 +340,11 @@ function Main() {
           <TaxInfo taxes={taxes} order={tableOrder} />
 
           <div className="flex mt-5">
-            <button className="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500">
-              Clear Items
-            </button>
+            <Link to={`/meja/${id}/transfer-order`}>
+              <button className="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500">
+                Transfer Order
+              </button>
+            </Link>
             <button
               className="btn btn-primary w-32 shadow-md ml-auto"
               onClick={handleCharge}
@@ -316,8 +357,8 @@ function Main() {
       <VariantModal
         setVariantModal={setVariantModal}
         variantModal={variantModal}
-        setSelectedMenu={setSelectedMenus}
-        selectedMenu={selectedMenus}
+        setSelectedMenus={setSelectedMenus}
+        selectedMenus={selectedMenus}
         selectedProduct={selectedProduct}
       />
     </>

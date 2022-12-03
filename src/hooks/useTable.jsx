@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
 
 export function useTables(refetchInterval = null) {
@@ -36,23 +36,59 @@ export function useFreeTables() {
     });
   }
 
-export function useUpdateTables(onSuccess) {
-  function updateTable({ id, data }) {
+  export function useOrderedTables() {
+    function fetchTables() {
+      return  api.get(`ordered-tables`);
+    }
+    return useQuery(["ordered-tables"], fetchTables, {
+      onError: () => {},
+      select: (data) => data?.data,
+      refetchOnWindowFocus: false,
+      refetchOnmount: false,
+      refetchOnReconnect: false,
+    });
+  }
+
+
+export function useUpdateTables(onSuccessCallback) {
+  const queryClient = useQueryClient();
+  function updateTable({id, ...data}) {
     return api.put(`tables/${id}`, data);
   }
   return useMutation(updateTable, {
-    onSuccess,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
+      onSuccessCallback(data)
+    },
     onError: () => {},
   });
 }
 
 
-export function useCreateTable(onSuccess) {
-  function createTable({ data }) {
+export function useCreateTable(onSuccessCallback) {
+  const queryClient = useQueryClient();
+  function createTable(data) {
     return api.post(`tables`, data);
   }
   return useMutation(createTable, {
-    onSuccess,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
+      onSuccessCallback(data)
+    },
+    onError: () => {},
+  });
+}
+
+export function useDeleteTable(tableId, onSuccessCallback) {
+  const queryClient = useQueryClient();
+  function deleteTable() {
+    return api.delete(`tables/${tableId}`);
+  }
+  return useMutation(deleteTable, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
+      onSuccessCallback(data)
+    },
     onError: () => {},
   });
 }

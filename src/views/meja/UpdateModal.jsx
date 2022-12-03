@@ -4,16 +4,18 @@ import classnames from "classnames";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import api from "../../services/api";
-
+import { useUpdateTables } from "../../hooks/useTable";
+// VALIDATION
+const schema = yup
+  .object({
+    name: yup.string().required(),
+  })
+  .required();
 function UpdateModal({ modal, setModal, table }) {
-  
-  // VALIDATION
-  const schema = yup
-    .object({
-      name: yup.string().required(),
-    })
-    .required();
+  const {mutate: updateTable} = useUpdateTables(() => {
+    reset(() => ({ name: "" }));
+    setModal(false);
+  });
   const {
     register,
     trigger,
@@ -30,24 +32,9 @@ function UpdateModal({ modal, setModal, table }) {
     if (table) {
       setValue("name", table.name);
     }
-  });
+  },[table]);
 
   
-  const handleUpdate = async (data) => {
-    const result = await trigger();
-    
-    if (result) {
-      try {
-        await api.put(`tables/${table.id}`, { ...data });
-        reset(() => ({
-          name: "",
-        }));
-        setModal(false);
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  };
   return (
     <>
       <Modal
@@ -56,7 +43,9 @@ function UpdateModal({ modal, setModal, table }) {
           setModal(false);
         }}
       >
-        <form className="validate-form" onSubmit={handleSubmit(handleUpdate)}>
+        <form className="validate-form" onSubmit={handleSubmit((data) => {
+           updateTable({ ...data, id: table.id})
+        })}>
           <ModalHeader>
             <h2 className="font-medium text-base mr-auto">Update Meja</h2>
           </ModalHeader>

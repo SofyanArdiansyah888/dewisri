@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import * as yup from "yup";
 import { useFreeTables, usePindahMeja } from "../../hooks/useTable";
-import api from "../../services/api";
 const schema = yup.object({
   table_id: yup.string().required(),
 });
