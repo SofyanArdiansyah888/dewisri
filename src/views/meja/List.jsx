@@ -29,7 +29,7 @@ function Main() {
     queryClient.invalidateQueries({ queryKey: ["tables"] });
   });
 
-  const { loading, data } = useTables();
+  const { loading, data } = useTables(15000);
 
   const [selectedTable, setSelectedTable] = useState();
   const [tables, setTables] = useState([]);

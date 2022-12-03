@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 
-export function useTables() {
+export function useTables(refetchInterval = null) {
   function fetchTables() {
-    return () => api.get(`tables`);
+    return api.get(`tables`);
   }
-  return useQuery(["tables"], fetchTables(), {
+  return useQuery(["tables"], fetchTables, {
     onError: () => {},
     select: (data) => {
       if (data.data) {
@@ -15,6 +15,7 @@ export function useTables() {
         });
       }
     },
+    refetchInterval
   });
 }
 
