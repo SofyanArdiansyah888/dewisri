@@ -587,10 +587,10 @@ function Main(props) {
           parseFloat(markerElem.longitude)
         );
         const infowincontent = `
-              <div class="font-medium">
+              <div className="font-medium">
                 ${markerElem.name}
               </div>
-              <div class="mt-1 text-gray-600">
+              <div className="mt-1 text-gray-600">
                 Latitude: ${markerElem.latitude}, Longitude: ${markerElem.longitude}
               </div>`;
         const marker = new google.maps.Marker({

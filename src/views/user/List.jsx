@@ -73,8 +73,8 @@ function UserList() {
             <div className="box">
               <div className="flex flex-col lg:flex-row items-center p-5">
                 <div className="w-24 h-24 lg:w-12 lg:h-12 image-fit lg:mr-1">
-                  <div class="inline-flex overflow-hidden relative justify-center items-center w-10 h-10 bg-gray-100 rounded-full dark:bg-gray-600">
-                    <span class="font-medium text-gray-600 ">
+                  <div className="inline-flex overflow-hidden relative justify-center items-center w-10 h-10 bg-gray-100 rounded-full dark:bg-gray-600">
+                    <span className="font-medium text-gray-600 ">
                       {user.name
                         ? user.name
                             .split(" ")

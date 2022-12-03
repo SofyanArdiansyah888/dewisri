@@ -4,23 +4,23 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Lucide,
+  Lucide
 } from "@/base-components";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { useTables, useUpdateTables } from "../../hooks/useTable";
-import api from "../../services/api";
 import { formatRupiah, secondToHourMinute } from "../../utils/formatter";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
-import ReservasiModal from "./ReservasiModal";
+import PindahMejaModal from "./PindahMejaModal";
 import UpdateModal from "./UpdateModal";
 
 function Main() {
   const [modal, setModal] = useState(false);
   const [modalEdit, setmodalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+  const [modalPindah, setModalPindah] = useState(false);
   const [search, setSearch] = useState("");
 
   const queryClient = useQueryClient();
@@ -166,11 +166,7 @@ function Main() {
                         </DropdownToggle>
                       )}
 
-                      {table.status === "ORDERED" && (
-                        <button className="btn btn-primary">
-                          MENGORDER
-                        </button>
-                      )}
+                    
                       <DropdownMenu className="w-40">
                         <DropdownContent>
                           {table.status !== "OPEN" && (
@@ -194,6 +190,12 @@ function Main() {
                         </DropdownContent>
                       </DropdownMenu>
                     </Dropdown>
+                    {table.status === "ORDERED" && (
+                        <div className="btn btn-primary" onClick={() => {
+                          setSelectedTable(table)
+                          setModalPindah(true)
+                        }}>Pindah</div>
+                      )}
                   </div>
 
                   <div className="absolute top-0 left-2 ml-2 mt-3 ml-aut text-lg font-semibold">
@@ -222,6 +224,11 @@ function Main() {
               </div>
             ))}
           </div>
+          <PindahMejaModal
+            modal={modalPindah}
+            setModal={setModalPindah}
+            table={selectedTable}
+          />
 
           <CreateModal modal={modal} setModal={setModal} />
           <UpdateModal
@@ -233,12 +240,6 @@ function Main() {
             modal={modalDelete}
             setModal={setModalDelete}
             table={selectedTable}
-          />
-          <ReservasiModal
-            modal={reservedModal}
-            setModal={setReservedModal}
-            setReservedStep={setReservedStep}
-            tables={tables}
           />
         </div>
       </div>

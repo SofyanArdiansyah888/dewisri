@@ -44,3 +44,24 @@ export function useUpdateTables(onSuccess) {
     onError: () => {},
   });
 }
+
+
+export function useCreateTable(onSuccess) {
+  function createTable({ data }) {
+    return api.post(`tables`, data);
+  }
+  return useMutation(createTable, {
+    onSuccess,
+    onError: () => {},
+  });
+}
+
+export function usePindahMeja(onSuccess) {
+  function pindahMeja(data) {
+    return api.post(`pindah-meja`, data);
+  }
+  return useMutation(pindahMeja, {
+    onSuccess,
+    onError: () => {},
+  });
+}

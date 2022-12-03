@@ -206,7 +206,7 @@ function Main(props) {
               role="button"
               className="justify-center items-center w-10 h-10 bg-gray-100 rounded-full"
             >
-                   <p class="font-medium text-center justify-center items-center pt-2 ">
+                   <p className="font-medium text-center justify-center items-center pt-2 ">
                       {user.name
                         ? user.name
                             .split(" ")

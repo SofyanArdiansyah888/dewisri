@@ -23,33 +23,23 @@ import { baseUrlImage } from "../../utils/constant";
 import { formatRupiah } from "../../utils/formatter";
 import CustomerInfo from "./CustomerInfo";
 import TaxInfo from "./TaxInfo";
+import VariantModal from "./VariantModal";
 
 function Main() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [newOrderModal, setNewOrderModal] = useState(false);
-  const [addItemModal, setAddItemModal] = useState(false);
+  const [variantModal, setVariantModal] = useState(false);
+  const [selectedMenus, setSelectedMenus] = useState();
+  const [selectedProduct, setSelectedProduct] = useState();
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { data: products } = useProducts();
   const { data: categories } = useCategory();
   const { data: taxes } = useTaxes();
   const { data: tableOrder } = useOrderTable(id);
-  
-  // const [tableOrder, setTableOrders] = useState([]);
-  // const [order, setOrder] = useState();
-  const [search, setSearch] = useState("");
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (tableOrder.length > 0) {
-  //       const orderId = tableOrder[0]?.order_id;
-  //       let result = await api.get(`orders/${orderId}`);
-  //       setOrder(result.data);
-  //     }
-  //   })();
-  // }, [tableOrder]);
+  const [search, setSearch] = useState("");
 
   const filteredData = () => {
     let filterProducts = products?.filter(
@@ -118,7 +108,11 @@ function Main() {
                         ? categories.map((category) => (
                             <div
                               key={category.id}
-                              className={`box px-4 py-3 cursor-pointer ${selectedCategory === category.name ? "bg-secondary" : "bg-base"}`}
+                              className={`box px-4 py-3 cursor-pointer ${
+                                selectedCategory === category.name
+                                  ? "bg-secondary"
+                                  : "bg-base"
+                              }`}
                               onClick={() => setSelectedCategory(category.name)}
                             >
                               {category.name}
@@ -130,7 +124,12 @@ function Main() {
                   {/* PRODUCTS  */}
                   <div className="grid grid-cols-2 gap-1 mt-5 pt-5 border-t overflow-y-auto max-h-[450px] pb-14">
                     {filteredData()?.map((product, index) => (
-                      <div className=" flex flex-row justify-between gap-4 max-h-[90px]  m-2 bg-gray-50 hover:bg-secondary rounded-md p-2 ">
+                      <div onClick={() => {
+                        if (product.available){
+                          setSelectedProduct(product)
+                          setVariantModal(true)
+                        }
+                      }} className=" flex flex-row justify-between gap-4 max-h-[90px]  m-2 bg-gray-50 hover:bg-secondary rounded-md p-2 ">
                         <div className="flex">
                           <img
                             className="h-[48px] w-[48px] rounded-md"
@@ -266,26 +265,30 @@ function Main() {
         <div className="flex flex-col col-span-4 overflow-scroll h-[550px] pb-12 ">
           {/* CUSTOMER */}
           <CustomerInfo order={tableOrder} />
- 
+
           <div className="box p-2 mt-5   h-[300px]">
-            {tableOrder && tableOrder?.products?.map((tableOrder) => (
-              <a
-                key={tableOrder.id}
-                onClick={() => {
-                  setAddItemModal(true);
-                }}
-                className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
-              >
-                <div className="max-w-[50%] truncate mr-1">
-                  {tableOrder.product_name}
-                </div>
-                <div className="text-slate-500">x {tableOrder.quantity}</div>
-                <Lucide icon="Edit" className="w-4 h-4 text-slate-500 ml-2" />
-                <div className="ml-auto font-medium">
-                  {formatRupiah(tableOrder.item_price)}
-                </div>
-              </a>
-            ))}
+            {tableOrder &&
+              tableOrder?.products?.map((tableOrder) => (
+                <a
+                  key={tableOrder.id}
+                  onClick={() => {
+                    // if (product.available){
+                      // setSelectedProduct(product)
+                      setVariantModal(true)
+                    // }
+                  }}
+                  className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
+                >
+                  <div className="max-w-[50%] truncate mr-1">
+                    {tableOrder.product_name}
+                  </div>
+                  <div className="text-slate-500">x {tableOrder.quantity}</div>
+                  <Lucide icon="Edit" className="w-4 h-4 text-slate-500 ml-2" />
+                  <div className="ml-auto font-medium">
+                    {formatRupiah(tableOrder.item_price)}
+                  </div>
+                </a>
+              ))}
           </div>
           {/* <div className="box flex p-5 mt-5">
                 <input
@@ -310,134 +313,13 @@ function Main() {
           </div>
         </div>
       </div>
-      {/* BEGIN: New Order Modal */}
-      <Modal
-        show={newOrderModal}
-        onHidden={() => {
-          setNewOrderModal(false);
-        }}
-      >
-        <ModalHeader>
-          <h2 className="font-medium text-base mr-auto">New Order</h2>
-        </ModalHeader>
-        <ModalBody className="grid grid-cols-12 gap-4 gap-y-3">
-          <div className="col-span-12">
-            <label htmlFor="pos-form-1" className="form-label">
-              Name
-            </label>
-            <input
-              id="pos-form-1"
-              type="text"
-              className="form-control flex-1"
-              placeholder="Customer name"
-            />
-          </div>
-          <div className="col-span-12">
-            <label htmlFor="pos-form-2" className="form-label">
-              Table
-            </label>
-            <input
-              id="pos-form-2"
-              type="text"
-              className="form-control flex-1"
-              placeholder="Customer table"
-            />
-          </div>
-          <div className="col-span-12">
-            <label htmlFor="pos-form-3" className="form-label">
-              Number of People
-            </label>
-            <input
-              id="pos-form-3"
-              type="text"
-              className="form-control flex-1"
-              placeholder="People"
-            />
-          </div>
-        </ModalBody>
-        <ModalFooter className="text-right">
-          <button
-            type="button"
-            onClick={() => {
-              setNewOrderModal(false);
-            }}
-            className="btn btn-outline-secondary w-32 mr-1"
-          >
-            Cancel
-          </button>
-          <button type="button" className="btn btn-primary w-32">
-            Create Ticket
-          </button>
-        </ModalFooter>
-      </Modal>
-      {/* END: New Order Modal */}
-      {/* BEGIN: Add Item Modal */}
-      <Modal
-        show={addItemModal}
-        onHidden={() => {
-          setAddItemModal(false);
-        }}
-      >
-        <ModalHeader>
-          <h2 className="font-medium text-base mr-auto">
-            {$f()[0].foods[0].name}
-          </h2>
-        </ModalHeader>
-        <ModalBody className="grid grid-cols-12 gap-4 gap-y-3">
-          <div className="col-span-12">
-            <label htmlFor="pos-form-4" className="form-label">
-              Quantity
-            </label>
-            <div className="flex flex-1">
-              <button
-                type="button"
-                className="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 mr-1"
-              >
-                -
-              </button>
-              <input
-                id="pos-form-4"
-                type="text"
-                className="form-control w-24 text-center"
-                placeholder="Item quantity"
-                value="2"
-                onChange={() => {}}
-              />
-              <button
-                type="button"
-                className="btn w-12 border-slate-200 bg-slate-100 dark:bg-darkmode-700 dark:border-darkmode-500 text-slate-500 ml-1"
-              >
-                +
-              </button>
-            </div>
-          </div>
-          <div className="col-span-12">
-            <label htmlFor="pos-form-5" className="form-label">
-              Notes
-            </label>
-            <textarea
-              id="pos-form-5"
-              className="form-control"
-              placeholder="Item notes"
-            ></textarea>
-          </div>
-        </ModalBody>
-        <ModalFooter className="text-right">
-          <button
-            type="button"
-            onClick={() => {
-              setAddItemModal(false);
-            }}
-            className="btn btn-outline-secondary w-24 mr-1"
-          >
-            Cancel
-          </button>
-          <button type="button" className="btn btn-primary w-24">
-            Add Item
-          </button>
-        </ModalFooter>
-      </Modal>
-      {/* END: Add Item Modal */}
+      <VariantModal
+        setVariantModal={setVariantModal}
+        variantModal={variantModal}
+        setSelectedMenu={setSelectedMenus}
+        selectedMenu={selectedMenus}
+        selectedProduct={selectedProduct}
+      />
     </>
   );
 }

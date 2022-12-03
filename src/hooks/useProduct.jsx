@@ -1,55 +1,55 @@
 import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 
-export function useProducts(onSuccess) {
-  function fetchProduct() {
-    return () => api.get(`products`);
-  }
-  return useQuery(["products"], fetchProduct(), {
-    onSuccess,
-    onError: () => {},
-    select: (data) => {
-      
-      return data?.data?.map((temp) => {
-
-          let variants = temp?.variants?.map((variant) => variant.name)
-       
-          temp.variant_names = variants.toString();
-          
-          return temp
-      })
-    },
-  });
-}
-
-// export function useProducts() {
-//   const [present] =  useIonAlert();
-//   function fetchProducts() {
-//       return () => apiService.get(`products`);
+// export function useProducts(onSuccess) {
+//   function fetchProduct() {
+//     return () => api.get(`products`);
 //   }
-//   return useQuery(['products'], fetchProducts(), {
-//       onError: () => {
-//           present('Silahkan Cek Koneksi Anda !')
-//       },
-//       select: (data) => {
-//          let products =  data?.data?.data
-//          return products.map((product: any) => {
-//           if(!product.materials){
-//               product.available = true;
-//           }else{
-//               product.materials.sort(( a:any, b:any ) =>  a.stock - b.stock )
-//               if(product.materials[0].stock > 0){
-//                   product.available = true;
-//               }else{
-//                   product.available = false;
-//               }
-//           }
-//           return product
-//          })
-//       }
-//   })
+//   return useQuery(["products"], fetchProduct(), {
+//     onSuccess,
+//     onError: () => {},
+//     select: (data) => {
+      
+//       return data?.data?.map((temp) => {
 
+//           let variants = temp?.variants?.map((variant) => variant.name)
+       
+//           temp.variant_names = variants.toString();
+          
+//           return temp
+//       })
+//     },
+//   });
 // }
+
+export function useProducts(onSuccess) {
+  function fetchProducts() {
+      return () => api.get(`products`);
+  }
+  return useQuery(['products'], fetchProducts(), {
+      // onError: () => {
+      //     present('Silahkan Cek Koneksi Anda !')
+      // },
+      onSuccess,
+      select: (data) => {
+         let products =  data?.data
+         return products.map((product) => {
+          if(!product.materials){
+              product.available = true;
+          }else{
+              product.materials.sort(( a, b ) =>  a.stock - b.stock )
+              if(product.materials[0].stock > 0){
+                  product.available = true;
+              }else{
+                  product.available = false;
+              }
+          }
+          return product
+         })
+      }
+  })
+
+}
 
 export function useProduct(productId,onSuccess) {
   function fetchProduct({queryKey}) {

@@ -56,12 +56,14 @@ import CreateReservation from "../views/meja/reservasi/Create";
 import ListReservation from "../views/meja/reservasi/List";
 import RequireAuth from "../components/RequireAuth";
 import { useAuth } from "../hooks/useAuth";
+import { User } from "lucide";
 
 
 function Router() {   
   const auth = useAuth()
-  const {pathname} = useLocation()
-  
+  const location = useLocation()
+  const redirectPath = location.state?.path || '/'
+ 
   const routes = [
     {
       path: "/",
@@ -224,7 +226,7 @@ function Router() {
  
     {
       path: "/login",
-      element:  <Login />,
+      element: auth.authUser ? <Navigate to={redirectPath} /> :  <Login />,
     },
     {
       path: "*",
