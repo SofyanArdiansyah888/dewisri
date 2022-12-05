@@ -27,15 +27,15 @@ export function useOrderTable(tableId, onSuccess) {
 }
 
 
-export function useCreateOrder(tableId, data) {
+export function useCreateOrder() {
     const queryClient = useQueryClient();
-    function createOrder(data, tableId) {
-        return () => api.post(`tables/${tableId}/orders`, data)
+    function createOrder({id,data}) {
+        
+        return api.post(`tables/${id}/orders`, data)
     }
-    return useMutation(createOrder(data, tableId), {
+    return useMutation(createOrder, {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['table-order'] })
-
         },
         onError: () => {
         }

@@ -7,7 +7,7 @@ import ErrorPage from "../views/errors/Main";
 import PointOfSale from "../views/pos/Main";
 
 // PRODUCT
-import RingkasanPenjualan from "../views/laporan/RingkasanPenjualan";
+import RingkasanPenjualan from "../views/laporan/ringkasan-penjualan/RingkasanPenjualan";
 import ListBahanBaku from "../views/produk/bahan-baku/List";
 import ListBahanPendukung from "../views/produk/bahan-pendukung/List";
 import ListKategori from "../views/produk/kategori/List";
@@ -24,9 +24,9 @@ import UserList from "../views/user/List";
 // import Diskon from "../views/laporan/Diskon";
 // import Pajak from "../views/laporan/Pajak";
 // import Pegawai from "../views/laporan/Pegawai";
-// import Pelanggan from "../views/laporan/Pelanggan";
-import PenjualanPerProduk from "../views/laporan/PenjualanPerProduk";
-import PenjualanPerKategori from "../views/laporan/RingkasanPenjualan";
+import Pelanggan from "../views/laporan/laporan-pelanggan/Pelanggan";
+import PenjualanPerProduk from "../views/laporan/laporan-produk/PenjualanPerProduk";
+import PenjualanPerKategori from "../views/laporan/laporan-kategori/PenjualanPerKategori";
 
 import RiwayatTransaksi from "../views/riwayat-transaksi/RiwayatTransaksi";
 
@@ -38,7 +38,6 @@ import DetailStokMasuk from "../views/inventaris/stok-masuk/Detail";
 import CreateStokOpname from "../views/inventaris/stok-opname/Create";
 import StokOpname from "../views/inventaris/stok-opname/List";
 import DetailStokOpname from "../views/inventaris/stok-opname/Detail";
-
 import CreateStokWasted from "../views/inventaris/stok-wasted/Create";
 import DetailStokWasted from "../views/inventaris/stok-wasted/Detail";
 import StokWasted from "../views/inventaris/stok-wasted/List";
@@ -57,7 +56,10 @@ import ListReservation from "../views/meja/reservasi/List";
 import RequireAuth from "../components/RequireAuth";
 import { useAuth } from "../hooks/useAuth";
 import TransferOrder from "../views/pos/TransferOrder";
-
+import Payment from "../views/pos/Payment";
+import PaymentReceipt from "../views/pos/PaymentReceipt";
+import SplitBill from "../views/pos/SplitBill";
+import LaporanPajak from '../views/laporan/pajak/Pajak'
 
 function Router() {   
   const auth = useAuth()
@@ -96,14 +98,14 @@ function Router() {
           path: "/laporan/penjualan-perkategori",
           element: <RequireAuth><PenjualanPerKategori /></RequireAuth>,
         },
-        // {
-        //   path: "/laporan/pajak",
-        //   element: <RequireAuth><Pajak /></RequireAuth>,
-        // },
-        // {
-        //   path: "/laporan/pelanggan",
-        //   element: <RequireAuth><Pelanggan /></RequireAuth>,
-        // },
+        {
+          path: "/laporan/pajak",
+          element: <RequireAuth><LaporanPajak /></RequireAuth>,
+        },
+        {
+          path: "/laporan/pelanggan",
+          element: <RequireAuth><Pelanggan /></RequireAuth>,
+        },
         // {
         //   path: "/laporan/pegawai",
         //   element: <RequireAuth><Pegawai /></RequireAuth>,
@@ -214,6 +216,18 @@ function Router() {
         {
           path: "/reservasi",
           element: <RequireAuth><ListReservation /></RequireAuth>
+        },
+        {
+          path: "/meja/:tableId/order/:orderId/payment",
+          element: <RequireAuth><Payment/></RequireAuth>
+        },
+        {
+          path: "/payment-receipt",
+          element: <RequireAuth><PaymentReceipt/></RequireAuth>
+        },
+        {
+          path: "/meja/:tableId/order/:orderId/split-bill",
+          element: <RequireAuth><SplitBill/></RequireAuth>
         },
         // PELANGGAN
         {

@@ -69,7 +69,6 @@ function Main() {
   }, []);
 
   const handleCreate = async (data) => {
-    console.log(data);
     let isZero = data.material.some((material) => material.stock_actual == 0);
 
     if (isZero) {

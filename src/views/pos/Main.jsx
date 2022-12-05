@@ -15,13 +15,16 @@ import classnames from "classnames";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCategory } from "../../hooks/useCategory";
-import { useOrderTable } from "../../hooks/useOrderTable";
+import { useCreateOrder, useOrderTable } from "../../hooks/useOrderTable";
 import { useProducts } from "../../hooks/useProduct";
 import { useTaxes } from "../../hooks/useTaxes";
 import api from "../../services/api";
 import { baseUrlImage } from "../../utils/constant";
 import { formatRupiah } from "../../utils/formatter";
 import CustomerInfo from "./CustomerInfo";
+import CustomerModal from "./CustomerModal";
+import { MenuManual } from "./MenuManual";
+import MenuModal from "./MenuModal";
 import TaxInfo from "./TaxInfo";
 import VariantModal from "./VariantModal";
 
@@ -30,13 +33,21 @@ function Main() {
   const { id } = useParams();
 
   const [variantModal, setVariantModal] = useState(false);
-  const [selectedMenus, setSelectedMenus] = useState();
+  const [menuModal, setMenuModal] = useState(false);
+  const [selectedMenus, setSelectedMenus] = useState([]);
+  const [selectedMenu, setSelectedMenu] = useState();
   const [selectedProduct, setSelectedProduct] = useState();
-
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedDefaultMenus, setSelectedDefaultMenus] = useState([]);
+
+  const [selectedCustomer, setSelectedCustomer] = useState();
+  const [modalCustomer, setModalCustomer] = useState(false);
+
   const { data: products } = useProducts();
   const { data: categories } = useCategory();
   const { data: taxes } = useTaxes();
+
+  const { mutate: createOrder } = useCreateOrder();
 
   const handleGetData = (data) => {
     let temp = [];
@@ -54,12 +65,12 @@ function Main() {
       });
       return item;
     });
-
+    setSelectedCustomer(data?.customer);
     setSelectedMenus([...temp]);
   };
 
   const { data: tableOrder } = useOrderTable(id, handleGetData);
-
+  console.log(tableOrder);
   const [search, setSearch] = useState("");
 
   const filteredData = () => {
@@ -78,20 +89,28 @@ function Main() {
     return filterProducts;
   };
 
-  const handleCharge = async () => {
-    const data = {
-      customer_id: order.customer.id,
-      order_id: order.id,
-      table_id: order.table.id,
-      subtotal: 0,
-      total: 0,
-      tax_ppn: 0,
-      tax_service: 0,
-    };
-    await api.post("payments", data);
-
-    navigate("/meja");
+  const handleSimpan = () => {
+    if (selectedCustomer?.id && selectedMenus.length > 0) {
+      const data = {
+        customer_id: selectedCustomer.id,
+        customer_name: selectedCustomer?.name,
+        customer_email: selectedCustomer?.email,
+        customer_phone: selectedCustomer?.phone,
+        table_id: id,
+        total_item: 0,
+        total_payment: 0,
+        product: selectedMenus,
+      };
+      createOrder({ data, id });
+    } else {
+      // presentAlert({
+      //   header: 'Silahkan lengkapi data customer dan menu terlebih dahulu !',
+      //   buttons: ['OK']
+      // })
+      alert("silahkan lengkapi data");
+    }
   };
+
   return (
     <>
       <div className="intro-y  flex flex-col sm:flex-row justify-between mt-8">
@@ -201,101 +220,7 @@ function Main() {
 
                 {/* MANUAL PANEL  */}
                 <TabPanel>
-                  <div className="w-1/2 flex flex-col gap-4">
-                    {/* NAMA PRODUK */}
-                    <div className="col-span-12">
-                      <label
-                        htmlFor="name"
-                        className="form-label font-semibold"
-                      >
-                        Nama Produk
-                      </label>
-                      <input
-                        // {...register("name")}
-                        className={classnames({
-                          "form-control": true,
-                          // "border-danger": errors.name,
-                        })}
-                        name="name"
-                        id="name"
-                        type="text"
-                      />
-                      {/* {errors.name && (
-                <div className="text-danger mt-2">{errors.name.message}</div>
-              )} */}
-                    </div>
-
-                    {/* HARGA */}
-                    <div className="col-span-12">
-                      <label
-                        htmlFor="name"
-                        className="form-label font-semibold"
-                      >
-                        Harga
-                      </label>
-                      <input
-                        // {...register("name")}
-                        className={classnames({
-                          "form-control": true,
-                          // "border-danger": errors.name,
-                        })}
-                        name="name"
-                        id="name"
-                        type="text"
-                      />
-                      {/* {errors.name && (
-                <div className="text-danger mt-2">{errors.name.message}</div>
-              )} */}
-                    </div>
-
-                    {/* JUMLAH */}
-                    <div className="col-span-12">
-                      <label
-                        htmlFor="name"
-                        className="form-label font-semibold"
-                      >
-                        Jumlah
-                      </label>
-                      <input
-                        // {...register("name")}
-                        className={classnames({
-                          "form-control": true,
-                          // "border-danger": errors.name,
-                        })}
-                        name="name"
-                        id="name"
-                        type="text"
-                      />
-                      {/* {errors.name && (
-                <div className="text-danger mt-2">{errors.name.message}</div>
-              )} */}
-                    </div>
-
-                    {/* DESKRIPSI */}
-                    <div className="col-span-12">
-                      <label
-                        htmlFor="name"
-                        className="form-label font-semibold"
-                      >
-                        Deskripsi
-                      </label>
-                      <textarea
-                        // {...register("name")}
-                        className={classnames({
-                          "form-control": true,
-                          // "border-danger": errors.name,
-                        })}
-                        name="name"
-                        id="name"
-                        type="text"
-                      />
-                      {/* {errors.name && (
-                <div className="text-danger mt-2">{errors.name.message}</div>
-              )} */}
-                    </div>
-
-                    <button className="btn btn-primary">Simpan</button>
-                  </div>
+                  <MenuManual setSelectedMenus={setSelectedMenus} />
                 </TabPanel>
               </TabPanels>
             </div>
@@ -304,62 +229,126 @@ function Main() {
 
         <div className="flex flex-col col-span-4 overflow-scroll h-[550px] pb-12 ">
           {/* CUSTOMER */}
-          <CustomerInfo order={tableOrder} />
+          {selectedCustomer ? (
+            <CustomerInfo
+              customer={selectedCustomer}
+              setModalCustomer={setModalCustomer}
+              order={tableOrder}
+            />
+          ) : (
+            <button
+              className="btn btn-primary"
+              onClick={() => setModalCustomer(true)}
+            >
+              Pilih Customer
+            </button>
+          )}
 
-          <div className="box p-2 mt-5   h-[300px]">
-            {selectedMenus?.map((selectedMenu) => (
-              <a
-                key={selectedMenu.id}
-                onClick={() => {
-                  // if (product.available){
-                  setSelectedProduct({ ...selectedMenu });
-                  setVariantModal(true);
-                  // }
-                }}
-                className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
-              >
-                <div className="max-w-[50%] truncate mr-1">
-                  {selectedMenu.product_name}
-                </div>
-                <div className="text-slate-500">x {selectedMenu.quantity}</div>
-                <Lucide icon="Edit" className="w-4 h-4 text-slate-500 ml-2" />
-                <div className="ml-auto font-medium">
-                  {formatRupiah(selectedMenu.item_price)}
-                </div>
-              </a>
-            ))}
-          </div>
-          {/* <div className="box flex p-5 mt-5">
-                <input
-                  type="text"
-                  className="form-control py-3 px-4 w-full bg-slate-100 border-slate-200/60 pr-10"
-                  placeholder="Use coupon code..."
-                />
-                <button className="btn btn-primary ml-2">Apply</button>
-              </div> */}
-          <TaxInfo taxes={taxes} order={tableOrder} />
+          {selectedMenus.length > 0 && (
+            <div className="box p-2 mt-5   h-[300px]">
+              {selectedMenus?.map((selectedMenu) => (
+                <a
+                  key={selectedMenu.id}
+                  className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
+                >
+                  {!selectedMenu.created_at && (
+                    <Lucide
+                      icon="Delete"
+                      className="w-4 h-4 text-red-400 mr-2"
+                      onClick={() => {
+                        let temp = selectedMenus.filter((item) => {
+                          return !(
+                            selectedMenu.product_id === item.product_id &&
+                            selectedMenu.variant_id === item.variant_id &&
+                            selectedMenu.created_at === item.created_at
+                          );
+                        });
+                        setSelectedMenus(temp);
+                      }}
+                    />
+                  )}
+                  <div className="max-w-[50%] truncate mr-1">
+                    {selectedMenu.product_name} <br />
+                    {selectedMenu.variant_name}
+                  </div>
+                  <div className="text-slate-500">
+                    x {selectedMenu.quantity}
+                  </div>
+                  <Lucide
+                    icon="Edit"
+                    className="w-4 h-4 text-slate-500 ml-2"
+                    onClick={() => {
+                      setSelectedMenu({ ...selectedMenu });
+                      setMenuModal(true);
+                    }}
+                  />
+                  <div className="ml-auto font-medium">
+                    {formatRupiah(
+                      selectedMenu.item_price * selectedMenu.quantity
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
 
-          <div className="flex mt-5">
-            <Link to={`/meja/${id}/transfer-order`}>
-              <button className="btn w-32 border-slate-300 dark:border-darkmode-400 text-slate-500">
+          <TaxInfo taxes={taxes} selectedMenus={selectedMenus} />
+
+          <div className="flex flex-col mt-5 gap-2">
+            <button
+              className="btn btn-primary w-full"
+              onClick={() => handleSimpan()}
+            >
+              Simpan
+            </button>
+            {/* <Link to={`/meja/${id}/transfer-order`}>
+              <button className="btn w-full border-slate-300 text-slate-500">
                 Transfer Order
               </button>
-            </Link>
+            </Link> */}
+
             <button
-              className="btn btn-primary w-32 shadow-md ml-auto"
-              onClick={handleCharge}
+              className="btn btn-primary shadow-md w-full"
+              onClick={() => {
+                navigate(`/meja/${id}/order/${tableOrder?.id}/payment`);
+              }}
+              disabled={tableOrder?.length === 0}
             >
-              Charge
+              Bayar
+            </button>
+
+            <button
+              className="btn btn-primary shadow-md w-full"
+              onClick={() => {
+                navigate(`/meja/${id}/order/${tableOrder?.id}/split-bill`);
+              }}
+              disabled={tableOrder?.length === 0}
+            >
+              Split Bill
             </button>
           </div>
         </div>
       </div>
+      <CustomerModal
+        setModal={setModalCustomer}
+        modal={modalCustomer}
+        selectedCustomer={selectedCustomer}
+        setSelectedCustomer={setSelectedCustomer}
+      />
       <VariantModal
         setVariantModal={setVariantModal}
         variantModal={variantModal}
         setSelectedMenus={setSelectedMenus}
         selectedMenus={selectedMenus}
         selectedProduct={selectedProduct}
+      />
+      <MenuModal
+        setMenuModal={setMenuModal}
+        menuModal={menuModal}
+        setSelectedMenus={setSelectedMenus}
+        selectedMenus={selectedMenus}
+        selectedMenu={selectedMenu}
+        selectedDefaultMenus={selectedDefaultMenus}
       />
     </>
   );

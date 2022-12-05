@@ -1,19 +1,24 @@
 import { formatRupiah } from "../../utils/formatter";
 
-function TaxInfo({ taxes, order }) {
+function TaxInfo({ taxes, selectedMenus }) {
   let totalPayment = 0;
+  let subtotal = 0
+  if (selectedMenus.length > 0 && taxes?.length === 2) {
+    selectedMenus.map((selectedMenu) => {
+      let total = selectedMenu.quantity * selectedMenu.item_price;
+      subtotal += total
+    })
 
-  if (order && taxes?.length === 2) {
-    const taxPPN = order?.total_payment * (taxes[0].amount / 100);
-    const taxService = order?.total_payment * (taxes[1].amount / 100);
-    totalPayment = order?.total_payment + (taxPPN + taxService);
+    const taxPPN = subtotal * (taxes[0].amount / 100);
+    const taxService = subtotal * (taxes[1].amount / 100);
+    totalPayment = subtotal + (taxPPN + taxService);
   }
   return (
     <>
       <div className="box p-5 mt-5">
         <div className="flex">
           <div className="mr-auto mb-4">Total</div>
-          <div className="font-medium">{formatRupiah (order?.total_payment,"Rp.")}</div>
+          <div className="font-medium">{formatRupiah (subtotal,"Rp.")}</div>
         </div>
         {taxes?.map((tax) => (
           <div className="flex">

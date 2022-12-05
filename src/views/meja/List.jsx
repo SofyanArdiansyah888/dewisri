@@ -66,22 +66,10 @@ function Main() {
   const handleUpdateStatus = (status, id) => {
     updateMutation.mutate({
       id,
-      data: { status },
+       status
     });
   };
 
-  const handleReservation = () => {
-    setReservedStep((step) => step + 1);
-  };
-  const handleChooseTable = (table) => {
-    const temp = tables.map((tempTable) => {
-      if (tempTable.id === table.id) {
-        return { ...tempTable, isChoosen: !tempTable.isChoosen };
-      }
-      return tempTable;
-    });
-    setTables(temp);
-  };
 
   const filterData = () => {
     return data?.filter((item) =>

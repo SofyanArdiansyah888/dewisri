@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 
 
@@ -18,6 +18,13 @@ export function useCustomers(onSuccess) {
 
 }
 
-export function useCreateCostumers(){
-    
-}
+
+export function useCreateCustomer(onSuccess) {
+    function createCustomer(data) {
+      return api.post(`customers`, data);
+    }
+    return useMutation(createCustomer, {
+      onSuccess,
+      onError: () => {}
+    });
+  }

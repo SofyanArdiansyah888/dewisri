@@ -16,8 +16,8 @@ function PindahMejaModal({ modal, setModal, table }) {
       table_id: "",
     }));
     setModal(false);
-    queryClient.invalidateQueries("free-tables");
-    queryClient.invalidateQueries("tables");
+    queryClient.invalidateQueries({queryKey: ["free-tables"]});
+    queryClient.invalidateQueries({queryKey: ["tables"]});
   });
 
   const {

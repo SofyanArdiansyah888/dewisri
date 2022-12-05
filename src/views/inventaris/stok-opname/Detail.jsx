@@ -8,7 +8,6 @@ function Detail() {
   const [date, setDate] = useState("");
   let { id } = useParams();
   const { data } = useOpnameStock(id);
-  console.log(data)
   useEffect(() => {
     if (data) setDate(data.incoming_date);
   }, [data]);

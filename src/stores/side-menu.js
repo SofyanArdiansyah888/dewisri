@@ -87,22 +87,22 @@ const adminMenu = [
         pathname: "/laporan/pelanggan",
         title: "Laporan Pelanggan",
       },
-      {
-        pathname: "/laporan/pegawai",
-        title: "Laporan Pegawai",
-      },
-      {
-        pathname: "/laporan/diskon",
-        title: "Laporan Diskon",
-      },
+      // {
+      //   pathname: "/laporan/pegawai",
+      //   title: "Laporan Pegawai",
+      // },
+      // {
+      //   pathname: "/laporan/diskon",
+      //   title: "Laporan Diskon",
+      // },
     ],
   },
   // RIWAYAT TRANSAKSI
-  {
-    icon: "Clock",
-    pathname: "/riwayat-transaksi",
-    title: "Riwayat Transaksi",
-  },
+  // {
+  //   icon: "Clock",
+  //   pathname: "/riwayat-transaksi",
+  //   title: "Riwayat Transaksi",
+  // },
   // MEJA
   {
     icon: "Table",

@@ -1,5 +1,6 @@
 import { Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
+import { useCategory } from "../../hooks/useCategory";
 import api from "../../services/api";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -13,6 +14,7 @@ function Main() {
   const [printers, setPrinters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const {data: categories} = useCategory()
 
   useEffect(() => {
     getPrinters();
@@ -73,6 +75,8 @@ function Main() {
                 <th className="whitespace-nowrap">Printer</th>
                 <th className="whitespace-nowrap">Deskripsi</th>
                 <th className="whitespace-nowrap">IP ADDRESS</th>
+                <th className="whitespace-nowrap">Kategori</th>
+                <th className="whitespace-nowrap">Kasir</th>
                 <th className="text-center whitespace-nowrap">ACTIONS</th>
               </tr>
             </thead>
@@ -97,6 +101,18 @@ function Main() {
                   <td>
                     <a href="" className="font-medium whitespace-nowrap">
                       {printer.ip_address}
+                    </a>
+                  </td>
+
+                  <td>
+                    <a href="" className="font-medium whitespace-nowrap">
+                      {printer.category_name}
+                    </a>
+                  </td>
+
+                  <td>
+                    <a href="" className="font-medium whitespace-nowrap">
+                      {printer.cashier == true ? "Ya" : "Tidak"}
                     </a>
                   </td>
 
