@@ -1,6 +1,7 @@
 import { LoadingIcon, Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
 import EmptyData from "../../components/EmptyData";
+import { useCustomers } from "../../hooks/useCustomer";
 import api from "../../services/api";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -11,25 +12,8 @@ function CustomerList() {
   const [modalEdit, setmodalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState();
-  const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
 
-  useEffect(() => {
-    getCustomers();
-  }, []);
-
-  useEffect(() => {
-    isChanged && getCustomers();
-  }, [isChanged]);
-
-  async function getCustomers() {
-    setLoading(true);
-    let response = await api.get("customers");
-    setCustomers(response.data);
-    setLoading(false);
-    setIsChanged(false);
-  }
+  const { data: customers, isLoading: loading } = useCustomers();
 
   const handleEdit = (customer) => {
     setselectedCustomer(customer);
@@ -84,7 +68,7 @@ function CustomerList() {
           ""
         )}
         {/* BEGIN: Customers Layout */}
-        {customers.map((customer, key) => (
+        {customers?.map((customer, key) => (
           <div key={key} className="intro-y col-span-12 md:col-span-6">
             <div className="box">
               <div className="flex flex-col lg:flex-row items-center p-5">
@@ -132,22 +116,16 @@ function CustomerList() {
       <CreateModal
         modal={modal}
         setModal={setModal}
-        isChanged={isChanged}
-        setIsChanged={setIsChanged}
       />
       <UpdateModal
         modal={modalEdit}
         setModal={setmodalEdit}
         customer={selectedCustomer}
-        isChanged={isChanged}
-        setIsChanged={setIsChanged}
       />
       <DeleteModal
         modal={modalDelete}
         setModal={setModalDelete}
         customer={selectedCustomer}
-        isChanged={isChanged}
-        setIsChanged={setIsChanged}
       />
     </>
   );

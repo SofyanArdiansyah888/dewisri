@@ -3,16 +3,23 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import classnames from "classnames";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
+import { useCreateCustomer } from "../../hooks/useCustomer";
 
-import api from "../../services/api";
-const schema = yup
-.object({
+const schema = yup.object({
   name: yup.string().required().min(2),
   email: yup.string().email(),
   phone: yup.string().min(3),
 });
 
-function CreateModal({ modal, setModal, setIsChanged }) {
+function CreateModal({ modal, setModal }) {
+  const { mutate } = useCreateCustomer(() => {
+    reset(() => ({
+      name: "",
+      email: "",
+      phone: "",
+    }));
+    setModal(false);
+  });
   const {
     register,
     trigger,
@@ -21,26 +28,9 @@ function CreateModal({ modal, setModal, setIsChanged }) {
     reset,
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
-  const handleCreate = async (data) => {
-    const result = await trigger();
-
-    if (result) {
-      try {
-        await api.post("customers", { ...data });
-        reset(() => ({
-          name: "",
-          email: "",
-          phone: ""
-        }));
-        setModal(false);
-        setIsChanged(true)
-        
-      } catch (error) {}
-    }
-  };
   return (
     <>
       <Modal
@@ -49,7 +39,12 @@ function CreateModal({ modal, setModal, setIsChanged }) {
           setModal(false);
         }}
       >
-        <form className="validate-form" onSubmit={handleSubmit(handleCreate)}>
+        <form
+          className="validate-form"
+          onSubmit={handleSubmit((data) => {
+            mutate(data);
+          })}
+        >
           <ModalHeader>
             <h2 className="font-medium text-base mr-auto">Create Customer</h2>
           </ModalHeader>
@@ -105,9 +100,7 @@ function CreateModal({ modal, setModal, setIsChanged }) {
                 type="text"
               />
               {errors.phone && (
-                <div className="text-danger mt-2">
-                  {errors.phone.message}
-                </div>
+                <div className="text-danger mt-2">{errors.phone.message}</div>
               )}
             </div>
           </ModalBody>

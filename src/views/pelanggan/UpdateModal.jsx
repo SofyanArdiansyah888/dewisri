@@ -4,18 +4,25 @@ import classnames from "classnames";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
+import { useUpdateCustomer } from "../../hooks/useCustomer";
 import api from "../../services/api";
-
-function UpdateModal({ modal, setModal, customer, setIsChanged }) {
-
-  // VALIDATION
-  const schema = yup
-    .object({
-      name: yup.string().required(),
-      email: yup.string().email(),
-      phone: yup.string(),
-    })
-    .required();
+// VALIDATION
+const schema = yup
+  .object({
+    name: yup.string().required(),
+    email: yup.string().email(),
+    phone: yup.string(),
+  })
+  .required();
+function UpdateModal({ modal, setModal, customer }) {
+  const { mutate } = useUpdateCustomer(customer?.id, () => {
+    reset(() => ({
+      name: "",
+      email: "",
+      phone: "",
+    }));
+    setModal(false);
+  });
   const {
     register,
     trigger,
@@ -34,26 +41,8 @@ function UpdateModal({ modal, setModal, customer, setIsChanged }) {
       setValue("email", customer.email);
       setValue("phone", customer.phone);
     }
-  });
+  }, [customer]);
 
-
-  const handleUpdate = async (data) => {
-    const result = await trigger();
-    if (result) {
-      try {
-        await api.put(`customers/${customer.id}`, { ...data });
-        reset(() => ({
-          name: "",
-          email: "",
-          phone: "",
-        }));
-        setModal(false);
-        setIsChanged(true);
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  };
   return (
     <>
       <Modal
@@ -62,7 +51,10 @@ function UpdateModal({ modal, setModal, customer, setIsChanged }) {
           setModal(false);
         }}
       >
-        <form className="validate-form" onSubmit={handleSubmit(handleUpdate)}>
+        <form
+          className="validate-form"
+          onSubmit={handleSubmit((data) => mutate(data))}
+        >
           <ModalHeader>
             <h2 className="font-medium text-base mr-auto">Update Customer</h2>
           </ModalHeader>
@@ -118,9 +110,7 @@ function UpdateModal({ modal, setModal, customer, setIsChanged }) {
                 type="text"
               />
               {errors.phone && (
-                <div className="text-danger mt-2">
-                  {errors.phone.message}
-                </div>
+                <div className="text-danger mt-2">{errors.phone.message}</div>
               )}
             </div>
           </ModalBody>

@@ -54,7 +54,7 @@ function Main() {
             Tambah Printer
           </button>
 
-          <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+          {/* <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
             <div className="w-56 relative text-slate-500">
               <input
                 type="text"
@@ -66,7 +66,7 @@ function Main() {
                 className="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0"
               />
             </div>
-          </div>
+          </div> */}
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto ">

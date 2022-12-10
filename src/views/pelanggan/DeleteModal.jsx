@@ -1,15 +1,11 @@
 import { Lucide, Modal, ModalBody } from "@/base-components";
-import api from "../../services/api";
+import { useDeleteCustomer } from "../../hooks/useCustomer";
 
-function DeleteModal({ modal, setModal, customer, setIsChanged }) {
-  
-  const handleDelete = async () => {
-    try {
-      await api.delete(`customers/${customer.id}`);
-      setModal(false);
-      setIsChanged(true);
-    } catch (error) {}
-  };
+function DeleteModal({ modal, setModal, customer }) {
+  const {mutate} = useDeleteCustomer(customer?.id,() => {
+    setModal(false);
+  })
+
   return (
     <>
       <Modal
@@ -43,7 +39,7 @@ function DeleteModal({ modal, setModal, customer, setIsChanged }) {
             <button
               type="button"
               className="btn btn-danger w-24"
-              onClick={handleDelete}
+              onClick={() => mutate()}
             >
               Delete
             </button>
