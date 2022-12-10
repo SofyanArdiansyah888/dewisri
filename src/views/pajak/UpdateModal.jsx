@@ -4,17 +4,24 @@ import classnames from "classnames";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import api from "../../services/api";
+import { useUpdateTax } from "../../hooks/useTaxes";
 // VALIDATION
 const schema = yup.object({
   name: yup.string().required(),
   description: yup.string().required(),
   amount: yup.string().required(),
 });
-function UpdateModal({ modal, setModal, tax, setIsChanged }) {
+function UpdateModal({ modal, setModal, tax }) {
+  const { mutate } = useUpdateTax(tax?.id, () => {
+    reset(() => ({
+      name: "",
+      description: "",
+      amount: "",
+    }));
+    setModal(false);
+  });
   const {
     register,
-    trigger,
     formState: { errors },
     handleSubmit,
     reset,
@@ -30,26 +37,9 @@ function UpdateModal({ modal, setModal, tax, setIsChanged }) {
       setValue("description", tax.description);
       setValue("amount", tax.amount);
     }
-  });
+    return () => {};
+  }, [tax]);
 
-  const handleUpdate = async (data) => {
-    const result = await trigger();
-
-    if (result) {
-      try {
-        await api.put(`taxes/${tax.id}`, { ...data });
-        reset(() => ({
-          name: "",
-          description: "",
-          amount: "",
-        }));
-        setModal(false);
-        setIsChanged(true);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
   return (
     <>
       <Modal
@@ -58,7 +48,10 @@ function UpdateModal({ modal, setModal, tax, setIsChanged }) {
           setModal(false);
         }}
       >
-        <form className="validate-form" onSubmit={handleSubmit(handleUpdate)}>
+        <form
+          className="validate-form"
+          onSubmit={handleSubmit((data) => mutate(data))}
+        >
           <ModalHeader>
             <h2 className="font-medium text-base mr-auto">Update tax</h2>
           </ModalHeader>
@@ -118,9 +111,7 @@ function UpdateModal({ modal, setModal, tax, setIsChanged }) {
                 type="text"
               />
               {errors.amount && (
-                <div className="text-danger mt-2">
-                  {errors.amount.message}
-                </div>
+                <div className="text-danger mt-2">{errors.amount.message}</div>
               )}
             </div>
           </ModalBody>
