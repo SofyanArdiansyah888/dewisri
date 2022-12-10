@@ -26,9 +26,8 @@ function CreateModal({ modal, setModal }) {
     resolver: yupResolver(schema),
   });
   
-  const queryClient = useQueryClient();
   const { mutate } = useCreateUser((data) => {
-    queryClient.invalidateQueries({ queryKey: ["users"] });
+    
     reset(() => ({
       name: "",
       email: "",

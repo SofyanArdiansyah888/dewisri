@@ -3,7 +3,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import classnames from "classnames";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
 import * as yup from "yup";
 import { useUpdateUser } from "../../hooks/useUser";
 
@@ -18,7 +17,6 @@ function UpdateModal({ modal, setModal, user }) {
 
   const {
     register,
-    trigger,
     formState: { errors },
     handleSubmit,
     reset,
@@ -28,10 +26,8 @@ function UpdateModal({ modal, setModal, user }) {
     resolver: yupResolver(schema),
   });
 
-  const queryClient = useQueryClient();
   const userId = user && user.id;
-  const { mutate } = useUpdateUser(userId, () => {
-    queryClient.invalidateQueries({ queryKey: ["users"] });
+  const { mutate } = useUpdateUser(userId, () => {    
     reset(() => ({
       name: "",
       email: "",

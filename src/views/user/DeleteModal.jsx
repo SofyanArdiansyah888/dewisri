@@ -3,10 +3,8 @@ import { useQueryClient } from "react-query";
 import { useDeleteUser } from "../../hooks/useUser";
 
 function DeleteModal({ modal, setModal, user }) {
-  const queryClient = useQueryClient();
   const userId = user && user.id;
   const { mutate } = useDeleteUser(userId, () => {
-    queryClient.invalidateQueries({ queryKey: ["users"] });
     setModal(false);
   });
 

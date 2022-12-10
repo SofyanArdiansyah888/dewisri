@@ -1,58 +1,73 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
 export function useUsers(onSuccess) {
-  const {setErrorMessage} = useError();
+  const { setErrorMessage } = useError();
   function fetchUser() {
     return api.get(`users`);
   }
   return useQuery(["users"], fetchUser, {
     onSuccess,
     onError: (error) => {
-      console.log(error)
-      setErrorMessage(error.message)
+      setErrorMessage(error.message);
     },
     select: (data) => data.data,
   });
 }
 
-export function useCreateUser(onSuccess) {
-  const {setErrorMessage} = useError();
+export function useCreateUser(onSuccessCallback) {
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
   function createUser(data) {
     return api.post(`users`, data);
   }
   return useMutation(createUser, {
-    onSuccess,
+    onSuccess: (data) => {
+      setSuccessMessage("Berhasil Membuat User");
+      onSuccessCallback(data);
+    },
     onError: (error) => {
-      setErrorMessage(error.message)
+      setErrorMessage(error.message);
     },
   });
 }
 
-export function useUpdateUser(userId, onSuccess) {
-  const {setErrorMessage} = useError();
+export function useUpdateUser(userId, onSuccessCallback) {
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  const query = useQueryClient();
   function updateUser(data) {
     return api.put(`users/${userId}`, data);
   }
   return useMutation(updateUser, {
-    onSuccess,
+    onSuccess: (data) => {
+      query.invalidateQueries({ queryKey: ["users"] });
+      setSuccessMessage("Berhasil Mengupdate User");
+      onSuccessCallback(data);
+    },
     onError: (error) => {
-      setErrorMessage(error.message)
+      setErrorMessage(error.message);
     },
   });
 }
 
-export function useDeleteUser(userId, onSuccess) {
-  const {setErrorMessage} = useError();
+export function useDeleteUser(userId, onSuccessCallback) {
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  const query = useQueryClient();
   function deleteUser() {
     return api.delete(`users/${userId}`);
   }
   return useMutation(deleteUser, {
-    onSuccess,
+    onSuccess: (data) => {
+      query.invalidateQueries({ queryKey: ["users"] });
+      setSuccessMessage("Berhasil Menghapus User");
+      onSuccessCallback(data);
+    },
     onError: (error) => {
-      setErrorMessage(error.message)
+      setErrorMessage(error.message);
     },
   });
 }
-
