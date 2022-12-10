@@ -1,5 +1,6 @@
-import { Lucide,LoadingIcon } from "@/base-components";
+import { Lucide, LoadingIcon } from "@/base-components";
 import { useState } from "react";
+import EmptyData from "../../../components/EmptyData";
 import { useCategory } from "../../../hooks/useCategory";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -9,10 +10,9 @@ function Main() {
   const [modalEdit, setmodalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [selectedCategory, setselectedCategory] = useState();
-  
+
   const { loading, data } = useCategory();
   const [search, setSearch] = useState("");
-
 
   const handleEdit = (category) => {
     setselectedCategory(category);
@@ -58,49 +58,54 @@ function Main() {
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto lg:overflow-visible">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">Kategori</th>
-                <th className="text-center whitespace-nowrap">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading && (
-                <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
-                  <LoadingIcon icon="circles" className="w-16 h-16" />
-                </div>
-              )}
-              {filterData()?.map((category, key) => (
-                <tr key={key} className="intro-x">
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {category.name}
-                    </a>
-                  </td>
-                  <td className="table-report__action w-56">
-                    <div className="flex justify-center items-center">
-                      <a
-                        className="flex items-center mr-3"
-                        href="#"
-                        onClick={() => handleEdit(category)}
-                      >
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => handleDelete(category)}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </td>
+          {filterData()?.length === 0 || !filterData() ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">Kategori</th>
+                  <th className="text-center whitespace-nowrap">ACTIONS</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {loading && (
+                  <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
+                    <LoadingIcon icon="circles" className="w-16 h-16" />
+                  </div>
+                )}
+                {filterData()?.map((category, key) => (
+                  <tr key={key} className="intro-x">
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {category.name}
+                      </a>
+                    </td>
+                    <td className="table-report__action w-56">
+                      <div className="flex justify-center items-center">
+                        <a
+                          className="flex items-center mr-3"
+                          href="#"
+                          onClick={() => handleEdit(category)}
+                        >
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Edit
+                        </a>
+                        <a
+                          className="flex items-center text-danger"
+                          href="#"
+                          onClick={() => handleDelete(category)}
+                        >
+                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                          Delete
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
@@ -166,10 +171,7 @@ function Main() {
           ""
         )} */}
         {/* END: Pagination */}
-        <CreateModal
-          modal={modal}
-          setModal={setModal}
-        />
+        <CreateModal modal={modal} setModal={setModal} />
         <UpdateModal
           modal={modalEdit}
           setModal={setmodalEdit}

@@ -1,5 +1,6 @@
 import { Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
+import EmptyData from "../../components/EmptyData";
 import { useCategory } from "../../hooks/useCategory";
 import api from "../../services/api";
 import CreateModal from "./CreateModal";
@@ -69,6 +70,9 @@ function Main() {
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto ">
+        {printers?.length === 0 || !printers ? (
+            <EmptyData />
+          ) : (
           <table className="table table-report -mt-2">
             <thead>
               <tr>
@@ -139,11 +143,11 @@ function Main() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table>)}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
-        {printers.length > 10 ? (
+        {/* {printers.length > 10 ? (
           <div className="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
             <nav className="w-full sm:w-auto sm:mr-auto">
               <ul className="pagination">
@@ -203,7 +207,7 @@ function Main() {
           </div>
         ) : (
           ""
-        )}
+        )} */}
         {/* END: Pagination */}
         <CreateModal
           modal={modal}

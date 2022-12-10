@@ -1,6 +1,7 @@
 import { Lucide, Tippy } from "@/base-components";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import EmptyData from "../../../components/EmptyData";
 import { useProducts } from "../../../hooks/useProduct";
 import { baseUrlImage } from "../../../utils/constant";
 import DeleteModal from "./DeleteModal";
@@ -54,43 +55,46 @@ function Main() {
         </div>
         {/* BEGIN: Data List -*/}
         <div className="intro-y col-span-12 overflow-auto lg:overflow-visible">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">FOTO</th>
-                <th className="whitespace-nowrap">NAMA PRODUK</th>
-                <th className="text-center whitespace-nowrap">HARGA</th>
-                <th className="text-center whitespace-nowrap">KATEGORI</th>
-                <th className="text-center whitespace-nowrap">Varian</th>
-                <th className="text-center whitespace-nowrap">AKSI</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filterData()?.map((product, index) => (
-                <tr key={index} className="intro-x">
-                  <td className="w-40">
-                    <div className="flex">
-                      <div className="w-24 h-24 image-fit zoom-in">
-                        <Tippy
-                          tag="img"
-                          alt={`Foto ${product.name}`}
-                          className="rounded-full"
-                          src={`${baseUrlImage}/products/${product.photo}`}
-                        />
+          {filterData()?.length === 0 || !filterData() ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">FOTO</th>
+                  <th className="whitespace-nowrap">NAMA PRODUK</th>
+                  <th className="text-center whitespace-nowrap">HARGA</th>
+                  <th className="text-center whitespace-nowrap">KATEGORI</th>
+                  <th className="text-center whitespace-nowrap">Varian</th>
+                  <th className="text-center whitespace-nowrap">AKSI</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filterData()?.map((product, index) => (
+                  <tr key={index} className="intro-x">
+                    <td className="w-40">
+                      <div className="flex">
+                        <div className="w-24 h-24 image-fit zoom-in">
+                          <Tippy
+                            tag="img"
+                            alt={`Foto ${product.name}`}
+                            className="rounded-full"
+                            src={`${baseUrlImage}/products/${product.photo}`}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {product.name}
-                    </a>
-                  </td>
-                  <td className="text-center">{product.price}</td>
-                  <td className="text-center">{product?.category?.name}</td>
-                  <td className="text-center font-semibold">
-                    {product?.variant_names}
-                  </td>
-                  {/* <td className="w-40">
+                    </td>
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {product.name}
+                      </a>
+                    </td>
+                    <td className="text-center">{product.price}</td>
+                    <td className="text-center">{product?.category?.name}</td>
+                    <td className="text-center font-semibold">
+                      {product?.variant_names}
+                    </td>
+                    {/* <td className="w-40">
                     {product.isFavourite && <div
                       className={classnames({
                         "flex items-center justify-center": true,
@@ -102,28 +106,32 @@ function Main() {
                       {product.isFavourite ? "Favorit" : "-"}
                     </div>}
                   </td> */}
-                  <td className="table-report__action w-56">
-                    <div className="flex justify-center items-center">
-                    
-                      <Link to={`/produk/produk/${product.id}/update`}>
-                        <a className="flex items-center mr-3">
-                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                          Edit
-                        </a>
-                      </Link>
+                    <td className="table-report__action w-56">
+                      <div className="flex justify-center items-center">
+                        <Link to={`/produk/produk/${product.id}/update`}>
+                          <a className="flex items-center mr-3">
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Edit
+                          </a>
+                        </Link>
 
-                      <a
-                        className="flex items-center text-danger"
-                        onClick={() => handleDelete(product)}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        <a
+                          className="flex items-center text-danger"
+                          onClick={() => handleDelete(product)}
+                        >
+                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                          Delete
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         <DeleteModal
           modal={modalDelete}

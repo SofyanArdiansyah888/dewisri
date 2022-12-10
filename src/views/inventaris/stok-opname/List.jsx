@@ -1,20 +1,20 @@
-import {
-  Litepicker, Lucide, Modal,
-  ModalBody
-} from "@/base-components";
+import { Litepicker, Lucide, Modal, ModalBody } from "@/base-components";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../../services/api";
 import { helper } from "../../../utils/helper";
 import { useOpnameStocks } from "../../../hooks/useOpnameStock";
+import EmptyData from "../../../components/EmptyData";
 function Main() {
   const [daterange, setDaterange] = useState("");
-  const {data} = useOpnameStocks();
-  const [search, setSearch] = useState('');
-  
+  const { data } = useOpnameStocks();
+  const [search, setSearch] = useState("");
+
   const filterData = () => {
     return data?.filter((item) =>
-      item.opname_number.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+      item.opname_number
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase())
     );
   };
   return (
@@ -31,7 +31,6 @@ function Main() {
                 Stok Opname
               </button>
             </Link>
-           
           </div>
           <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
             {/* <Litepicker
@@ -68,44 +67,44 @@ function Main() {
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto lg:overflow-visible">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">Tanggal</th>
-                <th className="whitespace-nowrap">Nomor</th>
-                <th className="whitespace-nowrap">User</th>
-                <th className="whitespace-nowrap">Aksi</th>
-                
-              </tr>
-            </thead>
-            <tbody>
-              {filterData()?.map((stock, index) => (
-                <tr key={index} className="intro-x">
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {helper.formatDate(stock.created_at,'DD MMM YYYY')}
-                    </a>
-                  </td>
-                  <td>
-                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                      {stock.opname_number}
-                    </div>
-                  </td>
-                  <td>
-                      {stock.user}
-                  </td>
-                  <td>
-                    <Link to={`/inventori/stok-opname/${stock.id}`}>
-                      <a className="flex items-center mr-3 text-center">
-                        <Lucide icon="Eye" className="w-4 h-4 mr-1" />{" "}
-                        Detail
-                      </a>
-                    </Link>
-                  </td>
+          {filterData()?.length === 0 || !filterData() ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">Tanggal</th>
+                  <th className="whitespace-nowrap">Nomor</th>
+                  <th className="whitespace-nowrap">User</th>
+                  <th className="whitespace-nowrap">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filterData()?.map((stock, index) => (
+                  <tr key={index} className="intro-x">
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {helper.formatDate(stock.created_at, "DD MMM YYYY")}
+                      </a>
+                    </td>
+                    <td>
+                      <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                        {stock.opname_number}
+                      </div>
+                    </td>
+                    <td>{stock.user}</td>
+                    <td>
+                      <Link to={`/inventori/stok-opname/${stock.id}`}>
+                        <a className="flex items-center mr-3 text-center">
+                          <Lucide icon="Eye" className="w-4 h-4 mr-1" /> Detail
+                        </a>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}

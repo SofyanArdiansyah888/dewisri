@@ -1,5 +1,6 @@
 import { LoadingIcon, Lucide } from "@/base-components";
 import { useState } from "react";
+import EmptyData from "../../components/EmptyData";
 import { useUsers } from "../../hooks/useUser";
 import CreateModal from "../user/CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -14,9 +15,9 @@ function UserList() {
   const [search, setSearch] = useState("");
 
   const filterData = () => {
-      return data?.filter((item) =>
-        item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-      );
+    return data?.filter((item) =>
+      item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    );
   };
 
   const handleEdit = (user) => {
@@ -67,6 +68,14 @@ function UserList() {
           ""
         )}
 
+        {filterData()?.length === 0 || !filterData() ? (
+          <div className="intro-y col-span-12 ">
+            {" "}
+            <EmptyData />{" "}
+          </div>
+        ) : (
+          ""
+        )}
         {/* BEGIN: Users Layout */}
         {filterData()?.map((user, key) => (
           <div key={key} className="intro-y col-span-12 md:col-span-6">
@@ -113,10 +122,7 @@ function UserList() {
         ))}
         {/* BEGIN: Users Layout */}
       </div>
-      <CreateModal
-        modal={modal}
-        setModal={setModal}
-      />
+      <CreateModal modal={modal} setModal={setModal} />
       <UpdateModal
         modal={modalEdit}
         setModal={setmodalEdit}

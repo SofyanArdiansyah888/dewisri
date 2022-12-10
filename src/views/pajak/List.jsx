@@ -2,7 +2,8 @@ import { Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import UpdateModal from "./UpdateModal";
-import {BrowserRouter as Router} from 'react-router-dom'
+import { BrowserRouter as Router } from "react-router-dom";
+import EmptyData from "../../components/EmptyData";
 function Main() {
   const [modal, setModal] = useState(false);
   const [modalEdit, setmodalEdit] = useState(false);
@@ -11,7 +12,7 @@ function Main() {
   const [taxes, setTaxes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const {history} = Router;
+  const { history } = Router;
 
   useEffect(() => {
     getTaxes();
@@ -27,7 +28,6 @@ function Main() {
     setTaxes(response.data);
     setLoading(false);
     setIsChanged(false);
-    
   }
 
   const handleEdit = (printer) => {
@@ -35,68 +35,67 @@ function Main() {
     setmodalEdit(true);
   };
 
-
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">Pajak</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
-        <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap justify-between mt-2">
-        
-
-        
-        </div>
+        <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap justify-between mt-2"></div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto ">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">Nama</th>
-                <th className="whitespace-nowrap">Deskripsi</th>
-                <th className="whitespace-nowrap">Jumlah (%)</th>
-                <th className="text-center whitespace-nowrap">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ?? (
-                <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
-                  <LoadingIcon icon="circles" className="w-16 h-16" />
-                </div>
-              )}
-              {taxes.map((printer, key) => (
-                <tr key={key} className="intro-x">
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {printer.name}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {printer.description}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {printer.amount}
-                    </a>
-                  </td>
-
-                  {/* ACTION BUTTONS */}
-                  <td className="table-report__action w-56">
-                    <div className="flex justify-center items-center">
-                      <a
-                        className="flex items-center mr-3"
-                        href="#"
-                        onClick={() => handleEdit(printer)}
-                      >
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                    </div>
-                  </td>
+          {taxes?.length === 0 || !taxes ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">Nama</th>
+                  <th className="whitespace-nowrap">Deskripsi</th>
+                  <th className="whitespace-nowrap">Jumlah (%)</th>
+                  <th className="text-center whitespace-nowrap">ACTIONS</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {loading ?? (
+                  <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
+                    <LoadingIcon icon="circles" className="w-16 h-16" />
+                  </div>
+                )}
+                {taxes.map((printer, key) => (
+                  <tr key={key} className="intro-x">
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {printer.name}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {printer.description}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {printer.amount}
+                      </a>
+                    </td>
+
+                    {/* ACTION BUTTONS */}
+                    <td className="table-report__action w-56">
+                      <div className="flex justify-center items-center">
+                        <a
+                          className="flex items-center mr-3"
+                          href="#"
+                          onClick={() => handleEdit(printer)}
+                        >
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Edit
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
@@ -170,7 +169,6 @@ function Main() {
           isChanged={isChanged}
           setIsChanged={setIsChanged}
         />
-
       </div>
     </>
   );

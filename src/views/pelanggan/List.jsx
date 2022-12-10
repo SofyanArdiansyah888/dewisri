@@ -1,5 +1,6 @@
 import { LoadingIcon, Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
+import EmptyData from "../../components/EmptyData";
 import api from "../../services/api";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -74,7 +75,14 @@ function CustomerList() {
             <LoadingIcon icon="circles" className="w-16 h-16" />
           </div>
         )}
-
+        {customers?.length === 0 || !customers ? (
+          <div className="intro-y col-span-12 ">
+            {" "}
+            <EmptyData />{" "}
+          </div>
+        ) : (
+          ""
+        )}
         {/* BEGIN: Customers Layout */}
         {customers.map((customer, key) => (
           <div key={key} className="intro-y col-span-12 md:col-span-6">

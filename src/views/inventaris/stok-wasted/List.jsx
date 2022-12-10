@@ -1,22 +1,23 @@
-import {
-  Lucide
-} from "@/base-components";
+import { Lucide } from "@/base-components";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import EmptyData from "../../../components/EmptyData";
 import { useWastedStocks } from "../../../hooks/useWastedStock";
 import { helper } from "../../../utils/helper";
 
 function Main() {
   const [daterange, setDaterange] = useState("");
-  const {data} = useWastedStocks();
-  const [search, setSearch] = useState('');
-  
+  const { data } = useWastedStocks();
+  const [search, setSearch] = useState("");
+
   const filterData = () => {
     return data?.filter((item) =>
-      item.wasted_number.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+      item.wasted_number
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase())
     );
   };
-  
+
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">Stok Terbuang</h2>
@@ -24,12 +25,12 @@ function Main() {
         <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap justify-between mt-2">
           <div>
             <Link to="/inventori/stok-wasted/create">
-            <button className="btn btn-primary shadow-md mr-2">
-              <span className="w-5 h-5 flex items-center justify-center">
-                <Lucide icon="Plus" className="w-4 h-4" />
-              </span>
-              Stok Terbuang
-            </button>
+              <button className="btn btn-primary shadow-md mr-2">
+                <span className="w-5 h-5 flex items-center justify-center">
+                  <Lucide icon="Plus" className="w-4 h-4" />
+                </span>
+                Stok Terbuang
+              </button>
             </Link>
           </div>
           <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -67,55 +68,54 @@ function Main() {
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">Tanggal</th>
-                <th className="whitespace-nowrap">Nomor</th>
-                <th className="whitespace-nowrap">Deskripsi</th>
-                <th className="whitespace-nowrap">User</th>
-                <th className="whitespace-nowrap">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filterData()?.map((wasted, index) => (
-                <tr key={index} className="intro-x">
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                    {helper.formatDate(wasted.wasted_date, "DD MMMM YYYY")}
-                    </a>
-                  </td>
-                  <td>
-                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                    {wasted.wasted_number}
-                    </div>
-                  </td>
-
-                  <td>
-                    {wasted.description}
-                  </td>
-                  <td>
-                    {wasted.user}
-                  </td>
-                  <td>
-                    <Link to={`/inventori/stok-wasted/${wasted.id}`}>
-                      <a className="flex items-center mr-3">
-                        <Lucide icon="Eye" className="w-4 h-4 mr-1" />{" "}
-                        Detail
+          {filterData()?.length === 0 || !filterData() ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">Tanggal</th>
+                  <th className="whitespace-nowrap">Nomor</th>
+                  <th className="whitespace-nowrap">Deskripsi</th>
+                  <th className="whitespace-nowrap">User</th>
+                  <th className="whitespace-nowrap">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filterData()?.map((wasted, index) => (
+                  <tr key={index} className="intro-x">
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {helper.formatDate(wasted.wasted_date, "DD MMMM YYYY")}
                       </a>
-                    </Link>
-                  </td>
+                    </td>
+                    <td>
+                      <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                        {wasted.wasted_number}
+                      </div>
+                    </td>
 
-                  {/* <td>
+                    <td>{wasted.description}</td>
+                    <td>{wasted.user}</td>
+                    <td>
+                      <Link to={`/inventori/stok-wasted/${wasted.id}`}>
+                        <a className="flex items-center mr-3">
+                          <Lucide icon="Eye" className="w-4 h-4 mr-1" /> Detail
+                        </a>
+                      </Link>
+                    </td>
+
+                    {/* <td>
                     <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                     { pipe(pluck('pivot'),pluck('description'))(wasted.materials).toString()}
                     
                     </div>
                   </td> */}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}

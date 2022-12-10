@@ -1,5 +1,6 @@
 import { Lucide, LoadingIcon } from "@/base-components";
 import { useState } from "react";
+import EmptyData from "../../../components/EmptyData";
 import { useMaterial } from "../../../hooks/useMaterial";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -11,11 +12,11 @@ function Main() {
   const [selectedMaterial, setselectedMaterial] = useState();
   const { loading, data } = useMaterial();
   const [search, setSearch] = useState("");
-  
+
   const filterData = () => {
-      return data?.filter((item) =>
-        item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-      );
+    return data?.filter((item) =>
+      item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    );
   };
 
   const handleEdit = (material) => {
@@ -56,72 +57,77 @@ function Main() {
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto lg:overflow-visible">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">Nama Bahan Baku</th>
-                <th className="whitespace-nowrap">SKU</th>
-                <th className="whitespace-nowrap">Stok</th>
-                <th className="whitespace-nowrap">Stok Minimal</th>
-                <th className="text-center whitespace-nowrap">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading && (
-                <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
-                  <LoadingIcon icon="circles" className="w-16 h-16" />
-                </div>
-              )}
-              {filterData()?.map((material, key) => (
-                <tr
-                  key={key}
-                  className={`intro-x ${
-                    material.type === "SUPPORT" ? "hidden" : ""
-                  }`}
-                >
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {material.name}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {material.code}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {material.stock}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="" className="font-medium whitespace-nowrap">
-                      {material.minimal_stock}
-                    </a>
-                  </td>
-                  <td className="table-report__action w-56">
-                    <div className="flex justify-center items-center">
-                      <a
-                        className="flex items-center mr-3"
-                        href="#"
-                        onClick={() => handleEdit(material)}
-                      >
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => handleDelete(material)}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </td>
+          {filterData()?.length === 0 || !filterData() ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">Nama Bahan Baku</th>
+                  <th className="whitespace-nowrap">SKU</th>
+                  <th className="whitespace-nowrap">Stok</th>
+                  <th className="whitespace-nowrap">Stok Minimal</th>
+                  <th className="text-center whitespace-nowrap">ACTIONS</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {loading && (
+                  <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
+                    <LoadingIcon icon="circles" className="w-16 h-16" />
+                  </div>
+                )}
+                {filterData()?.map((material, key) => (
+                  <tr
+                    key={key}
+                    className={`intro-x ${
+                      material.type === "SUPPORT" ? "hidden" : ""
+                    }`}
+                  >
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {material.name}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {material.code}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {material.stock}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="" className="font-medium whitespace-nowrap">
+                        {material.minimal_stock}
+                      </a>
+                    </td>
+                    <td className="table-report__action w-56">
+                      <div className="flex justify-center items-center">
+                        <a
+                          className="flex items-center mr-3"
+                          href="#"
+                          onClick={() => handleEdit(material)}
+                        >
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Edit
+                        </a>
+                        <a
+                          className="flex items-center text-danger"
+                          href="#"
+                          onClick={() => handleDelete(material)}
+                        >
+                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                          Delete
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
@@ -187,10 +193,7 @@ function Main() {
           ""
         )} */}
         {/* END: Pagination */}
-        <CreateModal
-          modal={modal}
-          setModal={setModal}
-        />
+        <CreateModal modal={modal} setModal={setModal} />
         <UpdateModal
           modal={modalEdit}
           setModal={setmodalEdit}

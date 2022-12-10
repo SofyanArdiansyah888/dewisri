@@ -2,18 +2,21 @@ import { Lucide } from "@/base-components";
 import { pipe, pluck, sum } from "ramda";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import EmptyData from "../../../components/EmptyData";
 import { useIncomingStocks } from "../../../hooks/useIncomingStock";
 
 import { helper } from "../../../utils/helper";
 
 function Main() {
   const [daterange, setDaterange] = useState("");
-  const {data} = useIncomingStocks();
-  const [search, setSearch] = useState('');
-  
+  const { data } = useIncomingStocks();
+  const [search, setSearch] = useState("");
+
   const filterData = () => {
     return data?.filter((item) =>
-      item.invoice_number.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+      item.invoice_number
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase())
     );
   };
 
@@ -67,53 +70,56 @@ function Main() {
         </div>
         {/* BEGIN: Data List */}
         <div className="intro-y col-span-12 overflow-auto lg:overflow-visible">
-          <table className="table table-report -mt-2">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap">Tanggal</th>
-                <th className="whitespace-nowrap">No Faktur</th>
-                <th className="text-center whitespace-nowrap">Material</th>
-                <th className="text-center whitespace-nowrap">Jumlah</th>
-                <th className="text-center whitespace-nowrap">User</th>
-                <th className="text-center whitespace-nowrap">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filterData()?.map((stock, index) => (
-                <tr key={index} className="intro-x">
-                  <td>
-                    <a>
-                      {helper.formatDate(stock.incoming_date, "DD MMMM YYYY")}
-                    </a>
-                  </td>
-                  <td>
-                    <div className="text-slate-900 text-md  whitespace-nowrap mt-0.5">
-                      {stock.invoice_number}
-                    </div>
-                  </td>
-                  <td className="text-center">
-                    {pluck("name")(stock.materials).toString()}
-                  </td>
-                  <td className="text-center">
-                    {pipe(
-                      pluck("pivot"),
-                      pluck("stock"),
-                      sum
-                    )(stock.materials).toString()}
-                  </td>
-                  <td className="text-center">{stock.user}</td>
-                  <td>
-                    <Link to={`/inventori/stok-masuk/${stock.id}`}>
-                      <a className="flex items-center mr-3">
-                        <Lucide icon="Eye" className="w-4 h-4 mr-1" />{" "}
-                        Detail
-                      </a>
-                    </Link>
-                  </td>
+          {filterData()?.length === 0 || !filterData() ? (
+            <EmptyData />
+          ) : (
+            <table className="table table-report -mt-2">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap">Tanggal</th>
+                  <th className="whitespace-nowrap">No Faktur</th>
+                  <th className="text-center whitespace-nowrap">Material</th>
+                  <th className="text-center whitespace-nowrap">Jumlah</th>
+                  <th className="text-center whitespace-nowrap">User</th>
+                  <th className="text-center whitespace-nowrap">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filterData()?.map((stock, index) => (
+                  <tr key={index} className="intro-x">
+                    <td>
+                      <a>
+                        {helper.formatDate(stock.incoming_date, "DD MMMM YYYY")}
+                      </a>
+                    </td>
+                    <td>
+                      <div className="text-slate-900 text-md  whitespace-nowrap mt-0.5">
+                        {stock.invoice_number}
+                      </div>
+                    </td>
+                    <td className="text-center">
+                      {pluck("name")(stock.materials).toString()}
+                    </td>
+                    <td className="text-center">
+                      {pipe(
+                        pluck("pivot"),
+                        pluck("stock"),
+                        sum
+                      )(stock.materials).toString()}
+                    </td>
+                    <td className="text-center">{stock.user}</td>
+                    <td>
+                      <Link to={`/inventori/stok-masuk/${stock.id}`}>
+                        <a className="flex items-center mr-3">
+                          <Lucide icon="Eye" className="w-4 h-4 mr-1" /> Detail
+                        </a>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
