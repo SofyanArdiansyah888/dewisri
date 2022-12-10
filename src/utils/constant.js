@@ -1,3 +1,4 @@
+
 export const uoms = ['pieces'];
-export const baseUrlImage = "http://127.0.0.1:8000/uploads/"
-export const baseUrl = `http://127.0.0.1:8000/api/`;
+export const baseUrlImage = import.meta.env.VITE_IMAGE_URL
+export const baseUrl = import.meta.env.VITE_API_URL

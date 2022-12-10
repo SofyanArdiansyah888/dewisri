@@ -1,12 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
+import { useError } from "./useError";
 
 export function useTables(refetchInterval = null) {
+  const { setErrorMessage } = useError();
   function fetchTables() {
     return api.get(`tables`);
   }
   return useQuery(["tables"], fetchTables, {
-    onError: () => {},
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
     select: (data) => {
       if (data.data) {
         return data?.data?.map((table) => {
@@ -15,55 +19,59 @@ export function useTables(refetchInterval = null) {
         });
       }
     },
-    refetchInterval
+    refetchInterval,
   });
 }
 
 export function useFreeTables() {
-    function fetchTables() {
-      return  api.get(`free-tables`);
-    }
-    return useQuery(["free-tables"], fetchTables, {
-      onError: () => {},
-      select: (data) => {
-        if (data.data) {
-          return data?.data?.map((table) => {
-            table.isChoosen = false;
-            return table;
-          });
-        }
-      },
-    });
+  const { setErrorMessage } = useError();
+  function fetchTables() {
+    return api.get(`free-tables`);
   }
+  return useQuery(["free-tables"], fetchTables, {
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+    select: (data) => {
+      if (data.data) {
+        return data?.data?.map((table) => {
+          table.isChoosen = false;
+          return table;
+        });
+      }
+    },
+  });
+}
 
-  export function useOrderedTables() {
-    function fetchTables() {
-      return  api.get(`ordered-tables`);
-    }
-    return useQuery(["ordered-tables"], fetchTables, {
-      onError: () => {},
-      select: (data) => data?.data,
-      refetchOnWindowFocus: false,
-      refetchOnmount: false,
-      refetchOnReconnect: false,
-    });
+export function useOrderedTables() {
+  const { setErrorMessage } = useError();
+  function fetchTables() {
+    return api.get(`ordered-tables`);
   }
-
+  return useQuery(["ordered-tables"], fetchTables, {
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+    select: (data) => data?.data,
+    refetchOnWindowFocus: false,
+    refetchOnmount: false,
+    refetchOnReconnect: false,
+  });
+}
 
 export function useUpdateTables(onSuccessCallback) {
   const queryClient = useQueryClient();
-  function updateTable({id, ...data}) {
+  function updateTable({ id, ...data }) {
     return api.put(`tables/${id}`, data);
   }
   return useMutation(updateTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
-      onSuccessCallback(data)
+      onSuccessCallback(data);
     },
     onError: () => {},
   });
 }
-
 
 export function useCreateTable(onSuccessCallback) {
   const queryClient = useQueryClient();
@@ -73,7 +81,7 @@ export function useCreateTable(onSuccessCallback) {
   return useMutation(createTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
-      onSuccessCallback(data)
+      onSuccessCallback(data);
     },
     onError: () => {},
   });
@@ -87,7 +95,7 @@ export function useDeleteTable(tableId, onSuccessCallback) {
   return useMutation(deleteTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
-      onSuccessCallback(data)
+      onSuccessCallback(data);
     },
     onError: () => {},
   });

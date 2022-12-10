@@ -74,11 +74,8 @@ function CustomerModal({
         size="modal-xl"
       >
         <ModalHeader>
-          <h2 className="font-medium text-base mr-auto">Buat Meja Baru</h2>
-        </ModalHeader>
-        <ModalBody>
-          <div className="grid grid-cols-12 gap-6 mt-5 max-h-[450px] overflow-y-auto">
-            <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap justify-end mt-2">
+          <h2 className="font-medium text-base mr-auto">Pilih Customer</h2>
+          <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap justify-end mt-2">
               <div className="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div className="w-56 relative text-slate-500">
                   <input
@@ -94,8 +91,12 @@ function CustomerModal({
                 </div>
               </div>
             </div>
+        </ModalHeader>
+        <ModalBody className="bg-gray-50">
+          <div className="grid grid-cols-12 gap-6  max-h-[450px] overflow-y-auto ">
+       
 
-            <div className="col-span-6 box h-auto p-8">
+            <div className="col-span-6 box h-auto max-h-[400px] p-8">
               <form
                 className="validate-form"
                 onSubmit={handleSubmit(handleCreate)}

@@ -5,19 +5,18 @@ import { clear, getUser, setUser } from "../services/database";
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState();
-
-    useEffect(() =>{
-        if(getUser()){
-            setAuthUser(getUser())
-        }
-    },[])
+  useEffect(() =>{
+      if(getUser()){
+          setAuthUser(getUser())
+      }
+  },[])
 
   function doLogin({ email, password }) {
     return api.post(`login`, { email, password });
   }
 
 
-  const {mutate, error,isSuccess} = useMutation(doLogin, {
+  const {mutate, error,isSuccess,isLoading} = useMutation(doLogin, {
     onSuccess: (data) => {
       setUser(data.user);
       setAuthUser(data.user);
@@ -34,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ authUser, login, logout, error,isSuccess }}>
+    <AuthContext.Provider value={{ authUser, login, logout, error,isSuccess,isLoading }}>
       {children}
     </AuthContext.Provider>
   );

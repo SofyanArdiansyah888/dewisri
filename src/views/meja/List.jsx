@@ -4,11 +4,12 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Lucide
+  Lucide,
 } from "@/base-components";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
+import { useOpenSession } from "../../hooks/useOpenSession";
 import { useTables, useUpdateTables } from "../../hooks/useTable";
 import { formatRupiah, secondToHourMinute } from "../../utils/formatter";
 import CreateModal from "./CreateModal";
@@ -36,6 +37,8 @@ function Main() {
 
   const [reservedStep, setReservedStep] = useState(0);
   const [reservedModal, setReservedModal] = useState(false);
+
+  // const {data: openSession } = useOpenSession()
 
   useEffect(() => {
     if (reservedStep === 2) {
@@ -66,10 +69,9 @@ function Main() {
   const handleUpdateStatus = (status, id) => {
     updateMutation.mutate({
       id,
-       status
+      status,
     });
   };
-
 
   const filterData = () => {
     return data?.filter((item) =>
@@ -111,6 +113,16 @@ function Main() {
                   Reservasi
                 </button>
               </Link>
+
+              {/* <button className="btn btn-primary shadow-md mr-2">
+                Cash In/Out
+              </button>
+              <button className="btn btn-primary shadow-md mr-2">
+                Buka Sesi
+              </button>
+              <button className="btn btn-primary shadow-md mr-2">
+                Tutup Sesi
+              </button> */}
             </div>
           </div>
 
@@ -154,7 +166,6 @@ function Main() {
                         </DropdownToggle>
                       )}
 
-                    
                       <DropdownMenu className="w-40">
                         <DropdownContent>
                           {table.status !== "OPEN" && (
@@ -179,11 +190,16 @@ function Main() {
                       </DropdownMenu>
                     </Dropdown>
                     {table.status === "ORDERED" && (
-                        <div className="btn btn-primary" onClick={() => {
-                          setSelectedTable(table)
-                          setModalPindah(true)
-                        }}>Pindah</div>
-                      )}
+                      <div
+                        className="btn btn-primary"
+                        onClick={() => {
+                          setSelectedTable(table);
+                          setModalPindah(true);
+                        }}
+                      >
+                        Pindah
+                      </div>
+                    )}
                   </div>
 
                   <div className="absolute top-0 left-2 ml-2 mt-3 ml-aut text-lg font-semibold">

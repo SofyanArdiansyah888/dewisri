@@ -22,37 +22,39 @@ function Main() {
     formState: { errors },
     handleSubmit,
     reset,
-    setError
+    setError,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
- 
-  const user = getUser()
-  const location = useLocation()
-  const redirectPath = location.state?.path || '/'
- 
+
+  const user = getUser();
+  const location = useLocation();
+  const redirectPath = location.state?.path || "/";
+  
   useEffect(() => {
- 
-    if(auth.error){
-      setError('email',{message: auth.error})
-    }
-    if(user){
-      navigate(redirectPath,{replace: true})
-    }
-    return () => {}
-  },[user, auth.error])
 
- 
+    if (auth?.error) {
+      setError("email", { message: auth?.error });
+    }
 
-  const handleLogin = (data) => { 
-      auth.login(data)
-  }
+    if (auth?.error?.message) {
+      setError("email", { message: auth?.error?.message });
+    }  
+    
+    if (user) {
+      navigate(redirectPath, { replace: true });
+    }
+    return () => {};
+  }, [user, auth.error]);
+
+  const handleLogin = (data) => {
+    auth.login(data);
+  };
 
   useEffect(() => {
     dom("body").removeClass("main").removeClass("error-page").addClass("login");
   }, []);
-
 
   return (
     <>
@@ -138,7 +140,7 @@ function Main() {
                     </label>
                   </div>
 
-                  <button className="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top mt-4">
+                  <button className="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top mt-4" disabled={auth.isLoading}>
                     Login
                   </button>
                 </form>
@@ -148,7 +150,6 @@ function Main() {
           {/* END: Login Form */}
         </div>
       </div>
-
     </>
   );
 }

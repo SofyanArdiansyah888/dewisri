@@ -162,7 +162,7 @@ function Main() {
                         ? categories.map((category) => (
                             <div
                               key={category.id}
-                              className={`box px-4 py-3 cursor-pointer ${
+                              className={`box px-4 py-3 cursor-pointer whitespace-nowrap ${
                                 selectedCategory === category.name
                                   ? "bg-secondary"
                                   : "bg-base"
