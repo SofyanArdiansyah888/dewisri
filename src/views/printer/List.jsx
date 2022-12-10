@@ -2,6 +2,7 @@ import { Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
 import EmptyData from "../../components/EmptyData";
 import { useCategory } from "../../hooks/useCategory";
+import { usePrinter } from "../../hooks/usePrinter";
 import api from "../../services/api";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
@@ -12,26 +13,25 @@ function Main() {
   const [modalEdit, setmodalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [selectedPrinter, setselectedPrinter] = useState();
-  const [printers, setPrinters] = useState([]);
-  const [loading, setLoading] = useState(false);
+  
   const [isChanged, setIsChanged] = useState(false);
-  const {data: categories} = useCategory()
+  const {data:printers, isLoading: loading} = usePrinter()
 
-  useEffect(() => {
-    getPrinters();
-  }, []);
+  // useEffect(() => {
+  //   getPrinters();
+  // }, []);
 
-  useEffect(() => {
-    isChanged && getPrinters();
-  }, [isChanged]);
+  // useEffect(() => {
+  //   isChanged && getPrinters();
+  // }, [isChanged]);
 
-  async function getPrinters() {
-    setLoading(true);
-    let response = await api.get("printers");
-    setPrinters(response.data);
-    setLoading(false);
-    setIsChanged(false);
-  }
+  // async function getPrinters() {
+  //   setLoading(true);
+  //   let response = await api.get("printers");
+  //   setPrinters(response.data);
+  //   setLoading(false);
+  //   setIsChanged(false);
+  // }
 
   const handleEdit = (printer) => {
     setselectedPrinter(printer);
@@ -93,51 +93,49 @@ function Main() {
               {printers.map((printer, key) => (
                 <tr key={key} className="intro-x">
                   <td>
-                    <a href="" className="font-medium whitespace-nowrap">
+                    <div className="font-medium whitespace-nowrap">
                       {printer.name}
-                    </a>
+                    </div>
                   </td>
                   <td>
-                    <a href="" className="font-medium whitespace-nowrap">
+                    <div className="font-medium whitespace-nowrap">
                       {printer.description}
-                    </a>
+                    </div>
                   </td>
                   <td>
-                    <a href="" className="font-medium whitespace-nowrap">
+                    <div className="font-medium whitespace-nowrap">
                       {printer.ip_address}
-                    </a>
+                    </div>
                   </td>
 
                   <td>
-                    <a href="" className="font-medium whitespace-nowrap">
+                    <div className="font-medium whitespace-nowrap">
                       {printer.category_name}
-                    </a>
+                    </div>
                   </td>
 
                   <td>
-                    <a href="" className="font-medium whitespace-nowrap">
+                    <div className="font-medium whitespace-nowrap">
                       {printer.cashier == true ? "Ya" : "Tidak"}
-                    </a>
+                    </div>
                   </td>
 
                   {/* ACTION BUTTONS */}
                   <td className="table-report__action w-56">
                     <div className="flex justify-center items-center">
-                      <a
+                      <div
                         className="flex items-center mr-3"
-                        href="#"
                         onClick={() => handleEdit(printer)}
                       >
                         <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
                         Edit
-                      </a>
-                      <a
+                      </div>
+                      <div
                         className="flex items-center text-danger"
-                        href="#"
                         onClick={() => handleDelete(printer)}
                       >
                         <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -226,8 +224,6 @@ function Main() {
           modal={modalDelete}
           setModal={setModalDelete}
           printer={selectedPrinter}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
         />
       </div>
     </>

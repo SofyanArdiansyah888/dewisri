@@ -4,20 +4,21 @@ import { HashRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { AuthProvider } from "./hooks/useAuth";
 import { ErrorProvider } from "./hooks/useError";
+import { SuccessProvider } from "./hooks/useSuccess";
 import Router from "./router";
 function App() {
-
   return (
     <RecoilRoot>
-      <ErrorProvider>
-        <AuthProvider>
-          <HashRouter>
-            <Router />
-            <ScrollToTop />
-        
-          </HashRouter>
-        </AuthProvider>
-      </ErrorProvider>
+      <SuccessProvider>
+        <ErrorProvider>
+          <AuthProvider>
+            <HashRouter>
+              <Router />
+              <ScrollToTop />
+            </HashRouter>
+          </AuthProvider>
+        </ErrorProvider>
+      </SuccessProvider>
     </RecoilRoot>
   );
 }

@@ -16,9 +16,9 @@ const schema = yup.object({
 });
 function UpdateModal({ modal, setModal, printer, setIsChanged }) {
   const { data: categories } = useCategory();
-  const queryClient = useQueryClient()
-  const {mutate: updatePrinter} = useUpdatePrinter(printer?.id,() => {
-    queryClient.invalidateQueries({ queryKey: ["printers"] })
+  const queryClient = useQueryClient();
+  const { mutate: updatePrinter } = useUpdatePrinter(printer?.id, () => {
+    queryClient.invalidateQueries({ queryKey: ["printers"] });
     reset(() => ({
       name: "",
       description: "",
@@ -26,7 +26,7 @@ function UpdateModal({ modal, setModal, printer, setIsChanged }) {
     }));
     setModal(false);
     setIsChanged(true);
-  })
+  });
   const {
     register,
     trigger,
@@ -45,18 +45,15 @@ function UpdateModal({ modal, setModal, printer, setIsChanged }) {
       setValue("description", printer.description);
       setValue("ip_address", printer.ip_address);
       setValue("cashier", printer.cashier);
-      setValue("categories", printer.categories.split(','));
+      setValue("categories", printer?.categories?.split(","));
     }
   });
 
   const handleUpdate = async (data) => {
     updatePrinter({
       ...data,
-      categories : data.categories.toString()
-    })
-    
-    
-    
+      categories: data.categories.toString(),
+    });
   };
   return (
     <>
@@ -145,7 +142,7 @@ function UpdateModal({ modal, setModal, printer, setIsChanged }) {
                 name="cashier"
                 id="cashier"
               >
-                <option value="0" >Tidak</option>
+                <option value="0">Tidak</option>
                 <option value="1">Ya</option>
               </select>
               {errors.cashier && (
@@ -157,15 +154,20 @@ function UpdateModal({ modal, setModal, printer, setIsChanged }) {
               <label htmlFor="categories" className="form-label">
                 Kategori
               </label>
-              {categories?.map((category) => (
-                <>
-                  <div>
-                    
-                    <input  {...register("categories")} type="checkbox" value={category.id} />
-                    <label className="ml-3">{category.name}</label>
-                  </div>
-                </>
-              ))}
+              <div className="grid grid-cols-2">
+                {categories?.map((category) => (
+                  <>
+                    <div>
+                      <input
+                        {...register("categories")}
+                        type="checkbox"
+                        value={category.id}
+                      />
+                      <label className="ml-3">{category.name}</label>
+                    </div>
+                  </>
+                ))}
+              </div>
 
               {errors.categories && (
                 <div className="text-danger mt-2">

@@ -15,15 +15,16 @@ import SideMenuTooltip from "@/components/side-menu-tooltip/Main";
 import { checkMenu } from "../../stores/side-menu";
 import { getUser } from "../../services/database";
 import { useError } from "../../hooks/useError";
+import { useSuccess } from "../../hooks/useSuccess";
 
 function Main() {
   const navigate = useNavigate();
   const { errorMessage, setErrorMessage } = useError();
+  const { successMessage, setSuccessMessage } = useSuccess();
   const location = useLocation();
   const [formattedMenu, setFormattedMenu] = useState([]);
 
   const sideMenuStore = useRecoilValue(useSideMenuStore);
-  
 
   useEffect(() => {
     dom("body").removeClass("error-page").removeClass("login").addClass("main");
@@ -219,6 +220,35 @@ function Main() {
               type="button"
               onClick={() => {
                 setErrorMessage(null);
+              }}
+              className="btn w-24 btn-primary"
+            >
+              Ok
+            </button>
+          </div>
+        </ModalBody>
+      </Modal>
+
+      <Modal
+        show={successMessage}
+        onHidden={() => {
+          setSuccessMessage(null);
+        }}
+      >
+        <ModalBody className="p-0">
+          <div className="p-5 text-center">
+            <Lucide
+              icon="Verified"
+              className="w-16 h-16 text-success mx-auto mt-3"
+            />
+            <div className="text-3xl mt-5">Sukses</div>
+            <div className="text-slate-500 mt-2">{successMessage}</div>
+          </div>
+          <div className="px-5 pb-8 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setSuccessMessage(null);
               }}
               className="btn w-24 btn-primary"
             >

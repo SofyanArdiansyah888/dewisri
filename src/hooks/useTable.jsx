@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
 export function useTables(refetchInterval = null) {
   const { setErrorMessage } = useError();
@@ -61,20 +62,27 @@ export function useOrderedTables() {
 
 export function useUpdateTables(onSuccessCallback) {
   const queryClient = useQueryClient();
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
   function updateTable({ id, ...data }) {
     return api.put(`tables/${id}`, data);
   }
   return useMutation(updateTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
+      setSuccessMessage("Berhasil mengupdate data");
       onSuccessCallback(data);
     },
-    onError: () => {},
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
   });
 }
 
 export function useCreateTable(onSuccessCallback) {
   const queryClient = useQueryClient();
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
   function createTable(data) {
     return api.post(`tables`, data);
   }
@@ -82,13 +90,18 @@ export function useCreateTable(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
       onSuccessCallback(data);
+      setSuccessMessage('Berhasil Membuat Meja')
     },
-    onError: () => {},
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
   });
 }
 
 export function useDeleteTable(tableId, onSuccessCallback) {
   const queryClient = useQueryClient();
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
   function deleteTable() {
     return api.delete(`tables/${tableId}`);
   }
@@ -96,17 +109,27 @@ export function useDeleteTable(tableId, onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
       onSuccessCallback(data);
+      setSuccessMessage('Berhasil Menghapus Meja')
     },
-    onError: () => {},
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
   });
 }
 
-export function usePindahMeja(onSuccess) {
+export function usePindahMeja(onSuccessCallback) {
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
   function pindahMeja(data) {
     return api.post(`pindah-meja`, data);
   }
   return useMutation(pindahMeja, {
-    onSuccess,
-    onError: () => {},
+    onSuccess: (data) => {
+      onSuccessCallback(data);
+      setSuccessMessage("Pindah Meja Berhasil Dilakukan!");
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
   });
 }

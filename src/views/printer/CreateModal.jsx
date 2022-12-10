@@ -15,9 +15,9 @@ const schema = yup.object({
 });
 function CreateModal({ modal, setModal, setIsChanged }) {
   const { data: categories } = useCategory();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { mutate: createPrinter } = useCreatePrinter(() => {
-    queryClient.invalidateQueries({ queryKey: ["printers"] })
+    queryClient.invalidateQueries({ queryKey: ["printers"] });
     reset();
     setModal(false);
     setIsChanged(true);
@@ -135,19 +135,20 @@ function CreateModal({ modal, setModal, setIsChanged }) {
               <label htmlFor="categories" className="form-label">
                 Kategori
               </label>
-              {categories?.map((category) => (
-                <>
-                  <div>
-                    <input
-                      {...register("categories")}
-                      type="checkbox"
-                      value={category.id}
-                    />
-                    <label className="ml-3">{category.name}</label>
-                  </div>
-                </>
-              ))}
-
+              <div className="grid grid-cols-2">
+                {categories?.map((category) => (
+                  <>
+                    <div>
+                      <input
+                        {...register("categories")}
+                        type="checkbox"
+                        value={category.id}
+                      />
+                      <label className="ml-3">{category.name}</label>
+                    </div>
+                  </>
+                ))}
+              </div>
               {errors.categories && (
                 <div className="text-danger mt-2">
                   {errors.categories.message}

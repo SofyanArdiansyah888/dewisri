@@ -1,15 +1,11 @@
 import { Lucide, Modal, ModalBody } from "@/base-components";
-import api from "../../services/api";
+import { useDeletePrinter } from "../../hooks/usePrinter";
 
-function DeleteModal({ modal, setModal, printer, setIsChanged }) {
+function DeleteModal({ modal, setModal, printer }) {
+  const {mutate} = useDeletePrinter(printer?.id, () => {
+    setModal(false);
+  })
   
-  const handleDelete = async () => {
-    try {
-      await api.delete(`printers/${printer.id}`);
-      setModal(false);
-      setIsChanged(true);
-    } catch (error) {}
-  };
   return (
     <>
       <Modal
@@ -27,7 +23,7 @@ function DeleteModal({ modal, setModal, printer, setIsChanged }) {
             <div className="text-3xl mt-5">Are you sure?</div>
             <div className="text-slate-500 mt-2">
               Do you really want to delete this printer? <br />
-              <strong className="capitalize">{printer ? printer.name : ''}</strong>
+              <strong className="capitalize">{printer ? printer?.name : ''}</strong>
             </div>
           </div>
           <div className="px-5 pb-8 text-center">
@@ -43,7 +39,9 @@ function DeleteModal({ modal, setModal, printer, setIsChanged }) {
             <button
               type="button"
               className="btn btn-danger w-24"
-              onClick={handleDelete}
+              onClick={() => {
+                mutate()
+              }}
             >
               Delete
             </button>
