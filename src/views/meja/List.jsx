@@ -10,19 +10,26 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import EmptyData from "../../components/EmptyData";
-import { useOpenSession } from "../../hooks/useOpenSession";
+import { useCloseSession } from "../../hooks/useCloseSession";
 import { useTables, useUpdateTables } from "../../hooks/useTable";
+
 import { formatRupiah, secondToHourMinute } from "../../utils/formatter";
 import CreateModal from "./CreateModal";
 import DeleteModal from "./DeleteModal";
 import PindahMejaModal from "./PindahMejaModal";
 import UpdateModal from "./UpdateModal";
-
+import CashFlowModal from "./CashFlowModal";
+import OpenSessionModal from "./OpenSessionModal";
+import CloseSessionModal from "./CloseSessionModal";
+import dashboardUrl from "@/assets/images/dashboard.svg";
 function Main() {
   const [modal, setModal] = useState(false);
   const [modalEdit, setmodalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [modalPindah, setModalPindah] = useState(false);
+  const [modalCashFlow, setModalCashFlow] = useState(false);
+  const [modalOpenSession, setModalOpenSession] = useState(false);
+  const [modalCloseSession, setModalCloseSession] = useState(false);
   const [search, setSearch] = useState("");
 
   const queryClient = useQueryClient();
@@ -39,7 +46,7 @@ function Main() {
   const [reservedStep, setReservedStep] = useState(0);
   const [reservedModal, setReservedModal] = useState(false);
 
-  // const {data: openSession } = useOpenSession()
+  const { data: sessionData } = useCloseSession();
 
   useEffect(() => {
     if (reservedStep === 2) {
@@ -115,129 +122,176 @@ function Main() {
                 </button>
               </Link>
 
-              {/* <button className="btn btn-primary shadow-md mr-2">
+              <button
+                className="btn btn-primary shadow-md mr-2"
+                onClick={() => setModalCashFlow(true)}
+              >
                 Cash In/Out
               </button>
-              <button className="btn btn-primary shadow-md mr-2">
-                Buka Sesi
-              </button>
-              <button className="btn btn-primary shadow-md mr-2">
-                Tutup Sesi
-              </button> */}
+              {(!sessionData || sessionData?.type === "CLOSE") && (
+                <button
+                  className="btn btn-primary shadow-md mr-2"
+                  onClick={() => setModalOpenSession(true)}
+                >
+                  Buka Sesi
+                </button>
+              )}
+
+              {sessionData?.type === "OPEN" && (
+                <button
+                  className="btn btn-primary shadow-md mr-2"
+                  onClick={() => setModalCloseSession(true)}
+                >
+                  Tutup Sesi
+                </button>
+              )}
             </div>
           </div>
-
+          {(!sessionData || sessionData?.type === "CLOSE") && (
+            <div className="w-full text-center  h-[50vh] pt-24">
+              <img
+                src={dashboardUrl}
+                className="h-[300px]  mx-auto place-content-center"
+              />
+              <h3 className="mt-12 text-3xl text-slate-700 font-light">
+                Open Sesi Untuk Memulai
+              </h3>
+            </div>
+          )}
           {/* LIST MEJA  */}
-          {filterData()?.length === 0 || !filterData() ? (
-            <EmptyData />
-          ) : (
-            <div className="intro-y grid grid-cols-12 gap-3 sm:gap-6 mt-5 ">
-              {filterData()?.map((table, index) => (
-                <div
-                  key={index}
-                  className="intro-y col-span-6 sm:col-span-4 md:col-span-3 2xl:col-span-3"
-                >
-                  <div className="file box rounded-md px-5 pt-8 pb-5  relative zoom-in ">
-                    <div className="block font-light mt-4 text-left truncate">
-                      Waktu : {secondToHourMinute(table?.order?.diff_time ?? 0)}
-                      <br />
-                      Total Belanja :{" "}
-                      {formatRupiah(table?.order?.total_payment, "Rp.")}
-                    </div>
-                    <div className="flex justify-end mt-4">
-                      {(table.status === "ORDERED" ||
-                        table.status === "OPEN") && (
-                        <Link to={`/meja/${table.id}/pos`}>
-                          <a className="btn btn-info mr-2">ORDER</a>
-                        </Link>
-                      )}
-                      <Dropdown>
-                        {table.status === "OPEN" && (
-                          <DropdownToggle className="btn btn-success text-white">
-                            BUKA
-                          </DropdownToggle>
-                        )}
+          {sessionData?.type === "OPEN" && (
+            <>
+              {filterData()?.length === 0 || !filterData() ? (
+                <EmptyData />
+              ) : (
+                <div className="intro-y grid grid-cols-12 gap-3 sm:gap-6 mt-5 ">
+                  {filterData()?.map((table, index) => (
+                    <div
+                      key={index}
+                      className="intro-y col-span-6 sm:col-span-4 md:col-span-3 2xl:col-span-3"
+                    >
+                      <div className="file box rounded-md px-5 pt-8 pb-5  relative zoom-in ">
+                        <div className="block font-light mt-4 text-left truncate">
+                          Waktu :{" "}
+                          {secondToHourMinute(table?.order?.diff_time ?? 0)}
+                          <br />
+                          Total Belanja :{" "}
+                          {formatRupiah(table?.order?.total_payment, "Rp.")}
+                        </div>
+                        <div className="flex justify-end mt-4">
+                          {(table.status === "ORDERED" ||
+                            table.status === "OPEN") && (
+                            <Link to={`/meja/${table.id}/pos`}>
+                              <a className="btn btn-info mr-2">ORDER</a>
+                            </Link>
+                          )}
+                          <Dropdown>
+                            {table.status === "OPEN" && (
+                              <DropdownToggle className="btn btn-success text-white">
+                                BUKA
+                              </DropdownToggle>
+                            )}
 
-                        {table.status === "CLOSED" && (
-                          <DropdownToggle className="btn btn-danger">
-                            TUTUP
-                          </DropdownToggle>
-                        )}
+                            {table.status === "CLOSED" && (
+                              <DropdownToggle className="btn btn-danger">
+                                TUTUP
+                              </DropdownToggle>
+                            )}
 
-                        {table.status === "RESERVED" && (
-                          <DropdownToggle className="btn btn-warning">
-                            RESERVASI
-                          </DropdownToggle>
-                        )}
+                            {table.status === "RESERVED" && (
+                              <DropdownToggle className="btn btn-warning">
+                                RESERVASI
+                              </DropdownToggle>
+                            )}
 
+                            <DropdownMenu className="w-40">
+                              <DropdownContent>
+                                {table.status !== "OPEN" && (
+                                  <DropdownItem
+                                    onClick={() =>
+                                      handleUpdateStatus("OPEN", table.id)
+                                    }
+                                  >
+                                    BUKA
+                                  </DropdownItem>
+                                )}
+                                {table.status !== "CLOSED" && (
+                                  <DropdownItem
+                                    onClick={() =>
+                                      handleUpdateStatus("CLOSED", table.id)
+                                    }
+                                  >
+                                    TUTUP
+                                  </DropdownItem>
+                                )}
+                              </DropdownContent>
+                            </DropdownMenu>
+                          </Dropdown>
+                          {table.status === "ORDERED" && (
+                            <div
+                              className="btn btn-primary"
+                              onClick={() => {
+                                setSelectedTable(table);
+                                setModalPindah(true);
+                              }}
+                            >
+                              Pindah
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="absolute top-0 left-2 ml-2 mt-3 ml-aut text-lg font-semibold">
+                          {table.name}
+                        </div>
+                      </div>
+                      <Dropdown className="absolute top-0 right-0 mr-2 mt-3 ml-auto">
+                        <DropdownToggle
+                          tag="a"
+                          className="w-5 h-5 block"
+                          href="#"
+                        >
+                          <Lucide
+                            icon="MoreVertical"
+                            className="w-5 h-5 text-slate-500"
+                          />
+                        </DropdownToggle>
                         <DropdownMenu className="w-40">
                           <DropdownContent>
-                            {table.status !== "OPEN" && (
-                              <DropdownItem
-                                onClick={() =>
-                                  handleUpdateStatus("OPEN", table.id)
-                                }
-                              >
-                                BUKA
-                              </DropdownItem>
-                            )}
-                            {table.status !== "CLOSED" && (
-                              <DropdownItem
-                                onClick={() =>
-                                  handleUpdateStatus("CLOSED", table.id)
-                                }
-                              >
-                                TUTUP
-                              </DropdownItem>
-                            )}
+                            <DropdownItem onClick={() => handleEdit(table)}>
+                              <Lucide icon="Edit" className="w-4 h-4 mr-2" />
+                              Edit
+                            </DropdownItem>
+                            <DropdownItem onClick={() => handleDelete(table)}>
+                              <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
+                              Hapus
+                            </DropdownItem>
                           </DropdownContent>
                         </DropdownMenu>
                       </Dropdown>
-                      {table.status === "ORDERED" && (
-                        <div
-                          className="btn btn-primary"
-                          onClick={() => {
-                            setSelectedTable(table);
-                            setModalPindah(true);
-                          }}
-                        >
-                          Pindah
-                        </div>
-                      )}
                     </div>
-
-                    <div className="absolute top-0 left-2 ml-2 mt-3 ml-aut text-lg font-semibold">
-                      {table.name}
-                    </div>
-                  </div>
-                  <Dropdown className="absolute top-0 right-0 mr-2 mt-3 ml-auto">
-                    <DropdownToggle tag="a" className="w-5 h-5 block" href="#">
-                      <Lucide
-                        icon="MoreVertical"
-                        className="w-5 h-5 text-slate-500"
-                      />
-                    </DropdownToggle>
-                    <DropdownMenu className="w-40">
-                      <DropdownContent>
-                        <DropdownItem onClick={() => handleEdit(table)}>
-                          <Lucide icon="Edit" className="w-4 h-4 mr-2" />
-                          Edit
-                        </DropdownItem>
-                        <DropdownItem onClick={() => handleDelete(table)}>
-                          <Lucide icon="Trash" className="w-4 h-4 mr-2" /> Hapus
-                        </DropdownItem>
-                      </DropdownContent>
-                    </DropdownMenu>
-                  </Dropdown>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
 
           <PindahMejaModal
             modal={modalPindah}
             setModal={setModalPindah}
             table={selectedTable}
+          />
+
+          <CashFlowModal modal={modalCashFlow} setModal={setModalCashFlow} />
+
+          <OpenSessionModal
+            modal={modalOpenSession}
+            setModal={setModalOpenSession}
+          />
+
+          <CloseSessionModal
+            modal={modalCloseSession}
+            setModal={setModalCloseSession}
+            sessionData={sessionData}
           />
 
           <CreateModal modal={modal} setModal={setModal} />

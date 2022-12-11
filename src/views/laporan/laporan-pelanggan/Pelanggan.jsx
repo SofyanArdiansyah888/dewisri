@@ -2,9 +2,24 @@ import {
   Dropdown, DropdownContent,
   DropdownItem, DropdownMenu, DropdownToggle, Litepicker, Lucide
 } from "@/base-components";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useCustomers } from "../../../hooks/useCustomer";
+import { useLaporanPelanggan } from "../../../hooks/useReport";
 import LaporanPelangganChart from "./LaporanPelangganChart";
 
 function Pelanggan() {
+  const [date, setDate] = useState();
+  const [type, setType] = useState("harian");
+  const {data: customers} = useCustomers();
+  const { data: laporanPenjualan,refetch } = useLaporanPelanggan({
+    date,
+    type,
+  });
+  useEffect(() => {
+    refetch()
+    return () => refetch
+  }, [type, date]);
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">
@@ -31,8 +46,8 @@ function Pelanggan() {
                 className="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0"
               />
               <Litepicker
-                // value={salesReportFilter}
-                // onChange={setSalesReportFilter}
+                value={date}
+                onChange={setDate}
                 options={{
                   autoApply: false,
                   singleMode: false,
@@ -56,23 +71,47 @@ function Pelanggan() {
             </h2>
             <div className="flex flex-col md:flex-row md:items-center mt-12">
               <div className="flex gap-2">
-                <div className="box p-3">Harian</div>
-                <div className="box p-3">Mingguan</div>
-                <div className="box p-3">Bulanan</div>
-                <div className="box p-3">Tahunan</div>
+              <div
+                className={`box p-3 ${
+                  type === "harian" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("harian")}
+              >
+                Harian
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "mingguan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("mingguan")}
+              >
+                Mingguan
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "bulanan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("bulanan")}
+              >
+                Bulanan
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "tahunan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("tahunan")}
+              >
+                Tahunan
+              </div>
               </div>
               <Dropdown className="md:ml-auto mt-5 md:mt-0">
                 <DropdownToggle className="btn btn-outline-secondary font-normal">
                   Filter by Pelanggan
                   <Lucide icon="ChevronDown" className="w-4 h-4 ml-2" />
                 </DropdownToggle>
-                <DropdownMenu className="w-40">
+                <DropdownMenu className="w-72">
                   <DropdownContent className="overflow-y-auto h-32">
-                    <DropdownItem>PC & Laptop</DropdownItem>
-                    <DropdownItem>Smartphone</DropdownItem>
-                    <DropdownItem>Electronic</DropdownItem>
-                    <DropdownItem>Photography</DropdownItem>
-                    <DropdownItem>Sport</DropdownItem>
+                    {customers?.map((customer) => <DropdownItem>{customer.name}</DropdownItem> ) }
                   </DropdownContent>
                 </DropdownMenu>
               </Dropdown>

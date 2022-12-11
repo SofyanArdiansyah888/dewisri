@@ -138,11 +138,11 @@ const cashierMenu = [
     title: "Beranda",
   },
   // RIWAYAT TRANSAKSI
-  {
-    icon: "Clock",
-    pathname: "/riwayat-transaksi",
-    title: "Riwayat Transaksi",
-  },
+  // {
+  //   icon: "Clock",
+  //   pathname: "/riwayat-transaksi",
+  //   title: "Riwayat Transaksi",
+  // },
   // MEJA
   {
     icon: "Table",

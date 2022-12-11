@@ -14,7 +14,7 @@ import { baseUrlImage, uoms } from "../../../../utils/constant";
 import { helper } from "../../../../utils/helper";
 import Material from "./Material";
 import Variant from "./Variant";
-
+import emptyDataUrl from "@/assets/images/empty_image.svg";
 const schema = yup.object({
   name: yup.string().required(),
   // category_id: yup.string().required(),

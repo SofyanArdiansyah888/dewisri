@@ -27,7 +27,7 @@ import { MenuManual } from "./MenuManual";
 import MenuModal from "./MenuModal";
 import TaxInfo from "./TaxInfo";
 import VariantModal from "./VariantModal";
-
+import emptyDataUrl from "@/assets/images/empty_image.svg";
 function Main() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -70,7 +70,7 @@ function Main() {
   };
 
   const { data: tableOrder } = useOrderTable(id, handleGetData);
-  console.log(tableOrder);
+  
   const [search, setSearch] = useState("");
 
   const filteredData = () => {
@@ -100,6 +100,7 @@ function Main() {
         total_item: 0,
         total_payment: 0,
         product: selectedMenus,
+        order_id:  tableOrder?.id
       };
       createOrder({ data, id });
     } else {
@@ -200,7 +201,7 @@ function Main() {
                             <div className="h-[48px] w-[48px] rounded-full bg-slate-100">
                             <img
                               
-                              src="src/assets/images/empty_image.svg"
+                              src={emptyDataUrl}
                               alt="Gambar Makanan"
                             />
                             </div>

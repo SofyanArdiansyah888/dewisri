@@ -5,6 +5,8 @@ import EmptyData from "../../../components/EmptyData";
 import { useProducts } from "../../../hooks/useProduct";
 import { baseUrlImage } from "../../../utils/constant";
 import DeleteModal from "./DeleteModal";
+import emptyDataUrl from "@/assets/images/empty_image.svg";
+
 function Main() {
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -75,12 +77,20 @@ function Main() {
                     <td className="w-40">
                       <div className="flex">
                         <div className="w-24 h-24 image-fit zoom-in">
-                          <Tippy
-                            tag="img"
-                            alt={`Foto ${product.name}`}
-                            className="rounded-full"
-                            src={`${baseUrlImage}/products/${product.photo}`}
-                          />
+                          {
+                            product?.photo ? (<Tippy
+                              tag="img"
+                              alt={`Foto ${product.name}`}
+                              className="rounded-full"
+                              src={` ${baseUrlImage}/products/${product.photo}`}
+                            />) : (<Tippy
+                              tag="img"
+                              alt={`Foto ${product.name}`}
+                              className="rounded-full"
+                              src={emptyDataUrl}
+                            />)
+                          }
+                          
                         </div>
                       </div>
                     </td>

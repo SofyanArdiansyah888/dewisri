@@ -2,7 +2,19 @@ import LineChart from "@/components/line-chart/Main";
 import { Lucide, Litepicker } from "@/base-components";
 import { Link } from "react-router-dom";
 import PajakLineChart from "./PajakLineChart";
+import { useEffect, useState } from "react";
+import { useLaporanPajak } from "../../../hooks/useReport";
 function Pajak() {
+  const [date, setDate] = useState();
+  const [type, setType] = useState("harian");
+  const { data: laporanPajak,refetch } = useLaporanPajak({
+    date,
+    type,
+  });
+  useEffect(() => {
+    refetch()
+    return () => refetch
+  }, [type, date]);
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">Laporan Pajak</h2>
@@ -25,8 +37,8 @@ function Pajak() {
                 className="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0"
               />
               <Litepicker
-                // value={salesReportFilter}
-                // onChange={setSalesReportFilter}
+                value={date}
+                onChange={setDate}
                 options={{
                   autoApply: false,
                   singleMode: false,
@@ -51,10 +63,38 @@ function Pajak() {
         <div className="mb-8">
           <h1 className="text-xl">Grafik Pajak</h1>
           <div className="flex flex-row gap-2 justify-items-center justify-end">
-            <div className="box p-3">Harian</div>
-            <div className="box p-3">Mingguan</div>
-            <div className="box p-3">Bulanan</div>
-            <div className="box p-3">Tahunan</div>
+          <div
+                className={`box p-3 ${
+                  type === "harian" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("harian")}
+              >
+                Harian
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "mingguan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("mingguan")}
+              >
+                Mingguan
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "bulanan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("bulanan")}
+              >
+                Bulanan
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "tahunan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("tahunan")}
+              >
+                Tahunan
+              </div>
           </div>
         </div>
           <PajakLineChart height={400}className="mt-4" />

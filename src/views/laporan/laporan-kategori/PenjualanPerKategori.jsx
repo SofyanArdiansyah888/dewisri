@@ -9,9 +9,26 @@ import {
   Litepicker,
   TinySlider,
 } from "@/base-components";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useCategory } from "../../../hooks/useCategory";
+import { useLaporanKategori } from "../../../hooks/useReport";
 
 import LaporanKategoriChart from "./LaporanKategoriChart";
 function PenjualanPerKategori() {
+  const [date, setDate] = useState();
+  const [type, setType] = useState("harian");
+  const { data: laporanKategori,refetch } = useLaporanKategori({
+    date,
+    type,
+  });
+  const {data: categories} = useCategory();
+
+  useEffect(() => {
+    refetch()
+    return () => refetch
+  }, [type, date]);
+
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">
@@ -38,8 +55,8 @@ function PenjualanPerKategori() {
                 className="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0"
               />
               <Litepicker
-                // value={salesReportFilter}
-                // onChange={setSalesReportFilter}
+                value={date}
+                onChange={setDate}
                 options={{
                   autoApply: false,
                   singleMode: false,
@@ -63,23 +80,47 @@ function PenjualanPerKategori() {
             </h2>
             <div className="flex flex-col md:flex-row md:items-center mt-12">
               <div className="flex gap-2">
-                <div className="box p-3">Harian</div>
-                <div className="box p-3">Mingguan</div>
-                <div className="box p-3">Bulanan</div>
-                <div className="box p-3">Tahunan</div>
+              <div
+                className={`box p-3 ${
+                  type === "harian" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("harian")}
+              >
+                Harian
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "mingguan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("mingguan")}
+              >
+                Mingguan
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "bulanan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("bulanan")}
+              >
+                Bulanan
+              </div>
+              <div
+                className={`box p-3 ${
+                  type === "tahunan" ? "bg-yellow-100" : ""
+                } `}
+                onClick={() => setType("tahunan")}
+              >
+                Tahunan
+              </div>
               </div>
               <Dropdown className="md:ml-auto mt-5 md:mt-0">
                 <DropdownToggle className="btn btn-outline-secondary font-normal">
                   Filter by Category
                   <Lucide icon="ChevronDown" className="w-4 h-4 ml-2" />
                 </DropdownToggle>
-                <DropdownMenu className="w-40">
+                <DropdownMenu className="w-72">
                   <DropdownContent className="overflow-y-auto h-32">
-                    <DropdownItem>PC & Laptop</DropdownItem>
-                    <DropdownItem>Smartphone</DropdownItem>
-                    <DropdownItem>Electronic</DropdownItem>
-                    <DropdownItem>Photography</DropdownItem>
-                    <DropdownItem>Sport</DropdownItem>
+                    {categories?.map((category) => <DropdownItem>{category.name}</DropdownItem> ) }
                   </DropdownContent>
                 </DropdownMenu>
               </Dropdown>

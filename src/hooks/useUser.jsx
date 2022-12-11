@@ -20,11 +20,13 @@ export function useUsers(onSuccess) {
 export function useCreateUser(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
   function createUser(data) {
     return api.post(`users`, data);
   }
   return useMutation(createUser, {
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       setSuccessMessage("Berhasil Membuat User");
       onSuccessCallback(data);
     },
