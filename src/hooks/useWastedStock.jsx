@@ -1,15 +1,20 @@
 import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
-export function useCreateWastedStock(onSuccess) {
+export function useCreateWastedStock(onSuccessCallback) {
   const { setErrorMessage } = useError();
-
+  const { setSuccessMessage } = useSuccess();
+  
   function createWastedStocks(data) {
     return api.post(`wasted-stocks`, data);
   }
   return useMutation(createWastedStocks, {
-    onSuccess,
+    onSuccess: (data) => {
+      setSuccessMessage("Berhasil Membuat Stok Terbuang");
+      onSuccessCallback(data);
+    },
     onError: (error) => {
       setErrorMessage(error.message);
     },

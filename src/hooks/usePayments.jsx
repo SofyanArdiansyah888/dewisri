@@ -1,6 +1,7 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
 export function useUnpaidPayments(onSuccess, data) {
   const { setErrorMessage } = useError();
@@ -17,13 +18,18 @@ export function useUnpaidPayments(onSuccess, data) {
   });
 }
 
-export function useCreatePayment(onSuccess) {
+export function useCreatePayment(onSuccessCallback) {
   const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+
   function createPayments(data) {
     return api.post(`payments`, data);
   }
   return useMutation(createPayments, {
-    onSuccess,
+    onSuccess: (data) => {
+      onSuccessCallback(data);
+      setSuccessMessage("Berhasil Melakukan Pembayaran");
+    },
     onError: (error) => {
       setErrorMessage(error.message);
     },

@@ -21,10 +21,10 @@ const schema = yup.object({
 
 function Create() {
   const { data, loading } = useCustomers();
-  const queryClient = useQueryClient();
+  
   const navigate = useNavigate();
   const {mutate} = useCreateReservation((data) => {
-    queryClient.invalidateQueries(["reservations"]);
+    
     navigate("/reservasi");
   });
   const { data: tables } = useFreeTables();

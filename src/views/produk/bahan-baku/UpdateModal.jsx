@@ -26,10 +26,9 @@ function UpdateModal({ modal, setModal, material }) {
     resolver: yupResolver(schema),
   });
 
-  const queryClient = useQueryClient();
+
   const materialId = material && material.id;
   const { mutate } = useUpdateMaterial(materialId, () => {
-    queryClient.invalidateQueries({ queryKey: ["materials"] });
     reset(() => ({
       name: "",
       code: "",

@@ -1,14 +1,22 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
-export function useCreateOpnameStock(onSuccess) {
+export function useCreateOpnameStock(onSuccessCallback) {
   const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
+
   function createOpnameStocks(data) {
     return api.post(`opname-stocks`, data);
   }
   return useMutation(createOpnameStocks, {
-    onSuccess,
+   onSuccess: (data) => {
+      onSuccessCallback(data)
+      setSuccessMessage('Berhasil Membuat Stok Opname')
+      queryClient.invalidateQueries({ queryKey: ["opname-stock"] });
+    },
     onError: (error) => {
       setErrorMessage(error.message);
     },

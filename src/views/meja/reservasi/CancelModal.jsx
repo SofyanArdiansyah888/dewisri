@@ -3,11 +3,9 @@ import { useQueryClient } from "react-query";
 import { useCancelReservation } from "../../../hooks/useReservation";
 
 function CancelModal({ modal, setModal, reservation }) {
-  
-  const queryClient = useQueryClient();
+
   const reservationId = reservation && reservation.id;
   const { mutate } = useCancelReservation(reservationId, () => {
-    queryClient.invalidateQueries({ queryKey: ["reservations"] });
     setModal(false);
   });
 

@@ -16,9 +16,8 @@ const schema = yup.object({
 });
 function UpdateModal({ modal, setModal, printer, setIsChanged }) {
   const { data: categories } = useCategory();
-  const queryClient = useQueryClient();
   const { mutate: updatePrinter } = useUpdatePrinter(printer?.id, () => {
-    queryClient.invalidateQueries({ queryKey: ["printers"] });
+    
     reset(() => ({
       name: "",
       description: "",

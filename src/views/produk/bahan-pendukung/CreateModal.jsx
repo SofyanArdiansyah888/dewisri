@@ -24,9 +24,8 @@ function CreateModal({ modal, setModal }) {
     resolver: yupResolver(schema),
   });
 
-  const queryClient = useQueryClient();
-  const { mutate } = useCreateMaterial((data) => {
-    queryClient.invalidateQueries({ queryKey: ["materials"] });
+  
+  const { mutate } = useCreateMaterial((data) => {  
     reset(() => ({
       name: "",
       code: "",

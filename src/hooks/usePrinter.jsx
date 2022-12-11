@@ -20,6 +20,8 @@ export function usePrinter(onSuccess) {
 export function useCreatePrinter(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
+  
   function createPrinter(data) {
     return api.post(`printers`, data);
   }
@@ -27,6 +29,7 @@ export function useCreatePrinter(onSuccessCallback) {
     onSuccess: (data) => {
       setSuccessMessage("Berhasil Membuat Printer");
       onSuccessCallback(data);
+      queryClient.invalidateQueries({ queryKey: ["printers"] });
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -37,6 +40,7 @@ export function useCreatePrinter(onSuccessCallback) {
 export function useUpdatePrinter(printerId, onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
   function updatePrinter(data) {
     return api.put(`printers/${printerId}`, data);
   }
@@ -44,6 +48,7 @@ export function useUpdatePrinter(printerId, onSuccessCallback) {
     onSuccess: (data) => {
       setSuccessMessage("Berhasil Mengupdate Printer");
       onSuccessCallback(data);
+      queryClient.invalidateQueries({ queryKey: ["printers"] });
     },
     onError: (error) => {
       setErrorMessage(error.message);

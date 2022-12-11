@@ -190,11 +190,21 @@ function Main() {
                         }  hover:bg-secondary rounded-md p-2`}
                       >
                         <div className="flex">
-                          <img
-                            className="h-[48px] w-[48px] rounded-md"
-                            src={`${baseUrlImage}/products/${product.photo}`}
-                            alt="Gambar Makanan"
-                          />
+                          {product?.photo ? (
+                            <img
+                              className="h-[48px] w-[48px] rounded-md"
+                              src={`${baseUrlImage}/products/${product.photo}`}
+                              alt="Gambar Makanan"
+                            />
+                          ) : (
+                            <div className="h-[48px] w-[48px] rounded-full bg-slate-100">
+                            <img
+                              
+                              src="src/assets/images/empty_image.svg"
+                              alt="Gambar Makanan"
+                            />
+                            </div>
+                          )}
                           <div className="text-left ml-4">
                             <h6 className="font-semibold text-md">
                               {product.name}

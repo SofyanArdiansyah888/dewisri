@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
 
@@ -44,26 +44,39 @@ export function useMaterial(onSuccess) {
   });
 }
 
-export function useCreateMaterial(onSuccess) {
+export function useCreateMaterial(onSuccessCallback) {
   const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
   function createdMaterial(data) {
     return api.post(`materials`, data);
   }
   return useMutation(createdMaterial, {
-    onSuccess,
+    onSuccess: (data) => {
+      onSuccessCallback(data);
+      setSuccessMessage("Berhasil Membuat Bahan");
+      queryClient.invalidateQueries({ queryKey: ["materials"] });
+    },
     onError: (error) => {
       setErrorMessage(error.message);
     },
   });
 }
 
-export function useUpdateMaterial(userId, onSuccess) {
+export function useUpdateMaterial(userId, onSuccessCallback) {
   const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
+
   function updatedMaterial(data) {
     return api.put(`materials/${userId}`, data);
   }
   return useMutation(updatedMaterial, {
-    onSuccess,
+    onSuccess: (data) => {
+      onSuccessCallback(data);
+      setSuccessMessage("Berhasil Membuat Bahan");
+      queryClient.invalidateQueries({ queryKey: ["materials"] });
+    },
     onError: (error) => {
       setErrorMessage(error.message);
     },

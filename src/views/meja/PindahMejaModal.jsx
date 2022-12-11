@@ -10,14 +10,13 @@ const schema = yup.object({
 });
 function PindahMejaModal({ modal, setModal, table }) {
   const { data: freeTables } = useFreeTables();
-  const queryClient = useQueryClient();
+  
   const { mutate: pindahMeja } = usePindahMeja(() => {
     reset(() => ({
       table_id: "",
     }));
     setModal(false);
-    queryClient.invalidateQueries({queryKey: ["free-tables"]});
-    queryClient.invalidateQueries({queryKey: ["tables"]});
+    
   });
 
   const {

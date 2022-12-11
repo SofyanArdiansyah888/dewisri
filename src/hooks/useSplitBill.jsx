@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
 export function useSplitBill(data, onSuccess) {
   const { setErrorMessage } = useError();
@@ -17,13 +18,18 @@ export function useSplitBill(data, onSuccess) {
   });
 }
 
-export function useCreateSplitBill(onSuccess) {
+export function useCreateSplitBill(onSuccessCallback) {
   const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  
   function createSplitBill(data) {
     return api.post(`split-bill`, data);
   }
   return useMutation(createSplitBill, {
-    onSuccess,
+    onSuccess: (data) => {
+      setSuccessMessage("Berhasil Pisah Bill");
+      onSuccessCallback(data);
+    },
     onError: (error) => {
       setErrorMessage(error.message);
     },

@@ -28,10 +28,8 @@ function UpdateModal({ modal, setModal, material }) {
     resolver: yupResolver(schema),
   });
 
-  const queryClient = useQueryClient();
   const materialId = material && material.id;
   const { mutate } = useUpdateMaterial(materialId, () => {
-    queryClient.invalidateQueries({ queryKey: ["materials"] });
     reset(() => ({
       name: "",
       code: "",
@@ -58,7 +56,9 @@ function UpdateModal({ modal, setModal, material }) {
       >
         <form
           className="validate-form"
-          onSubmit={handleSubmit((data) => mutate({ ...data, type: "SUPPORT" }))}
+          onSubmit={handleSubmit((data) =>
+            mutate({ ...data, type: "SUPPORT" })
+          )}
         >
           <ModalHeader>
             <h2 className="font-medium text-base mr-auto">

@@ -24,10 +24,8 @@ function UpdateModal({ modal, setModal, category }) {
     resolver: yupResolver(schema),
   });
 
-  const queryClient = useQueryClient();
   const categoryId = category && category.id;
   const { mutate } = useUpdateCategory(categoryId, () => {
-    queryClient.invalidateQueries({ queryKey: ["categories"] });
     reset(() => ({
       name: "",
     }));

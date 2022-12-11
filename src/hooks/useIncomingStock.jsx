@@ -1,14 +1,20 @@
 import { useMutation, useQuery } from "react-query";
 import api from "../services/api";
 import { useError } from "./useError";
+import { useSuccess } from "./useSuccess";
 
-export function useCreateIncomingStock(onSuccess) {
+export function useCreateIncomingStock(onSuccessCallback) {
   const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+
   function createIncomingStocks(data) {
     return api.post(`incoming-stocks`, data);
   }
   return useMutation(createIncomingStocks, {
-    onSuccess,
+    onSuccess:(data) => {
+      setSuccessMessage('Berhasil Membuat Stok Masuk')
+      onSuccessCallback(data)
+    },
     onError: (error) => { setErrorMessage(error?.message)},
   });
 }

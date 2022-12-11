@@ -3,11 +3,10 @@ import { useQueryClient } from "react-query";
 import { useDeleteProduct } from "../../../hooks/useProduct";
 
 function DeleteModal({ modal, setModal, product }) {
-  const queryClient = useQueryClient();
+  
   const productId = product && product.id;
   
   const { mutate } = useDeleteProduct(productId, () => {
-    queryClient.invalidateQueries({ queryKey: ["products"] });
     setModal(false);
   });
 

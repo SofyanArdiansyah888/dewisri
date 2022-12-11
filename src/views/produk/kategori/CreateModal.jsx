@@ -21,9 +21,7 @@ function CreateModal({ modal, setModal }) {
     resolver: yupResolver(schema),
   });
 
-  const queryClient = useQueryClient();
   const { mutate } = useCreateCategory(() => {
-    queryClient.invalidateQueries({ queryKey: ["categories"] });
     reset(() => ({
       name: "",
     }));

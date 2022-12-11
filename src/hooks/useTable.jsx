@@ -90,7 +90,7 @@ export function useCreateTable(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
       onSuccessCallback(data);
-      setSuccessMessage('Berhasil Membuat Meja')
+      setSuccessMessage("Berhasil Membuat Meja");
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -109,7 +109,7 @@ export function useDeleteTable(tableId, onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
       onSuccessCallback(data);
-      setSuccessMessage('Berhasil Menghapus Meja')
+      setSuccessMessage("Berhasil Menghapus Meja");
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -120,6 +120,7 @@ export function useDeleteTable(tableId, onSuccessCallback) {
 export function usePindahMeja(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
+  const queryClient = useQueryClient();
   function pindahMeja(data) {
     return api.post(`pindah-meja`, data);
   }
@@ -127,6 +128,8 @@ export function usePindahMeja(onSuccessCallback) {
     onSuccess: (data) => {
       onSuccessCallback(data);
       setSuccessMessage("Pindah Meja Berhasil Dilakukan!");
+      queryClient.invalidateQueries({ queryKey: ["free-tables"] });
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
     },
     onError: (error) => {
       setErrorMessage(error.message);
