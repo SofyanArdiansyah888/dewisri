@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
       }
   },[])
 
-  function doLogin({ email, password }) {
-    return api.post(`login`, { email, password });
+  function doLogin({ id, password }) {
+    return api.post(`login`, { id, password });
   }
 
 

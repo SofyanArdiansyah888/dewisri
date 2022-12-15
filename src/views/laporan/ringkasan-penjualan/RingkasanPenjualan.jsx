@@ -98,7 +98,7 @@ function RingkasanPenjualan() {
               </div>
             </div>
           </div>
-          <RingkasanPenjualanChart height={400}  className="mt-4" />
+          <RingkasanPenjualanChart height={400} type={type} data={[100,200,300]}  className="mt-4" />
         </div>
       </div>
     </>

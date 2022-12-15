@@ -15,7 +15,6 @@ const schema = yup.object({
   description: yup.string().required(),
 });
 export default function CloseSessionModal({ setModal, modal, sessionData }) {
-  console.log(sessionData);
   const { mutate: createSession } = useCreateCloseSession(() => {
     reset();
     setModal(false);

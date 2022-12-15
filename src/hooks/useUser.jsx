@@ -17,6 +17,20 @@ export function useUsers(onSuccess) {
   });
 }
 
+export function useAdmin(onSuccess) {
+  const { setErrorMessage } = useError();
+  function fetchUser() {
+    return api.get(`users?role=noncashier`);
+  }
+  return useQuery(["users"], fetchUser, {
+    onSuccess,
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+    select: (data) => data.data,
+  });
+}
+
 export function useCreateUser(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();

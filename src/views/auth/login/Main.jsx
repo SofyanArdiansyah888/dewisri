@@ -7,14 +7,17 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useAuth } from "../../../hooks/useAuth";
+import { useAdmin } from "../../../hooks/useUser";
 import { getUser } from "../../../services/database";
 const schema = yup.object({
-  email: yup.string().required(),
+  id: yup.number().required(),
   password: yup.string().required(),
 });
 
 function Main() {
   const auth = useAuth();
+  const { data: users } = useAdmin();
+  
   const navigate = useNavigate();
   const {
     register,
@@ -31,17 +34,21 @@ function Main() {
   const user = getUser();
   const location = useLocation();
   const redirectPath = location.state?.path || "/";
-  
-  useEffect(() => {
 
+  useEffect(() => {
+    
     if (auth?.error) {
-      setError("email", { message: auth?.error });
+      setError("id", { message: auth?.error });
     }
 
     if (auth?.error?.message) {
-      setError("email", { message: auth?.error?.message });
-    }  
-    
+      setError("id", { message: auth?.error?.message });
+    }
+
+    if (auth?.error?.response) {
+      setError("id", { message: auth?.error?.response?.data?.message });
+    }
+
     if (user) {
       navigate(redirectPath, { replace: true });
     }
@@ -103,15 +110,21 @@ function Main() {
                   className="validate-form"
                   onSubmit={handleSubmit(handleLogin)}
                 >
-                  <input
-                    {...register("email")}
+                  <select
+                    {...register("id")}
                     type="text"
-                    className="intro-x login__input form-control py-3 px-4 block"
-                    placeholder="Email"
-                  />
-                  {errors.email && (
+                    className="intro-x login__input form-control py-3 px-4 block capitalize"
+                  >
+                    <option>Pilih User</option>
+                    {users
+                      ? users?.map((user) => (
+                          <option value={user.id} className="capitalize"> {user.name}</option>
+                        ))
+                      : ""}
+                  </select>
+                  {errors.id && (
                     <div className="text-danger mt-2">
-                      {errors.email.message}
+                      {errors.id.message}
                     </div>
                   )}
                   <input
@@ -140,7 +153,10 @@ function Main() {
                     </label>
                   </div>
 
-                  <button className="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top mt-4" disabled={auth.isLoading}>
+                  <button
+                    className="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top mt-4"
+                    disabled={auth.isLoading}
+                  >
                     Login
                   </button>
                 </form>

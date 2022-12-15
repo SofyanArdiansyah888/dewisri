@@ -11,26 +11,48 @@ function RingkasanPenjualanChart(props) {
   const colorScheme = useRecoilValue(colorSchemeStore);
 
   const data = useMemo(() => {
+    let labels = []
+  
+    switch(props.type){
+   
+      case 'mingguan':
+        labels = [1,2,3,4]
+        break;
+      case 'bulanan':
+        labels = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ]
+      break;
+      case 'tahunan':
+        let years = []
+        for(let i=0;i<5;i++){
+          years.push(new Date().getFullYear()+i)
+        }
+        labels = years
+        break; 
+      default:
+        labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+      break;
+    }
+      
+    
     return {
-      labels: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
+      labels,
       datasets: [
- 
         {
           label: "Penjualan",
-          data: [0, 300, 400, 560, 320, 600, 720, 850, 690, 805, 1200, 1010],
+          data: props.data,
           borderWidth: 2,
           borderDash: [2, 2],
           borderColor: darkMode
