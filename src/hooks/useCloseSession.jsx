@@ -13,7 +13,7 @@ export function useCloseSession(onSuccess) {
       onError: (error) => {
         setErrorMessage(error?.message);
       },
-      select: (data) => data.data,
+      select: (data) => data.last_session,
     });
   }
   

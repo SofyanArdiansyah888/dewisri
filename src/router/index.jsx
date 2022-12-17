@@ -7,13 +7,13 @@ import ErrorPage from "../views/errors/Main";
 import PointOfSale from "../views/pos/Main";
 
 // PRODUCT
-import RingkasanPenjualan from "../views/laporan/ringkasan-penjualan/RingkasanPenjualan";
+import LaporanPenjualan from "../views/laporan/ringkasan-penjualan/RingkasanPenjualan";
+import LaporanPenjualanShift from "../views/laporan/shift/RingkasanPenjualan";
 import ListBahanBaku from "../views/produk/bahan-baku/List";
 import ListBahanPendukung from "../views/produk/bahan-pendukung/List";
 import ListKategori from "../views/produk/kategori/List";
 import CreateProduk from "../views/produk/produk/Create/Index";
 import UpdateProduk from "../views/produk/produk/Update/Index";
-
 
 import ListProduk from "../views/produk/produk/List";
 import { Navigate } from "react-router-dom";
@@ -21,9 +21,6 @@ import { Navigate } from "react-router-dom";
 import UserList from "../views/user/List";
 
 // LAPORAN
-// import Diskon from "../views/laporan/Diskon";
-// import Pajak from "../views/laporan/Pajak";
-// import Pegawai from "../views/laporan/Pegawai";
 import Pelanggan from "../views/laporan/laporan-pelanggan/Pelanggan";
 import PenjualanPerProduk from "../views/laporan/laporan-produk/PenjualanPerProduk";
 import PenjualanPerKategori from "../views/laporan/laporan-kategori/PenjualanPerKategori";
@@ -45,6 +42,7 @@ import StokWasted from "../views/inventaris/stok-wasted/List";
 // MEJA
 import ListMeja from "../views/meja/List";
 import ListPajak from "../views/pajak/List";
+import ListDiskon from "../views/discount/List";
 
 // Pelanggan
 import CustomerList from "../views/pelanggan/List";
@@ -59,192 +57,349 @@ import TransferOrder from "../views/pos/TransferOrder";
 import Payment from "../views/pos/Payment";
 import PaymentReceipt from "../views/pos/PaymentReceipt";
 import SplitBill from "../views/pos/SplitBill";
-import LaporanPajak from '../views/laporan/pajak/Pajak'
+import LaporanPajak from "../views/laporan/pajak/Pajak";
 
-function Router() {   
-  const auth = useAuth()
-  const location = useLocation()
-  const redirectPath = location.state?.path || '/'
- 
+function Router() {
+  const auth = useAuth();
+  const location = useLocation();
+  const redirectPath = location.state?.path || "/";
+
   const routes = [
     {
       path: "/",
-      element: <RequireAuth><SideMenu /></RequireAuth>,
+      element: (
+        <RequireAuth>
+          <SideMenu />
+        </RequireAuth>
+      ),
       children: [
         // BERANDA
         {
           path: "/",
-          element: <RequireAuth><Dashboard /></RequireAuth> ,
+          element: (
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          ),
         },
         {
           path: "/beranda",
-          element: <RequireAuth><Dashboard /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          ),
         },
         // USER
         {
           path: "/user",
-          element: <RequireAuth><UserList /></RequireAuth> ,
+          element: (
+            <RequireAuth>
+              <UserList />
+            </RequireAuth>
+          ),
         },
         // LAPORAN
         {
-          path: "laporan/ringkasan-penjualan",
-          element: <RequireAuth><RingkasanPenjualan /></RequireAuth>,
+          path: "laporan/laporan-penjualan",
+          element: (
+            <RequireAuth>
+              <LaporanPenjualan />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "laporan/laporan-penjualan-shift",
+          element: (
+            <RequireAuth>
+              <LaporanPenjualanShift />
+            </RequireAuth>
+          ),
         },
         {
           path: "/laporan/penjualan-perproduk",
-          element: <RequireAuth><PenjualanPerProduk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <PenjualanPerProduk />
+            </RequireAuth>
+          ),
         },
         {
           path: "/laporan/penjualan-perkategori",
-          element: <RequireAuth><PenjualanPerKategori /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <PenjualanPerKategori />
+            </RequireAuth>
+          ),
         },
         {
           path: "/laporan/pajak",
-          element: <RequireAuth><LaporanPajak /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <LaporanPajak />
+            </RequireAuth>
+          ),
         },
         {
           path: "/laporan/pelanggan",
-          element: <RequireAuth><Pelanggan /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <Pelanggan />
+            </RequireAuth>
+          ),
         },
-        // {
-        //   path: "/laporan/pegawai",
-        //   element: <RequireAuth><Pegawai /></RequireAuth>,
-        // },
-        // {
-        //   path: "/laporan/diskon",
-        //   element: <RequireAuth><Diskon /></RequireAuth>,
-        // },
+
         // RIWAYAT TRANSAKSI
         {
           path: "/riwayat-transaksi",
-          element: <RequireAuth><RiwayatTransaksi /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <RiwayatTransaksi />
+            </RequireAuth>
+          ),
         },
         // PRODUK
         {
           path: "/produk/produk",
-          element: <RequireAuth><ListProduk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListProduk />
+            </RequireAuth>
+          ),
         },
         {
           path: "/produk/produk/create",
-          element: <RequireAuth><CreateProduk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <CreateProduk />
+            </RequireAuth>
+          ),
         },
         {
           path: "/produk/produk/:id/update",
-          element: <RequireAuth><UpdateProduk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <UpdateProduk />
+            </RequireAuth>
+          ),
         },
         {
           path: "/produk/kategori",
-          element: <RequireAuth><ListKategori /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListKategori />
+            </RequireAuth>
+          ),
         },
         {
           path: "/produk/bahan-baku",
-          element: <RequireAuth><ListBahanBaku /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListBahanBaku />
+            </RequireAuth>
+          ),
         },
         {
           path: "/produk/bahan-pendukung",
-          element: <RequireAuth><ListBahanPendukung /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListBahanPendukung />
+            </RequireAuth>
+          ),
         },
         // INVENTARIS
         {
           path: "/inventori/stok-opname",
-          element: <RequireAuth><StokOpname /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <StokOpname />
+            </RequireAuth>
+          ),
         },
         {
           path: "/inventori/stok-opname/create",
-          element: <RequireAuth><CreateStokOpname /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <CreateStokOpname />
+            </RequireAuth>
+          ),
         },
         {
           path: "/inventori/stok-opname/:id",
-          element: <RequireAuth><DetailStokOpname /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <DetailStokOpname />
+            </RequireAuth>
+          ),
         },
 
         {
           path: "/inventori/stok-wasted",
-          element: <RequireAuth><StokWasted /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <StokWasted />
+            </RequireAuth>
+          ),
         },
         {
           path: "/inventori/stok-wasted/create",
-          element: <RequireAuth><CreateStokWasted /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <CreateStokWasted />
+            </RequireAuth>
+          ),
         },
         {
           path: "/inventori/stok-wasted/:id",
-          element: <RequireAuth><DetailStokWasted /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <DetailStokWasted />
+            </RequireAuth>
+          ),
         },
 
         {
           path: "/inventori/daftar-stok",
-          element: <RequireAuth><DaftarStok /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <DaftarStok />
+            </RequireAuth>
+          ),
         },
-        
 
         {
           path: "/inventori/stok-masuk",
-          element: <RequireAuth><StokMasuk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <StokMasuk />
+            </RequireAuth>
+          ),
         },
 
         {
           path: "/inventori/stok-masuk/:id",
-          element: <RequireAuth><DetailStokMasuk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <DetailStokMasuk />
+            </RequireAuth>
+          ),
         },
-        
+
         {
           path: "/inventori/stok-masuk/create",
-          element: <RequireAuth><CreateStokMasuk /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <CreateStokMasuk />
+            </RequireAuth>
+          ),
         },
         // PAJAK
         {
           path: "/pajak",
-          element: <RequireAuth><ListPajak /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListPajak />
+            </RequireAuth>
+          ),
+        },
+        // PAJAK
+        {
+          path: "/diskon",
+          element: (
+            <RequireAuth>
+              <ListDiskon />
+            </RequireAuth>
+          ),
         },
         // MEJA
         {
           path: "/meja",
-          element: <RequireAuth><ListMeja /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListMeja />
+            </RequireAuth>
+          ),
         },
         {
           path: "/meja/:id/pos",
-          element: <RequireAuth><PointOfSale /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <PointOfSale />
+            </RequireAuth>
+          ),
         },
         {
           path: "/meja/:id/transfer-order",
-          element: <RequireAuth><TransferOrder /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <TransferOrder />
+            </RequireAuth>
+          ),
         },
         {
           path: "/reservasi/create",
-          element: <RequireAuth><CreateReservation /></RequireAuth>
+          element: (
+            <RequireAuth>
+              <CreateReservation />
+            </RequireAuth>
+          ),
         },
         {
           path: "/reservasi",
-          element: <RequireAuth><ListReservation /></RequireAuth>
+          element: (
+            <RequireAuth>
+              <ListReservation />
+            </RequireAuth>
+          ),
         },
         {
           path: "/meja/:tableId/order/:orderId/payment",
-          element: <RequireAuth><Payment/></RequireAuth>
+          element: (
+            <RequireAuth>
+              <Payment />
+            </RequireAuth>
+          ),
         },
         {
           path: "/payment-receipt",
-          element: <RequireAuth><PaymentReceipt/></RequireAuth>
+          element: (
+            <RequireAuth>
+              <PaymentReceipt />
+            </RequireAuth>
+          ),
         },
         {
           path: "/meja/:tableId/order/:orderId/split-bill",
-          element: <RequireAuth><SplitBill/></RequireAuth>
+          element: (
+            <RequireAuth>
+              <SplitBill />
+            </RequireAuth>
+          ),
         },
         // PELANGGAN
         {
           path: "/pelanggan",
-          element: <RequireAuth><CustomerList /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <CustomerList />
+            </RequireAuth>
+          ),
         },
         // PRINTER
         {
           path: "/printer",
-          element: <RequireAuth><ListPrinter /></RequireAuth>,
+          element: (
+            <RequireAuth>
+              <ListPrinter />
+            </RequireAuth>
+          ),
         },
       ],
     },
- 
+
     {
       path: "/login",
-      element: auth.authUser ? <Navigate to={redirectPath} /> :  <Login />,
+      element: auth.authUser ? <Navigate to={redirectPath} /> : <Login />,
     },
     {
       path: "*",

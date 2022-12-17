@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useCreatePayment, useUnpaidPayments } from "../../hooks/usePayments";
 import { formatRupiah } from "../../utils/formatter";
 import { Lucide } from "@/base-components";
@@ -8,13 +8,23 @@ function Main() {
   const { tableId, orderId } = useParams();
   const navigate = useNavigate();
   const [totalPembayaran, setTotalPembayaran] = useState(0);
+  
   const [method, setMethod] = useState("cash");
   const [sisa, setSisa] = useState(0);
   const [cash, setCash] = useState(0);
   const [bank, setBank] = useState(0);
   const [kembalian, setKembalian] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const location = useLocation()
+  
   const [data, setData] = useState();
 
+ useEffect(() => {
+  const queryParams = new URLSearchParams(location.search)
+  const temp = queryParams.get('discount');
+  if(temp) setDiscount(temp)
+  else setDiscount(0)
+ },[location])
 
   const{ mutate: createPayment} = useCreatePayment((data) => {
       navigate("/meja");
@@ -23,14 +33,22 @@ function Main() {
   useUnpaidPayments(
     (data) => {
       setData(data);
-      setTotalPembayaran(data?.total);
+      let total = data?.total;
+
+      if(!total){
+        total = 0;
+      }else{
+        total = total - ((discount/100) * data?.subtotal)
+      }
+  
+      setTotalPembayaran(total);
     },
     {
       order_id: orderId,
       table_id: tableId,
     }
   );
-
+  
   useEffect(() => {
     let temp = totalPembayaran - (bank + cash);
     
@@ -65,6 +83,7 @@ function Main() {
         table_id: tableId,
         subtotal: data?.subtotal,
         total: totalPembayaran,
+        discount,
         tax_ppn: data?.tax_ppn,
         tax_service: data?.tax_service,
         cash,
@@ -73,6 +92,7 @@ function Main() {
         products: data?.order_product,
         split: data?.split
       };
+      
       
       createPayment(temp)
   
@@ -92,11 +112,11 @@ function Main() {
         
       </div>
 
-      <div className="intro-y grid grid-cols-12 gap-5 mt-5 overflow-hidden max-h-[52vh]">
+      <div className="intro-y grid grid-cols-12 gap-5 mt-5 overflow-hidden max-h-[55vh]">
         <div className="intro-y col-span-4 flex flex-col gap-2 ">
           <div
-            className={`w-full bg-slate-200 p-8 ${
-              method === "cash" ? "bg-indigo-200" : ""
+            className={`w-full bg-slate-200 p-8 rounded-md ${
+              method === "cash" ? "bg-yellow-100" : ""
             }`}
             onClick={() => setMethod("cash")}
           >
@@ -104,8 +124,8 @@ function Main() {
             <h2> {formatRupiah(cash, "Rp.")}</h2>
           </div>
           <div
-            className={`w-full bg-slate-200 p-8 ${
-              method === "bank" ? "bg-indigo-200" : ""
+            className={`w-full bg-slate-200 p-8 rounded-md ${
+              method === "bank" ? "bg-yellow-100" : ""
             }`}
             onClick={() => setMethod("bank")}
           >
@@ -129,6 +149,7 @@ function Main() {
                 {formatRupiah(sisa, "Rp.")}{" "}
               </span>
             </h2>
+            
             <h2 className="text-xl">
               Total Pembayaran {formatRupiah(totalPembayaran, "Rp.")}
             </h2>
@@ -139,8 +160,16 @@ function Main() {
               <div
                 className="bg-slate-200 rounded-md"
                 onClick={() => {
-                  if(method === 'cash') setCash(totalPembayaran)
-                  if(method === 'bank') setBank(totalPembayaran)
+                  if(method === 'cash') {
+                    let total = totalPembayaran - bank;
+                    if(total < 0) total = 0
+                    setCash(total)
+                  }
+                  if(method === 'bank') {
+                    let total = totalPembayaran - cash;
+                    if(total < 0) total = 0
+                    setBank(totalPembayaran - cash)
+                  }
                 }}
               >
                 <h3 className="mt-[12px] text-md cursor-pointer">Uang Pass</h3>

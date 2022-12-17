@@ -2,28 +2,25 @@ import { Litepicker, Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import EmptyData from "../../../components/EmptyData";
-import {
-  useExportLaporanPenjualan,
-  useLaporanPenjualan
-} from "../../../hooks/useLaporanPenjualan";
+
+import { useExportLaporanPenjualanShift, useLaporanPenjualanShift } from "../../../hooks/useLaporanPenjualanShift";
 import GroupTable from "./GroupTable";
 
 import Table from "./Table";
 function RingkasanPenjualan() {
   const [date, setDate] = useState();
   const [type, setType] = useState("harian");
-  const [reports, setReports] = useState([]);
   const queryClient = useQueryClient();
-  const { data: laporanPenjualan, refetch } = useLaporanPenjualan({
+  const { data: laporanPenjualan, refetch } = useLaporanPenjualanShift({
     date,
     type,
   });
 
-  const { mutate: exportLaporan } = useExportLaporanPenjualan((data) => {
+  const { mutate: exportLaporan } = useExportLaporanPenjualanShift((data) => {
     const url = window.URL.createObjectURL(new Blob([data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Laporan Penjualan ${date}.xlsx`);
+    link.setAttribute('download', `Laporan Penjualan Shift ${date}.xlsx`);
     document.body.appendChild(link);
     link.click();
   });

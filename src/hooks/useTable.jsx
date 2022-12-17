@@ -71,6 +71,7 @@ export function useUpdateTables(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
       setSuccessMessage("Berhasil mengupdate data");
+      if(onSuccessCallback)
       onSuccessCallback(data);
     },
     onError: (error) => {

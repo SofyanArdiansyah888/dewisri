@@ -5,13 +5,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useCreateCashFlow } from "../../hooks/useCashFlow";
 import { useCreateCloseSession } from "../../hooks/useCloseSession";
+import { formatRupiah } from "../../utils/formatter";
 const schema = yup.object({
-  opening_cash: yup.number().required(),
-  payment: yup.number().required(),
-  cash_in: yup.number().required(),
-  cash_out: yup.number().required(),
-  total: yup.number().required(),
-  manual_count: yup.number().required(),
   description: yup.string().required(),
 });
 export default function CloseSessionModal({ setModal, modal, sessionData }) {
@@ -20,138 +15,151 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
     setModal(false);
   });
 
-  useEffect(() => {
-    if (sessionData) {
-      let openingCash = sessionData.opening_cash;
-      let cashIn = sessionData.cash_in;
-      let cashOut = sessionData.cash_out;
-      let payment = sessionData.payment;
-      let total = sessionData.total;
-      setValue("opening_cash", openingCash);
-      setValue("payment", payment);
-      setValue("cash_in", cashIn);
-      setValue("cash_out", cashOut);
-      setValue("total", total);
-
-      setValue("total_order", sessionData.total_order);
-      setValue("cash", sessionData.cash);
-      setValue("debit", sessionData.debit);
-    } else {
-      setValue("total_order", 0);
-      setValue("cash", 0);
-      setValue("debit", 0);
-    }
-  }, [sessionData]);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-    getValues,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  const handleSimpan = (data) => {
+    createSession({ ...data, action: "simpan" });
+  };
+
+  const handleSimpanPrint = (data) => {
+    createSession({ ...data, action: "simpan print day" });
+  };
+
+  const handleSimpanPrintShift = (data) => {
+    createSession({ ...data, action: "simpan print shift" });
+  };
 
   return (
     <Modal show={modal} onHidden={() => setModal(false)} size="modal-lg">
-      <form
-        onSubmit={handleSubmit((data) => {
-          const result = {
-            ...data,
-            diff_count: data.total - data.manual_count,
-            type: "CLOSE",
-          };
-          createSession(result);
-        })}
-      >
+      <form onSubmit={handleSubmit(handleSimpan)}>
         <ModalHeader>
-          <h2 className="font-medium text-base mr-auto">Close Session</h2>
+          <h2 className="font-medium text-base mr-auto">Close Sesi</h2>
         </ModalHeader>
         <ModalBody>
-          <div className="col-span-12">
-            <div className="flex flex-col gap-3">
-              {/* KAS BUKA */}
-              <div className="form-control">
-                <label className="font-medium mb-2">Kas Buka</label>
-                <input
-                  type="text"
-                  {...register("opening_cash", { required: true })}
-                  className="input input-bordered input-md w-full bg-slate-50 "
-                  disabled
-                />
-              </div>
-              <div className="flex flex-row gap-4">
-                <div className="form-control">
-                  <label className="font-medium mb-2">Kas Masuk</label>
-                  <input
-                    type="text"
-                    {...register("cash_in", { required: true })}
-                    className="input input-bordered input-md w-full bg-slate-50 "
-                    disabled
-                  />
-                </div>
+          <div className="grid grid-cols-2">
+            <div className="mt-2">
+              <label className="font-semibold">Opening Cash</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.opening_cash, "Rp.")}
+              </p>
+            </div>
 
-                <div className="form-control">
-                  <label className="font-medium mb-2">Kas Keluar</label>
-                  <input
-                    type="text"
-                    {...register("cash_out", { required: true })}
-                    className="input input-bordered input-md w-full bg-slate-50 "
-                    disabled
-                  />
-                </div>
-              </div>
+            <div className="mt-2">
+              <label className="font-semibold">Item Sales</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.item_sales, "Rp.")}{" "}
+                <span className="font-semibold">
+                  ({sessionData?.item_sales_quantity})
+                </span>{" "}
+              </p>
+            </div>
 
-              <div className="form-control">
-                <label className="font-medium mb-2">Income</label>
-                <input
-                  type="text"
-                  {...register("payment", { required: true })}
-                  className="input input-bordered input-md w-full bg-slate-50 "
-                  disabled
-                />
-              </div>
+            <div className="mt-2">
+              <label className="font-semibold">Bill Discount</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.bill_discount, "Rp.")}{" "}
+                <span className="font-semibold">
+                  ({sessionData?.bill_discount_quantity})
+                </span>{" "}
+              </p>
+            </div>
 
-              <div className="form-control">
-                <label className="font-medium mb-2">Total Kas Sistem </label>
-                <input
-                  type="text"
-                  {...register("total", { required: true })}
-                  className="input input-bordered input-md w-full bg-slate-50 "
-                  disabled
-                />
-              </div>
+            <div className="mt-2">
+              <label className="font-semibold">Total Sales</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.total_sales, "Rp.")}
+              </p>
+            </div>
 
-              <div className="form-control">
-                <label className="font-medium mb-2">Kas Tutup</label>
-                <input
-                  type="text"
-                  {...register("manual_count", { required: true })}
-                  className="input input-bordered input-md w-full  "
-                />
-                {errors.manual_count && (
-                  <span className="text-xs text-red-700 mt-1 font-semibold">
-                    This field is required
-                  </span>
-                )}
-              </div>
+            <div className="mt-2">
+              <label className="font-semibold">Total Cash</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.total_cash, "Rp.")}{" "}
+                <span className="font-semibold">
+                  ({sessionData?.total_cash_quantity})
+                </span>
+              </p>
+            </div>
 
-              <div className="form-control">
-                <label className="font-medium mb-2">Keterangan</label>
-                <textarea
-                  type="text"
-                  {...register("description", { required: true })}
-                  className="input input-bordered input-md w-full"
-                />
-                {errors.description && (
-                  <span className="text-xs text-red-700 mt-1 font-semibold">
-                    This field is required
-                  </span>
-                )}
-              </div>
+            <div className="mt-2">
+              <label className="font-semibold">Total Debit</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.total_debit, "Rp.")}{" "}
+                <span className="font-semibold">
+                  ({sessionData?.total_debit_quantity})
+                </span>
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Void</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.send_void, "Rp.")}{" "}
+                <span className="font-semibold">
+                  ({sessionData?.send_void_quantity})
+                </span>
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Tax Service</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.tax_service, "Rp.")}
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Tax PPN</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.tax_ppn, "Rp.")}
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Net Sales</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.net_sales, "Rp.")}
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Total Bill</label>
+              <p className="mt-1">{sessionData?.total_bill}</p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Average Bill</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.average_bill, "Rp.")}
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-semibold">Cash In Drawer</label>
+              <p className="mt-1">
+                {formatRupiah(sessionData?.cash_in_drawer, "Rp.")}
+              </p>
+            </div>
+
+            <div className="mt-2">
+              <label className="font-medium mb-2">Keterangan</label>
+              <textarea
+                type="text"
+                {...register("description", { required: true })}
+                className="input input-bordered input-md w-full "
+              />
+              {errors.description && (
+                <span className="text-xs text-red-700 mt-1 font-semibold">
+                  This field is required
+                </span>
+              )}
             </div>
           </div>
         </ModalBody>
@@ -165,6 +173,20 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
           </button>
           <button type="submit" className="btn btn-primary btn-md flex-1 ml-2">
             Simpan
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit(handleSimpanPrintShift)}
+            className="btn bg-yellow-200 btn-md flex-1 ml-2"
+          >
+            Simpan & Print Shift
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit(handleSimpanPrint)}
+            className="btn bg-yellow-200 btn-md flex-1 ml-2"
+          >
+            Simpan & Print All Day
           </button>
         </ModalFooter>
       </form>

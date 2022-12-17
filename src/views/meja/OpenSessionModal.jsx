@@ -2,14 +2,13 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/base-components";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { useCreateCashFlow } from "../../hooks/useCashFlow";
-import { useCreateCloseSession } from "../../hooks/useCloseSession";
+import { useCreateOpenSession } from "../../hooks/useOpenSession";
 const schema = yup.object({
   opening_cash: yup.number().min(1).required(),
   description: yup.string().required(),
 });
 export default function OpenSessionModal({ setModal, modal }) {
-  const { mutate: createSession } = useCreateCloseSession(() => {
+  const { mutate: createSession } = useCreateOpenSession(() => {
     reset();
     setModal(false);
   });

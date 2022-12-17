@@ -32,11 +32,8 @@ function Main() {
   const [modalCloseSession, setModalCloseSession] = useState(false);
   const [search, setSearch] = useState("");
 
-  const queryClient = useQueryClient();
 
-  const updateMutation = useUpdateTables(() => {
-    queryClient.invalidateQueries({ queryKey: ["tables"] });
-  });
+  const updateMutation = useUpdateTables();
 
   const { loading, data } = useTables(15000);
 
@@ -122,12 +119,12 @@ function Main() {
                 </button>
               </Link>
 
-              <button
+              {/* <button
                 className="btn btn-primary shadow-md mr-2"
                 onClick={() => setModalCashFlow(true)}
               >
                 Cash In/Out
-              </button>
+              </button> */}
               {(!sessionData || sessionData?.type === "CLOSE") && (
                 <button
                   className="btn btn-primary shadow-md mr-2"

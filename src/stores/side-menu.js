@@ -44,10 +44,6 @@ const adminMenu = [
     icon: "Database",
     title: "Inventori",
     subMenu: [
-      // {
-      //   pathname: "/inventori/daftar-stok",
-      //   title: "Daftar Stok",
-      // },
       {
         pathname: "/inventori/stok-masuk",
         title: "Stok Masuk",
@@ -69,8 +65,12 @@ const adminMenu = [
     title: "Laporan",
     subMenu: [
       {
-        pathname: "/laporan/ringkasan-penjualan",
-        title: "Ringkasan penjualan",
+        pathname: "/laporan/laporan-penjualan",
+        title: "Penjualan",
+      },
+      {
+        pathname: "/laporan/laporan-penjualan-shift",
+        title: "Penjualan Shift",
       },
       {
         pathname: "/laporan/penjualan-perproduk",
@@ -88,22 +88,9 @@ const adminMenu = [
         pathname: "/laporan/pelanggan",
         title: "Laporan Pelanggan",
       },
-      // {
-      //   pathname: "/laporan/pegawai",
-      //   title: "Laporan Pegawai",
-      // },
-      // {
-      //   pathname: "/laporan/diskon",
-      //   title: "Laporan Diskon",
-      // },
     ],
   },
-  // RIWAYAT TRANSAKSI
-  // {
-  //   icon: "Clock",
-  //   pathname: "/riwayat-transaksi",
-  //   title: "Riwayat Transaksi",
-  // },
+
   // MEJA
   {
     icon: "Table",
@@ -115,6 +102,12 @@ const adminMenu = [
     icon: "Coins",
     pathname: "/pajak",
     title: "Pajak",
+  },
+  // DISKON
+  {
+    icon: "Coins",
+    pathname: "/diskon",
+    title: "Diskon",
   },
   // PELANGGAN
   {
@@ -137,12 +130,36 @@ const cashierMenu = [
     pathname: "/beranda",
     title: "Beranda",
   },
-  // RIWAYAT TRANSAKSI
-  // {
-  //   icon: "Clock",
-  //   pathname: "/riwayat-transaksi",
-  //   title: "Riwayat Transaksi",
-  // },
+  {
+    icon: "Clipboard",
+    title: "Laporan",
+    subMenu: [
+      {
+        pathname: "/laporan/laporan-penjualan",
+        title: "Penjualan",
+      },
+      {
+        pathname: "/laporan/laporan-penjualan-shift",
+        title: "Penjualan Shift",
+      },
+      {
+        pathname: "/laporan/penjualan-perproduk",
+        title: "Penjualan Per Produk",
+      },
+      {
+        pathname: "/laporan/penjualan-perkategori",
+        title: "Penjualan Per Kategori",
+      },
+      {
+        pathname: "/laporan/pajak",
+        title: "Laporan Pajak",
+      },
+      {
+        pathname: "/laporan/pelanggan",
+        title: "Laporan Pelanggan",
+      },
+    ],
+  },
   // MEJA
   {
     icon: "Table",
@@ -154,6 +171,12 @@ const cashierMenu = [
     icon: "Coins",
     pathname: "/pajak",
     title: "Pajak",
+  },
+  // DISKON
+  {
+    icon: "Coins",
+    pathname: "/diskon",
+    title: "Diskon",
   },
   // PELANGGAN
   {
@@ -200,9 +223,6 @@ const warehouseMenu = [
     ],
   },
 ];
-
-
-
 
 export function checkMenu() {
   let user = getUser();

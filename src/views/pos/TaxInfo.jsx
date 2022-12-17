@@ -1,17 +1,20 @@
 import { formatRupiah } from "../../utils/formatter";
 
-function TaxInfo({ taxes, selectedMenus }) {
+function TaxInfo({ taxes, selectedMenus, selectedDiscount }) {
   let totalPayment = 0;
   let subtotal = 0
   if (selectedMenus.length > 0 && taxes?.length === 2) {
     selectedMenus.map((selectedMenu) => {
-      let total = selectedMenu.quantity * selectedMenu.item_price;
+      let total = (selectedMenu.quantity - (selectedMenu.void_quantity ? selectedMenu.void_quantity : 0)) * selectedMenu.item_price;
       subtotal += total
     })
 
     const taxPPN = subtotal * (taxes[0].amount / 100);
     const taxService = subtotal * (taxes[1].amount / 100);
-    totalPayment = subtotal + (taxPPN + taxService);
+    
+    const discount = subtotal * (selectedDiscount / 100);
+    
+    totalPayment = subtotal + (taxPPN + taxService) -discount ;
   }
   return (
     <>

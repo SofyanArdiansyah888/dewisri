@@ -84,7 +84,7 @@ export default function VariantModal({
         return menu.product_id === selectedProduct.id;
       });
       if (isExist) {
-        let temp = selectedMenu.map((menu) => {
+        let temp = selectedMenus.map((menu) => {
           if (menu.product_id === selectedProduct.id) {
             menu.quantity += data.quantity;
             menu.description += ", " + data.description;

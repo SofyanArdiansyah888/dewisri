@@ -1,33 +1,31 @@
+import emptyDataUrl from "@/assets/images/empty_image.svg";
 import {
   Lucide,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Tab,
   TabGroup,
   TabList,
   TabPanel,
   TabPanels,
 } from "@/base-components";
-import { faker as $f } from "@/utils";
-import classnames from "classnames";
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCategory } from "../../hooks/useCategory";
+import { useDiscounts } from "../../hooks/useDiscounts";
+import { useError } from "../../hooks/useError";
 import { useCreateOrder, useOrderTable } from "../../hooks/useOrderTable";
+import { usePrintOrder } from "../../hooks/usePrintBill";
 import { useProducts } from "../../hooks/useProduct";
 import { useTaxes } from "../../hooks/useTaxes";
-import api from "../../services/api";
 import { baseUrlImage } from "../../utils/constant";
 import { formatRupiah } from "../../utils/formatter";
 import CustomerInfo from "./CustomerInfo";
 import CustomerModal from "./CustomerModal";
+import DiscountInfo from "./DiscountInfo";
 import { MenuManual } from "./MenuManual";
 import MenuModal from "./MenuModal";
 import TaxInfo from "./TaxInfo";
 import VariantModal from "./VariantModal";
-import emptyDataUrl from "@/assets/images/empty_image.svg";
+import VoidModal from "./VoidModal";
 function Main() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -37,8 +35,12 @@ function Main() {
   const [selectedMenus, setSelectedMenus] = useState([]);
   const [selectedMenu, setSelectedMenu] = useState();
   const [selectedProduct, setSelectedProduct] = useState();
+  const [selectedDiscount, setSelectedDiscount] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedDefaultMenus, setSelectedDefaultMenus] = useState([]);
+  const [isVoid, setIsVoid] = useState(false);
+  const [selectedVoid, setSelectedVoid] = useState();
+  const [voidModal, setVoidModal] = useState();
 
   const [selectedCustomer, setSelectedCustomer] = useState();
   const [modalCustomer, setModalCustomer] = useState(false);
@@ -46,8 +48,11 @@ function Main() {
   const { data: products } = useProducts();
   const { data: categories } = useCategory();
   const { data: taxes } = useTaxes();
+  const { data: discounts } = useDiscounts();
 
   const { mutate: createOrder } = useCreateOrder();
+  const { mutate: printOrder } = usePrintOrder();
+  const {setErrorMessage} = useError()
 
   const handleGetData = (data) => {
     let temp = [];
@@ -62,6 +67,7 @@ function Main() {
         item_price: item.pivot.item_price,
         description: item.pivot.description,
         created_at: item.pivot.created_at,
+        void_quantity: item.pivot.void_quantity,
       });
       return item;
     });
@@ -70,7 +76,7 @@ function Main() {
   };
 
   const { data: tableOrder } = useOrderTable(id, handleGetData);
-  
+
   const [search, setSearch] = useState("");
 
   const filteredData = () => {
@@ -100,16 +106,18 @@ function Main() {
         total_item: 0,
         total_payment: 0,
         product: selectedMenus,
-        order_id:  tableOrder?.id
+        order_id: tableOrder?.id,
       };
       createOrder({ data, id });
     } else {
-      // presentAlert({
-      //   header: 'Silahkan lengkapi data customer dan menu terlebih dahulu !',
-      //   buttons: ['OK']
-      // })
-      alert("silahkan lengkapi data");
+      setErrorMessage("Silahkan Lengkapi Data Terlebih Dahulu");
     }
+  };
+
+  const handlePrintBill = () => {
+    printOrder({
+      order_id: tableOrder?.id,
+    });
   };
 
   return (
@@ -199,11 +207,7 @@ function Main() {
                             />
                           ) : (
                             <div className="h-[48px] w-[48px] rounded-full bg-slate-100">
-                            <img
-                              
-                              src={emptyDataUrl}
-                              alt="Gambar Makanan"
-                            />
+                              <img src={emptyDataUrl} alt="Gambar Makanan" />
                             </div>
                           )}
                           <div className="text-left ml-4">
@@ -256,56 +260,80 @@ function Main() {
           )}
 
           {selectedMenus.length > 0 && (
-            <div className="box p-2 mt-5   h-[300px]">
+            <div className="box p-2 mt-5">
               {selectedMenus?.map((selectedMenu) => (
-                <a
-                  key={selectedMenu.id}
-                  className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
-                >
-                  {!selectedMenu.created_at && (
+                <>
+                  <a
+                    key={selectedMenu.id}
+                    className="flex items-center p-3 cursor-pointer transition duration-300 ease-in-out bg-white dark:bg-darkmode-600 hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md"
+                  >
+                    {!selectedMenu.created_at && (
+                      <Lucide
+                        icon="Delete"
+                        className="w-4 h-4 text-red-400 mr-2"
+                        onClick={() => {
+                          let temp = selectedMenus.filter((item) => {
+                            return !(
+                              selectedMenu.product_id === item.product_id &&
+                              selectedMenu.variant_id === item.variant_id &&
+                              selectedMenu.created_at === item.created_at
+                            );
+                          });
+                          setSelectedMenus(temp);
+                        }}
+                      />
+                    )}
+                    <div className="max-w-[50%] truncate mr-1">
+                      {selectedMenu.product_name} <br />
+                      {selectedMenu.variant_name}{" "}
+                      {isVoid && selectedMenu.created_at && (
+                        <button
+                          className="bg-danger p-1 rounded-md m-1 text-white"
+                          onClick={() => {
+                            setSelectedVoid(selectedMenu);
+                            setVoidModal(true);
+                          }}
+                        >
+                          Void
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-slate-500">
+                      x {selectedMenu.quantity} {selectedMenu.void_quantity > 0 && <span className="text-danger"> - {selectedMenu.void_quantity}</span> }
+                    </div>
                     <Lucide
-                      icon="Delete"
-                      className="w-4 h-4 text-red-400 mr-2"
+                      icon="Edit"
+                      className="w-4 h-4 text-slate-500 ml-2"
                       onClick={() => {
-                        let temp = selectedMenus.filter((item) => {
-                          return !(
-                            selectedMenu.product_id === item.product_id &&
-                            selectedMenu.variant_id === item.variant_id &&
-                            selectedMenu.created_at === item.created_at
-                          );
-                        });
-                        setSelectedMenus(temp);
+                        setSelectedMenu({ ...selectedMenu });
+                        setMenuModal(true);
                       }}
                     />
-                  )}
-                  <div className="max-w-[50%] truncate mr-1">
-                    {selectedMenu.product_name} <br />
-                    {selectedMenu.variant_name}
-                  </div>
-                  <div className="text-slate-500">
-                    x {selectedMenu.quantity}
-                  </div>
-                  <Lucide
-                    icon="Edit"
-                    className="w-4 h-4 text-slate-500 ml-2"
-                    onClick={() => {
-                      setSelectedMenu({ ...selectedMenu });
-                      setMenuModal(true);
-                    }}
-                  />
-                  <div className="ml-auto font-medium">
-                    {formatRupiah(
-                      selectedMenu.item_price * selectedMenu.quantity
-                    )}
-                  </div>
-                </a>
+                    <div className="ml-auto font-medium">
+                      {formatRupiah(
+                        selectedMenu.item_price *
+                          (selectedMenu.quantity -
+                            (selectedMenu.void_quantity
+                              ? selectedMenu.void_quantity
+                              : 0))
+                      )}
+                    </div>
+                  </a>
+                </>
               ))}
             </div>
           )}
+          <DiscountInfo
+            discounts={discounts}
+            setSelectedDiscount={setSelectedDiscount}
+          />
+          <TaxInfo
+            taxes={taxes}
+            selectedMenus={selectedMenus}
+            selectedDiscount={selectedDiscount}
+          />
 
-          <TaxInfo taxes={taxes} selectedMenus={selectedMenus} />
-
-          <div className="flex flex-col mt-5 gap-2">
+          <div className="grid grid-cols-2 mt-5 gap-2">
             <button
               className="btn btn-primary w-full"
               onClick={() => handleSimpan()}
@@ -321,7 +349,7 @@ function Main() {
             <button
               className="btn btn-primary shadow-md w-full"
               onClick={() => {
-                navigate(`/meja/${id}/order/${tableOrder?.id}/payment`);
+                navigate(`/meja/${id}/order/${tableOrder?.id}/payment?discount=${selectedDiscount}`);
               }}
               disabled={tableOrder?.length === 0}
             >
@@ -331,11 +359,26 @@ function Main() {
             <button
               className="btn btn-primary shadow-md w-full"
               onClick={() => {
-                navigate(`/meja/${id}/order/${tableOrder?.id}/split-bill`);
+                navigate(`/meja/${id}/order/${tableOrder?.id}/split-bill?discount=${selectedDiscount}`);
               }}
               disabled={tableOrder?.length === 0}
             >
               Split Bill
+            </button>
+
+            <button
+              className="btn rounded-lg bg-yellow-200 shadow-md w-full"
+              onClick={handlePrintBill}
+              disabled={tableOrder?.length === 0}
+            >
+              Print Bill
+            </button>
+            <button
+              className="btn rounded-lg bg-red-400 shadow-md w-full"
+              onClick={() => setIsVoid((isVoid) => !isVoid)}
+              disabled={tableOrder?.length === 0}
+            >
+              {isVoid ? "Batal Void" : "Void"}
             </button>
           </div>
         </div>
@@ -345,6 +388,14 @@ function Main() {
         modal={modalCustomer}
         selectedCustomer={selectedCustomer}
         setSelectedCustomer={setSelectedCustomer}
+      />
+      <VoidModal
+        setModal={setVoidModal}
+        modal={voidModal}
+        selectedVoid={selectedVoid}
+        setSelectedVoid={setSelectedVoid}
+        tableOrder={tableOrder}
+        setIsVoid={setIsVoid}
       />
       <VariantModal
         setVariantModal={setVariantModal}

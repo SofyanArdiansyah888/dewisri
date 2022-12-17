@@ -1,42 +1,35 @@
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/base-components";
 import { yupResolver } from "@hookform/resolvers/yup";
 import classnames from "classnames";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
 import * as yup from "yup";
-import { useFreeTables, usePindahMeja } from "../../hooks/useTable";
+import { useCreateDiscount } from "../../hooks/useDiscounts";
+// VALIDATION
 const schema = yup.object({
-  table_id: yup.string().required(),
+  name: yup.string().required(),
+  amount: yup.string().required(),
 });
-function PindahMejaModal({ modal, setModal, table }) {
-  const { data: freeTables } = useFreeTables();
-  
-  const { mutate: pindahMeja } = usePindahMeja(() => {
+function CreateModal({ modal, setModal }) {
+  const { mutate } = useCreateDiscount( () => {
     reset(() => ({
-      table_id: "",
+      name: "",
+      amount: "",
     }));
     setModal(false);
-    
   });
-
   const {
     register,
-    trigger,
     formState: { errors },
     handleSubmit,
     reset,
+    setValue,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
 
-  const handlePindahMeja = async (data) => {
-    pindahMeja({
-      ...data,
-      old_table_id:table?.id,
-      order_id: table?.order?.id,
-    });
-  };
+
   return (
     <>
       <Modal
@@ -47,31 +40,48 @@ function PindahMejaModal({ modal, setModal, table }) {
       >
         <form
           className="validate-form"
-          onSubmit={handleSubmit(handlePindahMeja)}
+          onSubmit={handleSubmit((data) => mutate(data))}
         >
           <ModalHeader>
-            <h2 className="font-medium text-base mr-auto">Pindah Meja</h2>
+            <h2 className="font-medium text-base mr-auto">Create Discount</h2>
           </ModalHeader>
           <ModalBody className="grid grid-cols-12 gap-4 gap-y-3">
             <div className="col-span-12">
               <label htmlFor="name" className="form-label">
-                Ke Meja
+                Nama
               </label>
-              <select
-                {...register("table_id")}
+              <input
+                {...register("name")}
                 className={classnames({
                   "form-control": true,
-                  "border-danger": errors.table_id,
+                  "border-danger": errors.name,
                 })}
+                name="name"
+                id="name"
                 type="text"
-              >
-                {freeTables?.map((table,index) => <option key={index} value={table.id}>{table.name}</option>     )}
-                
-            </select>
-              {errors.table_id && (
-                <div className="text-danger mt-2">
-                  {errors.table_id.message}
-                </div>
+              />
+              {errors.name && (
+                <div className="text-danger mt-2">{errors.name.message}</div>
+              )}
+            </div>
+
+  
+            <div className="col-span-12">
+              <label htmlFor="amount" className="form-label">
+                Jumlah (%)
+              </label>
+              <input
+                {...register("amount")}
+                className={classnames({
+                  "form-control": true,
+                  "border-danger": errors.amount,
+                })}
+                name="amount"
+                id="amount"
+                type="text"
+              />
+              {errors.amount && (
+                <div className="text-danger mt-2">{errors.amount.message}</div>
               )}
             </div>
           </ModalBody>
@@ -95,4 +105,4 @@ function PindahMejaModal({ modal, setModal, table }) {
   );
 }
 
-export default PindahMejaModal;
+export default CreateModal;
