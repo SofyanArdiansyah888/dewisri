@@ -11,12 +11,12 @@ export function useChangePassword(onSuccessCallback, onErrorCallback) {
   }
   return useMutation(updateProfile, {
     onSuccess: (data) => {
-      onSuccessCallback(data)
-      setSuccessMessage('Berhasil Mengubah Password')
+      if (onSuccessCallback) onSuccessCallback(data);
+      setSuccessMessage("Berhasil Mengubah Password");
     },
     onError: (error) => {
       setErrorMessage(error.message);
-      onErrorCallback(error)
+      onErrorCallback(error);
     },
   });
 }

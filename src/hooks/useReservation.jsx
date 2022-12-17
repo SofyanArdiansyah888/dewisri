@@ -40,7 +40,7 @@ export function useCreateReservation(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries(["reservations"]);
       setSuccessMessage("Berhasil Membuat Reservasi");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -60,7 +60,7 @@ export function useUpdateReservation(userId, onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries(["reservations"]);
       setSuccessMessage("Berhasil Mengupdate Reservasi");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -79,7 +79,7 @@ export function useCancelReservation(reservationId, onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries(["reservations"]);
       setSuccessMessage("Berhasil Mencancel Reservasi");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);

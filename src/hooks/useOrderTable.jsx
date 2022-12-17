@@ -28,7 +28,7 @@ export function useCreateOrder() {
   return useMutation(createOrder, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["table-order"] });
-      setSuccessMessage('Barhasil Melakukan Order')
+      setSuccessMessage("Barhasil Melakukan Order");
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -40,15 +40,15 @@ export function useTransferOrder(onSuccessCallback) {
   const queryClient = useQueryClient();
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
-  
+
   function createOrder(data) {
     return api.post(`transfer-order`, data);
   }
   return useMutation(createOrder, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["table-order"] });
-      setSuccessMessage('Barhasil Transfer Order')
-      onSuccessCallback(data);
+      setSuccessMessage("Barhasil Transfer Order");
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);

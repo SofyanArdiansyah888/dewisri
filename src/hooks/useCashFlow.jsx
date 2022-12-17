@@ -14,6 +14,7 @@ export function useCreateCashFlow(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["cash-flow"] });
       setSuccessMessage("Berhasil Menginput Cash");
+      if(onSuccessCallback)
       onSuccessCallback(data);
     },
     onError: (error) => {

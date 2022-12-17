@@ -61,13 +61,13 @@ export function useCreateProduct(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
   const queryClient = useQueryClient();
-  
+
   function createdProduct(data) {
     return api.post(`products`, data);
   }
   return useMutation(createdProduct, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Membuat Produk");
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
@@ -87,7 +87,7 @@ export function useUpdateProduct(onSuccessCallback) {
   }
   return useMutation(updatedProduct, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Mengupdate Produk");
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
@@ -106,7 +106,7 @@ export function useDeleteProduct(userId, onSuccessCallback) {
   }
   return useMutation(deletedProduct, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Menghapus Produk");
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },

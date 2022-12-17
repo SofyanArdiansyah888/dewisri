@@ -27,7 +27,7 @@ export function useCreatePayment(onSuccessCallback) {
   }
   return useMutation(createPayments, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Melakukan Pembayaran");
     },
     onError: (error) => {

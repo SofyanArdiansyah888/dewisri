@@ -11,11 +11,13 @@ export function useCreateIncomingStock(onSuccessCallback) {
     return api.post(`incoming-stocks`, data);
   }
   return useMutation(createIncomingStocks, {
-    onSuccess:(data) => {
-      setSuccessMessage('Berhasil Membuat Stok Masuk')
-      onSuccessCallback(data)
+    onSuccess: (data) => {
+      setSuccessMessage("Berhasil Membuat Stok Masuk");
+      if (onSuccessCallback) onSuccessCallback(data);
     },
-    onError: (error) => { setErrorMessage(error?.message)},
+    onError: (error) => {
+      setErrorMessage(error?.message);
+    },
   });
 }
 
@@ -26,19 +28,23 @@ export function useIncomingStocks(onSuccess) {
   }
   return useQuery(["incoming-stocks"], fetchIncomingStocks(), {
     onSuccess,
-    onError: (error) => { setErrorMessage(error?.message)},
+    onError: (error) => {
+      setErrorMessage(error?.message);
+    },
     select: (data) => data.data,
   });
 }
 
-export function useIncomingStock(incomingStockId,onSuccess) {
+export function useIncomingStock(incomingStockId, onSuccess) {
   const { setErrorMessage } = useError();
-  function fetchIncomingStocks({queryKey}) {
-    return  api.get(`incoming-stocks/${queryKey[1]}`);
+  function fetchIncomingStocks({ queryKey }) {
+    return api.get(`incoming-stocks/${queryKey[1]}`);
   }
-  return useQuery(["incoming-stock",incomingStockId], fetchIncomingStocks, {
+  return useQuery(["incoming-stock", incomingStockId], fetchIncomingStocks, {
     onSuccess,
-    onError: (error) => { setErrorMessage(error?.message)},
+    onError: (error) => {
+      setErrorMessage(error?.message);
+    },
     select: (data) => data.data,
   });
 }

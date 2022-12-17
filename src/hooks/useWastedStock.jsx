@@ -6,14 +6,14 @@ import { useSuccess } from "./useSuccess";
 export function useCreateWastedStock(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
-  
+
   function createWastedStocks(data) {
     return api.post(`wasted-stocks`, data);
   }
   return useMutation(createWastedStocks, {
     onSuccess: (data) => {
       setSuccessMessage("Berhasil Membuat Stok Terbuang");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);

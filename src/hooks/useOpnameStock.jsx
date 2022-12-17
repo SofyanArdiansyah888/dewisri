@@ -12,9 +12,9 @@ export function useCreateOpnameStock(onSuccessCallback) {
     return api.post(`opname-stocks`, data);
   }
   return useMutation(createOpnameStocks, {
-   onSuccess: (data) => {
-      onSuccessCallback(data)
-      setSuccessMessage('Berhasil Membuat Stok Opname')
+    onSuccess: (data) => {
+      if (onSuccessCallback) onSuccessCallback(data);
+      setSuccessMessage("Berhasil Membuat Stok Opname");
       queryClient.invalidateQueries({ queryKey: ["opname-stock"] });
     },
     onError: (error) => {

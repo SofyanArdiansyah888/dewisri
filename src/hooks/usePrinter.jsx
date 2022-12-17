@@ -21,14 +21,14 @@ export function useCreatePrinter(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
   const queryClient = useQueryClient();
-  
+
   function createPrinter(data) {
     return api.post(`printers`, data);
   }
   return useMutation(createPrinter, {
     onSuccess: (data) => {
       setSuccessMessage("Berhasil Membuat Printer");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       queryClient.invalidateQueries({ queryKey: ["printers"] });
     },
     onError: (error) => {
@@ -47,7 +47,7 @@ export function useUpdatePrinter(printerId, onSuccessCallback) {
   return useMutation(updatePrinter, {
     onSuccess: (data) => {
       setSuccessMessage("Berhasil Mengupdate Printer");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       queryClient.invalidateQueries({ queryKey: ["printers"] });
     },
     onError: (error) => {
@@ -56,9 +56,8 @@ export function useUpdatePrinter(printerId, onSuccessCallback) {
   });
 }
 
-
 export function useDeletePrinter(printerId, onSuccessCallback) {
-  const {setErrorMessage} = useError();
+  const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
   const queryClient = useQueryClient();
   function deletePrinter() {
@@ -68,11 +67,10 @@ export function useDeletePrinter(printerId, onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["printers"] });
       setSuccessMessage("Berhasil Menghapus Printer");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
-      setErrorMessage(error.message)
+      setErrorMessage(error.message);
     },
   });
 }
-

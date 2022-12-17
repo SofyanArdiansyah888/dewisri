@@ -76,10 +76,10 @@ const adminMenu = [
         pathname: "/laporan/penjualan-perproduk",
         title: "Penjualan Per Produk",
       },
-      {
-        pathname: "/laporan/penjualan-perkategori",
-        title: "Penjualan Per Kategori",
-      },
+      // {
+      //   pathname: "/laporan/penjualan-perkategori",
+      //   title: "Penjualan Per Kategori",
+      // },
       {
         pathname: "/laporan/pajak",
         title: "Laporan Pajak",
@@ -146,10 +146,10 @@ const cashierMenu = [
         pathname: "/laporan/penjualan-perproduk",
         title: "Penjualan Per Produk",
       },
-      {
-        pathname: "/laporan/penjualan-perkategori",
-        title: "Penjualan Per Kategori",
-      },
+      // {
+      //   pathname: "/laporan/penjualan-perkategori",
+      //   title: "Penjualan Per Kategori",
+      // },
       {
         pathname: "/laporan/pajak",
         title: "Laporan Pajak",

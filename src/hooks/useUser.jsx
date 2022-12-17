@@ -42,7 +42,7 @@ export function useCreateUser(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setSuccessMessage("Berhasil Membuat User");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -61,7 +61,7 @@ export function useUpdateUser(userId, onSuccessCallback) {
     onSuccess: (data) => {
       query.invalidateQueries({ queryKey: ["users"] });
       setSuccessMessage("Berhasil Mengupdate User");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -80,7 +80,7 @@ export function useDeleteUser(userId, onSuccessCallback) {
     onSuccess: (data) => {
       query.invalidateQueries({ queryKey: ["users"] });
       setSuccessMessage("Berhasil Menghapus User");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);

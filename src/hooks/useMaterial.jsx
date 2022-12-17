@@ -54,7 +54,7 @@ export function useCreateMaterial(onSuccessCallback) {
   }
   return useMutation(createdMaterial, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Membuat Bahan");
       queryClient.invalidateQueries({ queryKey: ["materials"] });
     },
@@ -74,7 +74,7 @@ export function useUpdateMaterial(userId, onSuccessCallback) {
   }
   return useMutation(updatedMaterial, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Membuat Bahan");
       queryClient.invalidateQueries({ queryKey: ["materials"] });
     },

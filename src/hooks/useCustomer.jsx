@@ -30,6 +30,7 @@ export function useCreateCustomer(onSuccessCallback) {
     onSuccess: (data) => {
       query.invalidateQueries({queryKey:['customers']})
       setSuccessMessage('Berhasil Membuat Customer')
+      if(onSuccessCallback)
       onSuccessCallback(data)
     },
     onError: (error) => { setErrorMessage(error?.message)},
@@ -48,6 +49,7 @@ export function useUpdateCustomer(customerId, onSuccessCallback) {
     onSuccess: (data) => {
       query.invalidateQueries({queryKey:['customers']})
       setSuccessMessage('Berhasil Mengupdate Customer')
+      if(onSuccessCallback)
       onSuccessCallback(data)
     },
     onError: (error) => {
@@ -67,6 +69,7 @@ export function useDeleteCustomer(customerId, onSuccessCallback) {
     onSuccess: (data) => {
       query.invalidateQueries({queryKey:['customers']})
       setSuccessMessage('Berhasil Menghapus Customer')
+      if(onSuccessCallback)
       onSuccessCallback(data)
     },
     onError: (error) => {

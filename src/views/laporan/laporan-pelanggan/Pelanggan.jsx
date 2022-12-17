@@ -1,44 +1,62 @@
-import {
-  Dropdown, DropdownContent,
-  DropdownItem, DropdownMenu, DropdownToggle, Litepicker, Lucide
-} from "@/base-components";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useCustomers } from "../../../hooks/useCustomer";
-import { useLaporanPelanggan } from "../../../hooks/useReport";
-import LaporanPelangganChart from "./LaporanPelangganChart";
+import { Litepicker, Lucide } from "@/base-components";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
+import EmptyData from "../../../components/EmptyData";
 
+import { useExportLaporanPelanggan, useLaporanPelanggan } from "../../../hooks/useLaporanPelanggan";
+
+
+import GroupTable from "./GroupTable";
+
+import Table from "./Table";
 function Pelanggan() {
   const [date, setDate] = useState();
   const [type, setType] = useState("harian");
-  const {data: customers} = useCustomers();
-  const { data: laporanPenjualan,refetch } = useLaporanPelanggan({
+  const queryClient = useQueryClient();
+  const { data: laporanPenjualan, refetch } = useLaporanPelanggan({
     date,
     type,
   });
+  
+  const { mutate: exportLaporan } = useExportLaporanPelanggan((data) => {
+    const url = window.URL.createObjectURL(new Blob([data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Laporan Pelanggan ${date}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+  });
+
   useEffect(() => {
-    refetch()
-    return () => refetch
+    queryClient.invalidateQueries({ queryKey: ["laporan-pelanggan"] });
+    refetch();
+    return () => refetch;
   }, [type, date]);
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">
-        Laporan Penjualan Pelanggan
+        Laporan Pelanggan
       </h2>
 
       <div className="flex flex-col gap-2 mt-5">
         <div className="intro-y flex flex-wrap sm:flex-nowrap justify-between mt-2">
           <div>
-            <button className="btn btn-primary shadow-md mr-2">
+            <button
+              className="btn btn-primary shadow-md mr-2"
+              onClick={() => {
+                exportLaporan({
+                  date,
+                  type,
+                });
+              }}
+            >
               <span className="w-5 h-5 mr-2 flex items-center justify-center">
                 <Lucide icon="Printer" className="w-4 h-4" />
               </span>
               Export Laporan
             </button>
           </div>
-        </div>
 
-        <div className="col-span-12 lg:col-span-6 mt-8">
           <div className="intro-y block sm:flex items-center h-10">
             <div className="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
               <Lucide
@@ -61,65 +79,62 @@ function Pelanggan() {
                     years: true,
                   },
                 }}
-                className="form-control sm:w-56 box pl-10"
+                className="form-control sm:w-56 box pl-10 cursor-pointer"
               />
             </div>
           </div>
-          <div className="intro-y box p-5 mt-12 sm:mt-5">
-            <h2 className="text-lg font-medium truncate mr-5">
-              Grafik Laporan Pelanggan
-            </h2>
-            <div className="flex flex-col md:flex-row md:items-center mt-12">
-              <div className="flex gap-2">
-              <div
-                className={`box p-3 ${
-                  type === "harian" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("harian")}
-              >
-                Harian
-              </div>
-              <div
-                className={`box p-3 ${
-                  type === "mingguan" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("mingguan")}
-              >
-                Mingguan
-              </div>
-              <div
-                className={`box p-3 ${
-                  type === "bulanan" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("bulanan")}
-              >
-                Bulanan
-              </div>
-              <div
-                className={`box p-3 ${
-                  type === "tahunan" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("tahunan")}
-              >
-                Tahunan
-              </div>
-              </div>
-              <Dropdown className="md:ml-auto mt-5 md:mt-0">
-                <DropdownToggle className="btn btn-outline-secondary font-normal">
-                  Filter by Pelanggan
-                  <Lucide icon="ChevronDown" className="w-4 h-4 ml-2" />
-                </DropdownToggle>
-                <DropdownMenu className="w-72">
-                  <DropdownContent className="overflow-y-auto h-32">
-                    {customers?.map((customer) => <DropdownItem>{customer.name}</DropdownItem> ) }
-                  </DropdownContent>
-                </DropdownMenu>
-              </Dropdown>
+        </div>
+        <div>
+          <div className="flex flex-row gap-2 justify-items-center justify-end">
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "harian" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("harian")}
+            >
+              Harian
             </div>
-            <div className="report-chart">
-              <LaporanPelangganChart height={400} className="mt-4" />
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "mingguan" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("mingguan")}
+            >
+              Mingguan
+            </div>
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "bulanan" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("bulanan")}
+            >
+              Bulanan
+            </div>
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "tahunan" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("tahunan")}
+            >
+              Tahunan
             </div>
           </div>
+        </div>
+
+        <div className="intro-y overflow-x-auto justify-center justify-items-center bg-white p-8 rounded-md  mt-2">
+          {laporanPenjualan?.length === 0 || !laporanPenjualan ? (
+            <EmptyData />
+          ) : (
+            <>
+              {type === "harian" && (
+                <Table laporanPenjualan={laporanPenjualan} />
+              )}
+
+              {type !== "harian" && (
+                <GroupTable laporanPenjualan={laporanPenjualan} />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

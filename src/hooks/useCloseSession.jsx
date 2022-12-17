@@ -29,6 +29,7 @@ export function useCreateCloseSession(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["close-session"] });
       setSuccessMessage("Berhasil Mengupdate Data");
+      if(onSuccessCallback)
       onSuccessCallback(data);
     },
     onError: (error) => {

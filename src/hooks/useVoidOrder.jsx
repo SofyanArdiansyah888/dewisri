@@ -3,8 +3,6 @@ import api from "../services/api";
 import { useError } from "./useError";
 import { useSuccess } from "./useSuccess";
 
-
-
 export function useCreateVoidOrder(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
@@ -14,14 +12,12 @@ export function useCreateVoidOrder(onSuccessCallback) {
   }
   return useMutation(createVoidOrder, {
     onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["table-order"] });
+      queryClient.invalidateQueries({ queryKey: ["table-order"] });
       setSuccessMessage("Berhasil Melakukan Void");
-      if(onSuccessCallback)
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);
     },
   });
 }
-

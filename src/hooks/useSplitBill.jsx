@@ -21,14 +21,14 @@ export function useSplitBill(data, onSuccess) {
 export function useCreateSplitBill(onSuccessCallback) {
   const { setErrorMessage } = useError();
   const { setSuccessMessage } = useSuccess();
-  
+
   function createSplitBill(data) {
     return api.post(`split-bill`, data);
   }
   return useMutation(createSplitBill, {
     onSuccess: (data) => {
       setSuccessMessage("Berhasil Pisah Bill");
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);

@@ -28,6 +28,7 @@ export function useCreateCategory(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       setSuccessMessage("Berhasil Membuat Kategori");
+      if(onSuccessCallback)
       onSuccessCallback(data);
     },
     onError: (error) => {
@@ -45,6 +46,7 @@ export function useUpdateCategory(userId, onSuccessCallback) {
   }
   return useMutation(updateCategories, {
     onSuccess: (data) => {
+      if(onSuccessCallback)
       onSuccessCallback(data)
       setSuccessMessage('Berhasil Mengupdate Kategori')
       queryClient.invalidateQueries({ queryKey: ["categories"] });
