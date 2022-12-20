@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import EmptyData from "../../../components/EmptyData";
 
-import { useExportLaporanPenjualanShift, useLaporanPenjualanShift } from "../../../hooks/useLaporanPenjualanShift";
+import { useExportLaporanPenjualanShift, useLaporanPenjualanShift, usePrintLaporanPenjualanShift } from "../../../hooks/useLaporanPenjualanShift";
 import GroupTable from "./GroupTable";
 
 import Table from "./Table";
@@ -30,6 +30,8 @@ function RingkasanPenjualan() {
     refetch();
     return () => refetch;
   }, [type, date]);
+
+  const {mutate: printLaporan} = usePrintLaporanPenjualanShift()
   return (
     <>
       <h2 className="intro-y text-lg font-medium mt-10">
@@ -125,11 +127,11 @@ function RingkasanPenjualan() {
           ) : (
             <>
               {type === "harian" && (
-                <Table laporanPenjualan={laporanPenjualan} />
+                <Table laporanPenjualan={laporanPenjualan} printLaporan={printLaporan} />
               )}
 
               {type !== "harian" && (
-                <GroupTable laporanPenjualan={laporanPenjualan} />
+                <GroupTable laporanPenjualan={laporanPenjualan} printLaporan={printLaporan} />
               )}
             </>
           )}

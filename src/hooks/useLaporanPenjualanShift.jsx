@@ -37,3 +37,22 @@ export function useExportLaporanPenjualanShift(onSuccessCallback) {
     },
   });
 }
+
+export function usePrintLaporanPenjualanShift(onSuccessCallback){
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  
+  function exportLaporan(data) {
+    return api.post(`laporan-penjualan-shift/print`, data);
+  }
+  return useMutation(exportLaporan, {
+    onSuccess: (data) => {
+      setSuccessMessage('Cetak Laporan Sedang Dilakukan')
+      if(onSuccessCallback)
+       onSuccessCallback(data);
+    },
+    onError: (error) => {
+      setErrorMessage(error?.message);
+    },
+  });
+}

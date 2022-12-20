@@ -73,13 +73,14 @@ const adminMenu = [
         title: "Penjualan Shift",
       },
       {
+        pathname: "/laporan/riwayat-transaksi",
+        title: "Riwayat Transaksi",
+      },
+      {
         pathname: "/laporan/penjualan-perproduk",
         title: "Penjualan Per Produk",
       },
-      // {
-      //   pathname: "/laporan/penjualan-perkategori",
-      //   title: "Penjualan Per Kategori",
-      // },
+
       {
         pathname: "/laporan/pajak",
         title: "Laporan Pajak",
@@ -143,13 +144,14 @@ const cashierMenu = [
         title: "Penjualan Shift",
       },
       {
+        pathname: "/laporan/riwayat-transaksi",
+        title: "Riwayat Transaksi",
+      },
+      {
         pathname: "/laporan/penjualan-perproduk",
         title: "Penjualan Per Produk",
       },
-      // {
-      //   pathname: "/laporan/penjualan-perkategori",
-      //   title: "Penjualan Per Kategori",
-      // },
+
       {
         pathname: "/laporan/pajak",
         title: "Laporan Pajak",

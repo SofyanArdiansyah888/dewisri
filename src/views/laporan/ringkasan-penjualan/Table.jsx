@@ -2,12 +2,12 @@ import { Litepicker, Lucide } from "@/base-components";
 import { helper } from "../../../utils/helper";
 import { formatRupiah } from "../../../utils/formatter";
 
-export default function Table({ laporanPenjualan }) {
+export default function Table({ laporanPenjualan, printLaporan }) {
   return (
     <table className="table table-report -mt-2 ">
       <thead>
         <tr>
-        <th className="text-center whitespace-nowrap">ACTIONS</th>
+          <th className="text-center whitespace-nowrap">ACTIONS</th>
           <th className="whitespace-nowrap">Tanggal</th>
           <th className="whitespace-nowrap">Opening Cash</th>
           <th className="whitespace-nowrap">Item Sales</th>
@@ -22,20 +22,21 @@ export default function Table({ laporanPenjualan }) {
           <th className="whitespace-nowrap">Cash In Drawer</th>
           <th className="whitespace-nowrap">Total Bill</th>
           <th className="whitespace-nowrap">Average Bill</th>
-
-        
         </tr>
       </thead>
       <tbody>
         {laporanPenjualan?.map((item, key) => (
           <tr key={key} className="intro-x">
-            
             {/* ACTION BUTTONS */}
             <td className=" w-56">
               <div className="flex justify-center items-center">
                 <div
-                  className="flex items-center mr-3"
-                  onClick={() => handleEdit(printer)}
+                  className="flex items-center mr-3 cursor-pointer"
+                  onClick={() => {
+                    printLaporan({
+                      date: item.date,
+                    });
+                  }}
                 >
                   <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" /> Print
                 </div>
@@ -123,7 +124,6 @@ export default function Table({ laporanPenjualan }) {
                 {formatRupiah(item.average_bill, "Rp.")}
               </div>
             </td>
-
           </tr>
         ))}
       </tbody>

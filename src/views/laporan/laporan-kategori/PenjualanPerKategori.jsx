@@ -12,20 +12,20 @@ import {
 import { useEffect } from "react";
 import { useState } from "react";
 import { useCategory } from "../../../hooks/useCategory";
-import { useLaporanKategori } from "../../../hooks/useReport";
+
 
 import LaporanKategoriChart from "./LaporanKategoriChart";
 function PenjualanPerKategori() {
   const [date, setDate] = useState();
   const [type, setType] = useState("harian");
-  const { data: laporanKategori,refetch } = useLaporanKategori({
-    date,
-    type,
-  });
+  // const { data: laporanKategori,refetch } = useLaporanKategori({
+  //   date,
+  //   type,
+  // });
   const {data: categories} = useCategory();
 
   useEffect(() => {
-    refetch()
+    // refetch()
     return () => refetch
   }, [type, date]);
 

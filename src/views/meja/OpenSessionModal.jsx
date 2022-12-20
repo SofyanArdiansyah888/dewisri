@@ -30,14 +30,6 @@ export default function OpenSessionModal({ setModal, modal }) {
         onSubmit={handleSubmit((data) => {
           const result = {
             ...data,
-            total_order: 0,
-            payment: 0,
-            cash: 0,
-            debit: 0,
-            manual_count: 0,
-            diff_count: 0,
-            cash_in: 0,
-            cash_out: 0,
             type: "OPEN",
           };
           createSession(result);

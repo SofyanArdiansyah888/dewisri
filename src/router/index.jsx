@@ -117,6 +117,14 @@ function Router() {
           ),
         },
         {
+          path: "laporan/riwayat-transaksi",
+          element: (
+            <RequireAuth>
+              <RiwayatTransaksi />
+            </RequireAuth>
+          ),
+        },
+        {
           path: "/laporan/penjualan-perproduk",
           element: (
             <RequireAuth>
@@ -149,15 +157,7 @@ function Router() {
           ),
         },
 
-        // RIWAYAT TRANSAKSI
-        {
-          path: "/riwayat-transaksi",
-          element: (
-            <RequireAuth>
-              <RiwayatTransaksi />
-            </RequireAuth>
-          ),
-        },
+   
         // PRODUK
         {
           path: "/produk/produk",

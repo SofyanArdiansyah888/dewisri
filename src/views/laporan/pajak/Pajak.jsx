@@ -1,19 +1,37 @@
-import LineChart from "@/components/line-chart/Main";
-import { Lucide, Litepicker } from "@/base-components";
-import { Link } from "react-router-dom";
-import PajakLineChart from "./PajakLineChart";
+import { Litepicker, Lucide } from "@/base-components";
 import { useEffect, useState } from "react";
-import { useLaporanPajak } from "../../../hooks/useReport";
+import { useQueryClient } from "react-query";
+import EmptyData from "../../../components/EmptyData";
+import {
+  useExportLaporanPajak,
+  useLaporanPajak,
+} from "../../../hooks/useLaporanPajak";
+
+import GroupTable from "./GroupTable";
+
+import Table from "./Table";
 function Pajak() {
   const [date, setDate] = useState();
   const [type, setType] = useState("harian");
-  const { data: laporanPajak,refetch } = useLaporanPajak({
+  const queryClient = useQueryClient();
+  const { data: laporanPenjualan, refetch } = useLaporanPajak({
     date,
     type,
   });
+
+  const { mutate: exportLaporan } = useExportLaporanPajak((data) => {
+    const url = window.URL.createObjectURL(new Blob([data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Laporan Pajak ${date}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+  });
+
   useEffect(() => {
-    refetch()
-    return () => refetch
+    queryClient.invalidateQueries({ queryKey: ["laporan-pajak"] });
+    refetch();
+    return () => refetch;
   }, [type, date]);
   return (
     <>
@@ -22,7 +40,15 @@ function Pajak() {
       <div className="flex flex-col gap-2 mt-5">
         <div className="intro-y flex flex-wrap sm:flex-nowrap justify-between mt-2">
           <div>
-            <button className="btn btn-primary shadow-md mr-2">
+            <button
+              className="btn btn-primary shadow-md mr-2"
+              onClick={() => {
+                exportLaporan({
+                  date,
+                  type,
+                });
+              }}
+            >
               <span className="w-5 h-5 mr-2 flex items-center justify-center">
                 <Lucide icon="Printer" className="w-4 h-4" />
               </span>
@@ -52,52 +78,62 @@ function Pajak() {
                     years: true,
                   },
                 }}
-                className="form-control sm:w-56 box pl-10"
+                className="form-control sm:w-56 box pl-10 cursor-pointer"
               />
             </div>
           </div>
         </div>
-
-
-        <div className="intro-y w-full  justify-center justify-items-center bg-white p-8 rounded-md  mt-2">
-        <div className="mb-8">
-          <h1 className="text-xl">Grafik Pajak</h1>
+        <div>
           <div className="flex flex-row gap-2 justify-items-center justify-end">
-          <div
-                className={`box p-3 ${
-                  type === "harian" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("harian")}
-              >
-                Harian
-              </div>
-              <div
-                className={`box p-3 ${
-                  type === "mingguan" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("mingguan")}
-              >
-                Mingguan
-              </div>
-              <div
-                className={`box p-3 ${
-                  type === "bulanan" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("bulanan")}
-              >
-                Bulanan
-              </div>
-              <div
-                className={`box p-3 ${
-                  type === "tahunan" ? "bg-yellow-100" : ""
-                } `}
-                onClick={() => setType("tahunan")}
-              >
-                Tahunan
-              </div>
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "harian" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("harian")}
+            >
+              Harian
+            </div>
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "mingguan" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("mingguan")}
+            >
+              Mingguan
+            </div>
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "bulanan" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("bulanan")}
+            >
+              Bulanan
+            </div>
+            <div
+              className={`box p-3 cursor-pointer ${
+                type === "tahunan" ? "bg-yellow-100" : ""
+              } `}
+              onClick={() => setType("tahunan")}
+            >
+              Tahunan
+            </div>
           </div>
         </div>
-          <PajakLineChart height={400}className="mt-4" />
+
+        <div className="intro-y overflow-x-auto justify-center justify-items-center bg-white p-8 rounded-md  mt-2">
+          {laporanPenjualan?.length === 0 || !laporanPenjualan ? (
+            <EmptyData />
+          ) : (
+            <>
+              {type === "harian" && (
+                <Table laporanPenjualan={laporanPenjualan} />
+              )}
+
+              {type !== "harian" && (
+                <GroupTable laporanPenjualan={laporanPenjualan} />
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

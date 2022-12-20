@@ -4,7 +4,8 @@ import { useQueryClient } from "react-query";
 import EmptyData from "../../../components/EmptyData";
 import {
   useExportLaporanPenjualan,
-  useLaporanPenjualan
+  useLaporanPenjualan,
+  usePrintLaporanPenjualan
 } from "../../../hooks/useLaporanPenjualan";
 import GroupTable from "./GroupTable";
 
@@ -27,6 +28,8 @@ function RingkasanPenjualan() {
     document.body.appendChild(link);
     link.click();
   });
+
+  const {mutate: printLaporan} = usePrintLaporanPenjualan();
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["laporan-penjualan"] });
@@ -128,11 +131,11 @@ function RingkasanPenjualan() {
           ) : (
             <>
               {type === "harian" && (
-                <Table laporanPenjualan={laporanPenjualan} />
+                <Table laporanPenjualan={laporanPenjualan} printLaporan={printLaporan} />
               )}
 
               {type !== "harian" && (
-                <GroupTable laporanPenjualan={laporanPenjualan} />
+                <GroupTable laporanPenjualan={laporanPenjualan} printLaporan={printLaporan} />
               )}
             </>
           )}

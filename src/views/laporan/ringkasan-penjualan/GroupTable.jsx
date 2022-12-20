@@ -39,8 +39,12 @@ export default function GroupTable({ laporanPenjualan }) {
          <td className="w-56">
            <div className="flex justify-center items-center">
              <div
-               className="flex items-center mr-3"
-               onClick={() => handleEdit(printer)}
+               className="flex items-center mr-3 cursor-pointer"
+               onClick={() =>
+                printLaporan({
+                  date: item.date,
+                })
+              }
              >
                <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" /> Print
              </div>

@@ -3,6 +3,23 @@ import api from "../services/api";
 import { useError } from "./useError";
 import { useSuccess } from "./useSuccess";
 
+
+export function usePayments(onSuccess, data) {
+  const { setErrorMessage } = useError();
+  function fetchData({ queryKey }) {
+    const { page } = queryKey[1];
+    return api.get(`payments?page=${page}`);
+  }
+  return useQuery(["payments", data], fetchData, {
+    onSuccess,
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+    select: (data) => data,
+  });
+}
+
+
 export function useUnpaidPayments(onSuccess, data) {
   const { setErrorMessage } = useError();
   function fetchData({ queryKey }) {

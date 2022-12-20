@@ -71,8 +71,7 @@ export function useUpdateTables(onSuccessCallback) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
       setSuccessMessage("Berhasil mengupdate data");
-      if(onSuccessCallback)
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -90,7 +89,7 @@ export function useCreateTable(onSuccessCallback) {
   return useMutation(createTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Membuat Meja");
     },
     onError: (error) => {
@@ -109,7 +108,7 @@ export function useDeleteTable(tableId, onSuccessCallback) {
   return useMutation(deleteTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Berhasil Menghapus Meja");
     },
     onError: (error) => {
@@ -127,7 +126,7 @@ export function usePindahMeja(onSuccessCallback) {
   }
   return useMutation(pindahMeja, {
     onSuccess: (data) => {
-      onSuccessCallback(data);
+      if (onSuccessCallback) onSuccessCallback(data);
       setSuccessMessage("Pindah Meja Berhasil Dilakukan!");
       queryClient.invalidateQueries({ queryKey: ["free-tables"] });
       queryClient.invalidateQueries({ queryKey: ["tables"] });

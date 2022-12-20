@@ -36,3 +36,22 @@ export function useExportLaporanPenjualan(onSuccessCallback) {
     },
   });
 }
+
+export function usePrintLaporanPenjualan(onSuccessCallback){
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+  
+  function exportLaporan(data) {
+    return api.post(`laporan-penjualan/print`, data);
+  }
+  return useMutation(exportLaporan, {
+    onSuccess: (data) => {
+      setSuccessMessage('Cetak Laporan Sedang Dilakukan')
+      if(onSuccessCallback)
+       onSuccessCallback(data);
+    },
+    onError: (error) => {
+      setErrorMessage(error?.message);
+    },
+  });
+}

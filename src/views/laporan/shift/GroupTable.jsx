@@ -2,7 +2,7 @@ import { Litepicker, Lucide } from "@/base-components";
 import { formatRupiah } from "../../../utils/formatter";
 import { helper } from "../../../utils/helper";
 
-export default function GroupTable({ laporanPenjualan }) {
+export default function GroupTable({ laporanPenjualan, printLaporan }) {
   return (
     <table className="table -mt-2">
       <thead>
@@ -39,8 +39,10 @@ export default function GroupTable({ laporanPenjualan }) {
                 <td className="w-56">
                   <div className="flex justify-center items-center">
                     <div
-                      className="flex items-center mr-3"
-                      onClick={() => handleEdit(printer)}
+                      className="flex items-center mr-3 cursor-pointer"
+                      onClick={() => printLaporan({
+                        id: item.id
+                      })}
                     >
                       <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
                       Print

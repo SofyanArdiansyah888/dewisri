@@ -12,7 +12,26 @@ export function usePrintOrder(onSuccessCallback) {
   }
   return useMutation(printOrder, {
     onSuccess: (data) => {
-      setSuccessMessage("Berhasil Membuat Mencetak Bill");
+      setSuccessMessage("Berhasil Mencetak Bill");
+      if (onSuccessCallback) onSuccessCallback(data);
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
+}
+
+
+export function usePrintPayment(onSuccessCallback) {
+  const { setErrorMessage } = useError();
+  const { setSuccessMessage } = useSuccess();
+
+  function printOrder(data) {
+    return api.post(`print-payment`, data);
+  }
+  return useMutation(printOrder, {
+    onSuccess: (data) => {
+      setSuccessMessage("Berhasil Mencetak Bill");
       if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
