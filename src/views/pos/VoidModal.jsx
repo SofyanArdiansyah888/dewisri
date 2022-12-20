@@ -18,6 +18,7 @@ import { useCreateVoidOrder } from "../../hooks/useVoidOrder";
 const schema = yup.object({
   quantity: yup.number().min(1).required(),
   void_quantity: yup.number().min(1).required(),
+  password: yup.string().required()
 });
 export default function VoidModal({
   setModal,
@@ -38,7 +39,10 @@ export default function VoidModal({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  const {mutate: voidOrder} = useCreateVoidOrder()
+  const {mutate: voidOrder} = useCreateVoidOrder(() => {
+    setModal(false)
+    setIsVoid(false)
+  })
 
   useEffect(() => {
     setValue("order_id", tableOrder?.id);
@@ -51,8 +55,7 @@ export default function VoidModal({
 
   const onSubmit = (data) => {
     voidOrder(data)
-    setModal(false)
-    setIsVoid(false)
+    
   };
 
   return (
@@ -142,6 +145,24 @@ export default function VoidModal({
                   </div>
 
                   {errors.void_quantity && (
+                    <span className="text-xs text-red-700 mt-1 font-semibold">
+                      This field is required
+                    </span>
+                  )}
+                </div>
+
+                 {/* PASSWORD  */}
+                <div className="form-control">
+                  <label className="font-medium mb-2">Password</label>
+                  <div className="flex flex-row gap-2">
+                    <input
+                      type="password"
+                      {...register("password", { required: true })}
+                      className="input input-bordered input-md w-full "
+                    />
+                
+                  </div>
+                  {errors.password && (
                     <span className="text-xs text-red-700 mt-1 font-semibold">
                       This field is required
                     </span>

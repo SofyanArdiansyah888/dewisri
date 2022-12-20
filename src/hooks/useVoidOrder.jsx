@@ -17,6 +17,10 @@ export function useCreateVoidOrder(onSuccessCallback) {
       if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {
+      if(error?.response?.data?.message){
+        setErrorMessage(error?.response?.data?.message);
+        return;
+      }
       setErrorMessage(error.message);
     },
   });

@@ -16,6 +16,7 @@ import { useCreateOrder, useOrderTable } from "../../hooks/useOrderTable";
 import { usePrintOrder } from "../../hooks/usePrintBill";
 import { useProducts } from "../../hooks/useProduct";
 import { useTaxes } from "../../hooks/useTaxes";
+import { getUser } from "../../services/database";
 import { baseUrlImage } from "../../utils/constant";
 import { formatRupiah } from "../../utils/formatter";
 import CustomerInfo from "./CustomerInfo";
@@ -373,13 +374,13 @@ function Main() {
             >
               Print Bill
             </button>
-            <button
+           {getUser().role === "ADMIN" &&  <button
               className="btn rounded-lg bg-red-400 shadow-md w-full"
               onClick={() => setIsVoid((isVoid) => !isVoid)}
               disabled={tableOrder?.length === 0}
             >
               {isVoid ? "Batal Void" : "Void"}
-            </button>
+            </button>}
           </div>
         </div>
       </div>

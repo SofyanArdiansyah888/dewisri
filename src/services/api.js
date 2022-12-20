@@ -21,7 +21,6 @@ const defaults = {
 
 const api = (method, url, variables,responseType) =>{
   token = getUser()?.token;
-  console.log(responseType)
   return new Promise((resolve, reject) => {
     axios({
       url: `${defaults.baseURL}${url}`,
