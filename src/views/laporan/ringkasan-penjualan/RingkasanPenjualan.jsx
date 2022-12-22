@@ -69,6 +69,7 @@ function RingkasanPenjualan() {
               />
               <Litepicker
                 value={date}
+                tipe={type}
                 onChange={setDate}
                 options={{
                   autoApply: false,

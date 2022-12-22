@@ -42,6 +42,7 @@ export default function VoidModal({
   const {mutate: voidOrder} = useCreateVoidOrder(() => {
     setModal(false)
     setIsVoid(false)
+    reset();
   })
 
   useEffect(() => {

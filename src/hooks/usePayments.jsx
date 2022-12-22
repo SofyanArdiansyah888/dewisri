@@ -7,8 +7,8 @@ import { useSuccess } from "./useSuccess";
 export function usePayments(onSuccess, data) {
   const { setErrorMessage } = useError();
   function fetchData({ queryKey }) {
-    const { page } = queryKey[1];
-    return api.get(`payments?page=${page}`);
+    const { page, date } = queryKey[1];
+    return api.get(`payments?page=${page}&date=${date}`);
   }
   return useQuery(["payments", data], fetchData, {
     onSuccess,

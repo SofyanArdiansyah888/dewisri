@@ -65,6 +65,7 @@ function PenjualanPerProduk() {
               <Litepicker
                 value={date}
                 onChange={setDate}
+                tipe={type}
                 options={{
                   autoApply: false,
                   singleMode: false,

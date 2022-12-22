@@ -109,6 +109,7 @@ function Main() {
         product: selectedMenus,
         order_id: tableOrder?.id,
       };
+      
       createOrder({ data, id });
     } else {
       setErrorMessage("Silahkan Lengkapi Data Terlebih Dahulu");

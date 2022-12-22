@@ -22,7 +22,7 @@ function Litepicker(props) {
     }
 
     tempValue.current = props.value;
-  }, [props.value]);
+  }, [props.value,props?.tipe]);
 
   const { options, value, onChange, getRef, ...computedProps } = props;
   return createElement(

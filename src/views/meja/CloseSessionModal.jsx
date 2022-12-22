@@ -181,13 +181,13 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
           >
             Simpan & Print Shift
           </button>
-          <button
+          {/* <button
             type="button"
             onClick={handleSubmit(handleSimpanPrint)}
             className="btn bg-yellow-200 btn-md flex-1 ml-2"
           >
             Simpan & Print All Day
-          </button>
+          </button> */}
         </ModalFooter>
       </form>
     </Modal>

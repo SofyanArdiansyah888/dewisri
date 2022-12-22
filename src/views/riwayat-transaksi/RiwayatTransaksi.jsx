@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import { formatRupiah } from "../../utils/formatter";
 import { helper } from "../../utils/helper";
 import { usePrintPayment } from "../../hooks/usePrintBill";
+import EmptyData from "../../components/EmptyData";
+import { useQueryClient } from "react-query";
 
 function RiwayatTransaksi() {
   const [date, setDate] = useState();
@@ -15,6 +17,8 @@ function RiwayatTransaksi() {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState([]);
   const [payments, setPayments] = useState([]);
+  const queryClient = useQueryClient();
+
   const { refetch } = usePayments(
     (data) => {
       let lastPage = data.meta.last_page;
@@ -24,17 +28,18 @@ function RiwayatTransaksi() {
       }
       setPayments(data?.data);
     },
-    { page }
+    { page, date }
   );
 
   const { mutate: printPayment } = usePrintPayment();
 
   useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["payments"] });
     refetch();
     return () => {
       refetch;
     };
-  }, [page]);
+  }, [page,date]);
 
   return (
     <>
@@ -42,7 +47,7 @@ function RiwayatTransaksi() {
       <div className="flex flex-col gap-2 mt-5">
         <div className="intro-y flex flex-wrap sm:flex-nowrap justify-between mt-2">
           <div>
-            <button
+            {/* <button
               className="btn btn-primary shadow-md mr-2"
               onClick={() => {
                 exportLaporan({
@@ -55,7 +60,7 @@ function RiwayatTransaksi() {
                 <Lucide icon="Printer" className="w-4 h-4" />
               </span>
               Export Laporan
-            </button>
+            </button> */}
           </div>
 
           <div className="intro-y block sm:flex items-center h-10">
@@ -67,6 +72,7 @@ function RiwayatTransaksi() {
               <Litepicker
                 value={date}
                 onChange={setDate}
+                tipe={type}
                 options={{
                   autoApply: false,
                   singleMode: false,
@@ -84,7 +90,7 @@ function RiwayatTransaksi() {
               />
             </div>
 
-            <div className="w-full sm:w-auto relative ml-3 mt-3 sm:mt-0">
+            {/* <div className="w-full sm:w-auto relative ml-3 mt-3 sm:mt-0">
               <Lucide
                 icon="Search"
                 className="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500"
@@ -95,98 +101,109 @@ function RiwayatTransaksi() {
                 placeholder="Search..."
                 onChange={(e) => setSearch(e.target.value)}
               />
-            </div>
+            </div> */}
           </div>
         </div>
 
         <div className="intro-y col-span-12 overflow-auto  mt-2">
-          <table className="table table-report -mt-2 ">
-            <thead>
-              <tr>
-                <th className="text-center whitespace-nowrap">ACTIONS</th>
-                <th className="whitespace-nowrap">Payment Number</th>
-                <th className="whitespace-nowrap">Meja</th>
-                <th className="whitespace-nowrap">Customer Name</th>
-                <th className="whitespace-nowrap">Subtotal</th>
-                <th className="whitespace-nowrap">Tax PPN</th>
-                <th className="whitespace-nowrap">Tax Service</th>
-                <th className="whitespace-nowrap">Discount</th>
-                <th className="whitespace-nowrap">Total</th>
-                <th className="whitespace-nowrap">Tanggal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payments.map((item, key) => (
-                <tr key={key} className="intro-x">
-                  <td className=" w-56">
-                    <div className="flex justify-center items-center">
-                      <div
-                        className="flex items-center mr-3 cursor-pointer"
-                        onClick={() => printPayment({ payment_id: item.id })}
-                      >
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Print
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {item.payment_number}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {item.table_name}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {item.customer_name}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {formatRupiah(item.subtotal, "Rp.")}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {formatRupiah(
-                        (item.tax_ppn / 100) * item.subtotal,
-                        "Rp."
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {formatRupiah(
-                        (item.tax_service / 100) * item.subtotal,
-                        "Rp."
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {formatRupiah(
-                        (item.discount / 100) * item.subtotal,
-                        "Rp."
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {formatRupiah(item.total, "Rp.")}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-medium whitespace-nowrap">
-                      {helper.formatDate(item.created_at, "D MMM YYYY")}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {payments?.length === 0 || !payments ? (
+            <EmptyData />
+          ) : (
+            <>
+              <table className="table table-report -mt-2 ">
+                <thead>
+                  <tr>
+                    <th className="text-center whitespace-nowrap">ACTIONS</th>
+                    <th className="whitespace-nowrap">Payment Number</th>
+                    <th className="whitespace-nowrap">Meja</th>
+                    <th className="whitespace-nowrap">Customer Name</th>
+                    <th className="whitespace-nowrap">Subtotal</th>
+                    <th className="whitespace-nowrap">Tax PPN</th>
+                    <th className="whitespace-nowrap">Tax Service</th>
+                    <th className="whitespace-nowrap">Discount</th>
+                    <th className="whitespace-nowrap">Total</th>
+                    <th className="whitespace-nowrap">Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payments.map((item, key) => (
+                    <tr key={key} className="intro-x">
+                      <td className=" w-56">
+                        <div className="flex justify-center items-center">
+                          <div
+                            className="flex items-center mr-3 cursor-pointer"
+                            onClick={() =>
+                              printPayment({ payment_id: item.id })
+                            }
+                          >
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Print
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {item.payment_number}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {item.table_name}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {item.customer_name}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {formatRupiah(item.subtotal, "Rp.")}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {formatRupiah(
+                            (item.tax_ppn / 100) * item.subtotal,
+                            "Rp."
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {formatRupiah(
+                            (item.tax_service / 100) * item.subtotal,
+                            "Rp."
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {formatRupiah(
+                            (item.discount / 100) * item.subtotal,
+                            "Rp."
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {formatRupiah(item.total, "Rp.")}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-medium whitespace-nowrap">
+                          {helper.formatDate(item.created_at, "D MMM YYYY")}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
 
         {/* BEGIN: Pagination */}
