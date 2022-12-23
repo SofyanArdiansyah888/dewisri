@@ -2,6 +2,7 @@ import { Litepicker } from "@/base-components";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useOpnameStock } from "../../../hooks/useOpnameStock";
+import { formatRupiah } from "../../../utils/formatter";
 import { helper } from "../../../utils/helper";
 
 function Detail() {
@@ -82,57 +83,52 @@ function Detail() {
                 </tr>
               </thead>
               <tbody>
-                {data?.materials?.map((field, index) => (
-                  <>
-                    <tr key={field.id}>
-                      <td>
-                        <input type="text" readOnly value={field?.name} />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          readOnly
-                          value={field?.type}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          readOnly
-                          value={field?.pivot?.actual_stock}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          readOnly
-                          value={field?.pivot?.system_stock}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          readOnly
-                          value={field?.pivot?.diff_stock}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          readOnly
-                          value={field?.pivot?.capital}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          readOnly
-                          value={field?.pivot?.description}
-                        />
-                      </td>
-                    </tr>
-                  </>
-                ))}
+                {data?.materials?.map((field, index) => {
+                  let capital = formatRupiah(field.pivot.capital, "Rp.");
+                  return (
+                    <>
+                      <tr key={field.id}>
+                        <td>
+                          <input type="text" readOnly value={field?.name} />
+                        </td>
+                        <td>
+                          <input type="text" readOnly value={field?.type} />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            readOnly
+                            value={field?.pivot?.actual_stock}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            readOnly
+                            value={field?.pivot?.system_stock}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            readOnly
+                            value={field?.pivot?.diff_stock}
+                          />
+                        </td>
+                        <td>
+                          <input type="text" readOnly value={capital} />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            readOnly
+                            value={field?.pivot?.description}
+                          />
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })}
               </tbody>
             </table>
           </div>

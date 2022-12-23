@@ -5,6 +5,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import { useCreateWastedStock, useWastedStock } from "../../../hooks/useWastedStock";
+import { formatRupiah } from "../../../utils/formatter";
 import { helper } from "../../../utils/helper";
 import MaterialModal from "../MaterialModal";
 import MaterialSupportModal from "../MaterialSupportModal";
@@ -144,8 +145,8 @@ function Detail() {
                         </td>
                         <td>
                           <input
-                            type="number"
-                            value={field?.pivot?.capital}
+                            type="text"
+                            value={formatRupiah (field?.pivot?.capital,'Rp.')}
                           />
                         </td>
                         <td>

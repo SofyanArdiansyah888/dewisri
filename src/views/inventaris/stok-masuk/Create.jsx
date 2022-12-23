@@ -5,6 +5,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useCreateIncomingStock } from "../../../hooks/useIncomingStock";
+import { formatRupiah } from "../../../utils/formatter";
 import { helper } from "../../../utils/helper";
 import MaterialModal from "../MaterialModal";
 import MaterialSupportModal from "../MaterialSupportModal";
@@ -49,7 +50,7 @@ function Main() {
     name: "material",
   });
   const watchFieldArray = watch("material").map((test, index) => {
-    test.total_capital = test.capital * test.stock;
+    test.total_capital = Number(test?.capital?.toString().replace(/\D/g,'')) * test.stock;
     return test;
   });
 
@@ -76,6 +77,11 @@ function Main() {
       setErrorMessage("Material harus diisi");
       return;
     }
+    data.material.map((material) => {
+      material.capital = Number(material.capital.replace(/\D/g,''))
+      return material;
+    })
+    
     mutate(data);
   };
 
@@ -216,8 +222,11 @@ function Main() {
                         </td>
                         <td>
                           <input
-                            type="number"
+                            type="text"
                             {...register(`material.${index}.capital`)}
+                            onInput={(e) => {
+                              setValue(`material.${index}.capital`, formatRupiah(e.target.value,'Rp.'))
+                          }}
                           />
                         </td>
                         <td>
@@ -230,9 +239,9 @@ function Main() {
                         </td>
                         <td>
                           <input
-                            type="number"
+                            type="text"
                             {...register(`material.${index}.total_capital`)}
-                            value={watchFieldArray[index].total_capital}
+                            value={formatRupiah(watchFieldArray[index].total_capital,'Rp.')}
                             readOnly
                           />
                         </td>

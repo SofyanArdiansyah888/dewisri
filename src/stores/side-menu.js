@@ -201,6 +201,22 @@ const warehouseMenu = [
     pathname: "/beranda",
     title: "Beranda",
   },
+  // PRODUK
+  {
+    icon: "HardDrive",
+    title: "Produk",
+    subMenu: [
+      {
+        pathname: "/produk/bahan-baku",
+        title: "Bahan Baku",
+      },
+      {
+        pathname: "/produk/bahan-pendukung",
+        title: "Bahan Pendukung",
+      },
+    ],
+  },
+
   // INVENTARIS
   {
     icon: "Database",

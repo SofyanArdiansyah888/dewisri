@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useCreateOpnameStock, useOpnameStock } from "../../../hooks/useOpnameStock";
 import api from "../../../services/api";
+import { formatRupiah } from "../../../utils/formatter";
 import { helper } from "../../../utils/helper";
 import MaterialModal from "../MaterialModal";
 import MaterialSupportModal from "../MaterialSupportModal";
@@ -85,6 +86,11 @@ function Main() {
       setErrorMessage("Deskripsi Material harus diisi");
       return;
     }
+    data.material.map((material) => {
+      material.capital = material.capital.replace(/\D/g,'')
+      return material;
+    })
+    
     mutate(data);
   };
 
@@ -264,8 +270,11 @@ function Main() {
                         </td>
                         <td>
                           <input
-                            type="number"
+                            type="text"
                             {...register(`material.${index}.capital`)}
+                            onInput={(e) => {
+                                setValue(`material.${index}.capital`, formatRupiah(e.target.value,'Rp.'))
+                            }}
                           />
                         </td>
                         <td>

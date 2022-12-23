@@ -2,6 +2,7 @@ import { Litepicker } from "@/base-components";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useIncomingStock } from "../../../hooks/useIncomingStock";
+import { formatRupiah } from "../../../utils/formatter";
 import { helper } from "../../../utils/helper";
 
 function Detail() {
@@ -85,9 +86,9 @@ function Detail() {
                         </td>
                         <td>
                           <input
-                            type="number"
+                            type="text"
                             readOnly
-                            value={field?.pivot?.capital}
+                            value={formatRupiah(field?.pivot?.capital,'Rp.')}
                           />
                         </td>
                         <td>
@@ -99,9 +100,9 @@ function Detail() {
                         </td>
                         <td>
                           <input
-                            type="number"
+                            type="text"
                             readOnly
-                            value={field?.pivot?.total_capital}
+                            value={formatRupiah(field?.pivot?.total_capital,'Rp.')}
                           />
                         </td>
                         
