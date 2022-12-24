@@ -80,10 +80,7 @@ export default function MenuModal({
         menu.quantity = data.quantity;
         menu.item_price = data.item_price.toString().replace(/\D/g,'');
         menu.description = data.description ?? "";
-        // if(data.void_reason){
-        //     menu.void_reason = data.void_reason
-        //     menu.void_quantity =  selectedMenu.quantity - selectedDefaultMenu.quantity
-        // }
+
       }
       return menu;
     });
