@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useEffect, useState } from "react";
+import { formatRupiah } from "../../utils/formatter";
 
 export default function MenuModal({
   setMenuModal,
@@ -50,7 +51,7 @@ export default function MenuModal({
 
   useEffect(() => {
     setValue("product_name", selectedMenu?.product_name);
-    setValue("item_price", selectedMenu?.item_price);
+    setValue("item_price", formatRupiah(selectedMenu?.item_price,'Rp.'));
     setValue("quantity", selectedMenu?.quantity);
     setValue("variant_name", selectedMenu?.variant_name);
     setValue("description", selectedMenu?.description);
@@ -77,6 +78,7 @@ export default function MenuModal({
         menu.variant_id === data.variant_id
       ) {
         menu.quantity = data.quantity;
+        menu.item_price = data.item_price.toString().replace(/\D/g,'');
         menu.description = data.description ?? "";
         // if(data.void_reason){
         //     menu.void_reason = data.void_reason
@@ -142,8 +144,8 @@ export default function MenuModal({
                   <input
                     type="text"
                     {...register("item_price", { required: true })}
-                    className="input input-bordered input-md w-full bg-slate-50"
-                    disabled
+                    className="input input-bordered input-md w-full"
+                    onInput={(e) => setValue('item_price',formatRupiah(e.target.value,'Rp.'))}
                   />
                   {errors.item_price && (
                     <span className="text-xs text-red-700 mt-1 font-semibold">

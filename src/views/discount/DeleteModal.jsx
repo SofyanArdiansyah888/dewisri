@@ -2,7 +2,7 @@ import { Lucide, Modal, ModalBody } from "@/base-components";
 import { useDeleteDiscount } from "../../hooks/useDiscounts";
 
 function DeleteModal({ modal, setModal, discount }) {
-  const {mutate} = useDeleteDiscount(discount?.id, () => {
+  const {mutate, isLoading} = useDeleteDiscount(discount?.id, () => {
     setModal(false);
   })
   
@@ -42,6 +42,7 @@ function DeleteModal({ modal, setModal, discount }) {
               onClick={() => {
                 mutate()
               }}
+              disabled={isLoading}
             >
               Delete
             </button>

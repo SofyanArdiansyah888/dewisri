@@ -14,8 +14,8 @@ function DiscountInfo({ discounts, setSelectedDiscount }) {
             onChange={(e) => setSelectedDiscount(e.target.value)}
           >
             <option value={0}>Pilih Diskon</option>
-            {discounts?.map((discount) => (
-              <option value={discount.amount}>{discount.name}</option>
+            {discounts?.map((discount,index) => (
+              <option key={index} value={discount.amount}>{discount.name}</option>
             ))}
           </select>
         </div>

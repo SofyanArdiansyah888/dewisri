@@ -19,7 +19,7 @@ function CreateModal({ modal, setModal }) {
     resolver: yupResolver(schema),
   });
 
-  const { mutate: createTable } = useCreateTable(() => {
+  const { mutate: createTable, isLoading: isCreate } = useCreateTable(() => {
     reset(() => ({ name: "" }));
     setModal(false);
   });
@@ -71,7 +71,7 @@ function CreateModal({ modal, setModal }) {
             >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary w-20">
+            <button type="submit" className="btn btn-primary w-20" disabled={isCreate}>
               Submit
             </button>
           </ModalFooter>

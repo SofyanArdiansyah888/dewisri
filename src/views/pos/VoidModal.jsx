@@ -15,10 +15,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useEffect, useState } from "react";
 import { useCreateVoidOrder } from "../../hooks/useVoidOrder";
+import { useAdmin, useUsers } from "../../hooks/useUser";
 const schema = yup.object({
   quantity: yup.number().min(1).required(),
   void_quantity: yup.number().min(1).required(),
-  password: yup.string().required()
+  password: yup.string().required(),
+  user_id: yup.string().required(),
 });
 export default function VoidModal({
   setModal,
@@ -26,7 +28,7 @@ export default function VoidModal({
   setSelectedVoid,
   selectedVoid,
   tableOrder,
-  setIsVoid
+  setIsVoid,
 }) {
   const {
     register,
@@ -39,11 +41,13 @@ export default function VoidModal({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  const {mutate: voidOrder} = useCreateVoidOrder(() => {
-    setModal(false)
-    setIsVoid(false)
+  const { mutate: voidOrder } = useCreateVoidOrder(() => {
+    setModal(false);
+    setIsVoid(false);
     reset();
-  })
+  });
+
+  const { data: users } = useAdmin();
 
   useEffect(() => {
     setValue("order_id", tableOrder?.id);
@@ -55,8 +59,8 @@ export default function VoidModal({
   }, [selectedVoid, tableOrder]);
 
   const onSubmit = (data) => {
-    voidOrder(data)
     
+    voidOrder(data);
   };
 
   return (
@@ -83,22 +87,9 @@ export default function VoidModal({
                     </span>
                   )}
                 </div>
-                <div className="form-control">
-                  <label className="font-medium mb-2">Harga Item</label>
-                  <input
-                    type="text"
-                    {...register("item_price", { required: true })}
-                    className="input input-bordered input-md w-full bg-slate-50"
-                    disabled
-                  />
-                  {errors.item_price && (
-                    <span className="text-xs text-red-700 mt-1 font-semibold">
-                      This field is required
-                    </span>
-                  )}
-                </div>
-                <div className="form-control">
-                  <label className="font-medium mb-2">Jumlah</label>
+
+                <div className="form-control hidden">
+                  <label className="font-medium mb-2">Jumlah Item</label>
                   <div className="flex flex-row gap-2">
                     <input
                       type="number"
@@ -151,8 +142,29 @@ export default function VoidModal({
                     </span>
                   )}
                 </div>
+                <div className="form-control">
+                  <label className="font-medium mb-2">User</label>
+                  <select
+                    {...register("user_id", { required: true })}
+                    className="intro-x login__input form-control py-3 px-4 block capitalize"
+                  >
+                    {users
+                      ? users?.map((user) => (
+                          <option value={user.id} className="capitalize">
+                            {" "}
+                            {user.name}
+                          </option>
+                        ))
+                      : ""}
+                  </select>
+                  {errors.user_id && (
+                    <span className="text-xs text-red-700 mt-1 font-semibold">
+                      This field is required
+                    </span>
+                  )}
+                </div>
 
-                 {/* PASSWORD  */}
+                {/* PASSWORD  */}
                 <div className="form-control">
                   <label className="font-medium mb-2">Password</label>
                   <div className="flex flex-row gap-2">
@@ -161,7 +173,6 @@ export default function VoidModal({
                       {...register("password", { required: true })}
                       className="input input-bordered input-md w-full "
                     />
-                
                   </div>
                   {errors.password && (
                     <span className="text-xs text-red-700 mt-1 font-semibold">

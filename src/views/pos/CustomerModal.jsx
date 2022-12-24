@@ -29,7 +29,7 @@ function CustomerModal({
 }) {
   const { data, loading } = useCustomers();
   const queryClient = useQueryClient();
-  const { mutate } = useCreateCustomer((data) => {
+  const { mutate, isLoading: isCreateCustomer } = useCreateCustomer((data) => {
     queryClient.invalidateQueries(["customers"]);
     
     setModal(false);
@@ -167,7 +167,7 @@ function CustomerModal({
                 </div>
 
                 <div className="mt-4">
-                  <button className="btn btn-primary">Submit</button>
+                  <button className="btn btn-primary" disabled={isCreateCustomer}>Submit</button>
                   
                 <a className="btn btn-secondary ml-2" onClick={() => setModal(false)}>Kembali</a>
                   

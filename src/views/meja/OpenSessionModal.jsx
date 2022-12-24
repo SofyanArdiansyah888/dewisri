@@ -9,7 +9,7 @@ const schema = yup.object({
   description: yup.string().required(),
 });
 export default function OpenSessionModal({ setModal, modal }) {
-  const { mutate: createSession } = useCreateOpenSession(() => {
+  const { mutate: createSession,isLoading } = useCreateOpenSession(() => {
     reset();
     setModal(false);
   });
@@ -81,7 +81,7 @@ export default function OpenSessionModal({ setModal, modal }) {
           >
             Kembali
           </button>
-          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2">
+          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2" disabled={isLoading}>
             Simpan
           </button>
         </ModalFooter>

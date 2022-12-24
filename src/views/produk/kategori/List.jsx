@@ -77,28 +77,26 @@ function Main() {
                 {filterData()?.map((category, key) => (
                   <tr key={key} className="intro-x">
                     <td>
-                      <a href="" className="font-medium whitespace-nowrap">
+                      <div className="font-medium whitespace-nowrap">
                         {category.name}
-                      </a>
+                      </div>
                     </td>
                     <td className="table-report__action w-56">
                       <div className="flex justify-center items-center">
-                        <a
+                        <button
                           className="flex items-center mr-3"
-                          href="#"
                           onClick={() => handleEdit(category)}
                         >
                           <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
                           Edit
-                        </a>
-                        <a
+                        </button>
+                        <div
                           className="flex items-center text-danger"
-                          href="#"
                           onClick={() => handleDelete(category)}
                         >
                           <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
                           Delete
-                        </a>
+                        </div>
                       </div>
                     </td>
                   </tr>

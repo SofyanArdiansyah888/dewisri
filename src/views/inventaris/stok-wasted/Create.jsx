@@ -24,7 +24,7 @@ function Main() {
   const [modal, showModal] = useState(false);
   const [supportModal, showsupportModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
-  const { mutate } = useCreateWastedStock(() => {
+  const { mutate, isLoading } = useCreateWastedStock(() => {
     navigate("/inventori/stok-wasted");
   });
 
@@ -164,7 +164,7 @@ function Main() {
                     </button>
                   </Link>
 
-                  <button type="submit" className="btn btn-primary w-24">
+                  <button type="submit" className="btn btn-primary w-24" disabled={isLoading}>
                     Simpan
                   </button>
                 </div>

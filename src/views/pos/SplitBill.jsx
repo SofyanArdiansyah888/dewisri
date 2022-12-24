@@ -91,7 +91,7 @@ function Main() {
     }
   );
 
-  const { mutate: createSplitBill } = useCreateSplitBill(() => {
+  const { mutate: createSplitBill, isLoading } = useCreateSplitBill(() => {
     navigate(`/meja/${tableId}/order/${orderId}/payment`);
   });
 
@@ -119,7 +119,7 @@ function Main() {
             Kembali
           </button>
           {/* <Link to="/meja"> */}
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={isLoading}>
             Payment
           </button>
           {/* </Link> */}

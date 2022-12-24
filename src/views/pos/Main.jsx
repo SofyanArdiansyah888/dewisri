@@ -51,8 +51,8 @@ function Main() {
   const { data: taxes } = useTaxes();
   const { data: discounts } = useDiscounts();
 
-  const { mutate: createOrder } = useCreateOrder();
-  const { mutate: printOrder } = usePrintOrder();
+  const { mutate: createOrder, isLoading: isCreateOrder } = useCreateOrder();
+  const { mutate: printOrder, isLoading: isPrintOrder } = usePrintOrder();
   const {setErrorMessage} = useError()
 
   const handleGetData = (data) => {
@@ -190,6 +190,7 @@ function Main() {
                   <div className="grid grid-cols-2 gap-1 mt-5 pt-5 border-t overflow-y-auto max-h-[450px] pb-14">
                     {filteredData()?.map((product, index) => (
                       <div
+                      key={index}
                         onClick={() => {
                           if (product.available) {
                             setSelectedProduct(product);
@@ -288,7 +289,7 @@ function Main() {
                     <div className="max-w-[50%] truncate mr-1">
                       {selectedMenu.product_name} <br />
                       {selectedMenu.variant_name}{" "}
-                      {isVoid && selectedMenu.created_at && (
+                      {selectedMenu.created_at && (
                         <button
                           className="bg-danger p-1 rounded-md m-1 text-white"
                           onClick={() => {
@@ -339,6 +340,7 @@ function Main() {
             <button
               className="btn btn-primary w-full"
               onClick={() => handleSimpan()}
+              disabled={isCreateOrder}
             >
               Simpan
             </button>
@@ -371,17 +373,11 @@ function Main() {
             <button
               className="btn rounded-lg bg-yellow-200 shadow-md w-full"
               onClick={handlePrintBill}
-              disabled={tableOrder?.length === 0}
+              disabled={tableOrder?.length === 0 || isPrintOrder}
             >
               Print Bill
             </button>
-           {getUser().role === "ADMIN" &&  <button
-              className="btn rounded-lg bg-red-400 shadow-md w-full"
-              onClick={() => setIsVoid((isVoid) => !isVoid)}
-              disabled={tableOrder?.length === 0}
-            >
-              {isVoid ? "Batal Void" : "Void"}
-            </button>}
+          
           </div>
         </div>
       </div>

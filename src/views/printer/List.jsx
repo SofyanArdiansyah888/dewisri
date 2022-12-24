@@ -69,7 +69,7 @@ function Main() {
           </div> */}
         </div>
         {/* BEGIN: Data List */}
-        <div className="intro-y col-span-12 overflow-auto ">
+        <div className="intro-y col-span-12 overflow-x-auto ">
         {printers?.length === 0 || !printers ? (
             <EmptyData />
           ) : (
@@ -109,7 +109,7 @@ function Main() {
                   </td>
 
                   <td>
-                    <div className="font-medium whitespace-nowrap">
+                    <div className="font-medium ">
                       {printer.category_name}
                     </div>
                   </td>

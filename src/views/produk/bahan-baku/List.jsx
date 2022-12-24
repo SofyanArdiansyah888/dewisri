@@ -84,43 +84,43 @@ function Main() {
                     }`}
                   >
                     <td>
-                      <a href="" className="font-medium whitespace-nowrap">
+                      <div className="font-medium whitespace-nowrap">
                         {material.name}
-                      </a>
+                      </div>
                     </td>
                     <td>
-                      <a href="" className="font-medium whitespace-nowrap">
+                      <div className="font-medium whitespace-nowrap">
                         {material.code}
-                      </a>
+                      </div>
                     </td>
                     <td>
-                      <a href="" className="font-medium whitespace-nowrap">
+                      <div className="font-medium whitespace-nowrap">
                         {material.stock}
-                      </a>
+                      </div>
                     </td>
                     <td>
-                      <a href="" className="font-medium whitespace-nowrap">
+                      <div className="font-medium whitespace-nowrap">
                         {material.minimal_stock}
-                      </a>
+                      </div>
                     </td>
                     <td className="table-report__action w-56">
                       <div className="flex justify-center items-center">
-                        <a
-                          className="flex items-center mr-3"
-                          href="#"
+                        <div
+                          className="flex items-center mr-3 cursor-pointer"
+                    
                           onClick={() => handleEdit(material)}
                         >
                           <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
                           Edit
-                        </a>
-                        <a
-                          className="flex items-center text-danger"
-                          href="#"
+                        </div>
+                        <div
+                          className="flex items-center text-danger cursor-pointer"
+                    
                           onClick={() => handleDelete(material)}
                         >
                           <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
                           Delete
-                        </a>
+                        </div>
                       </div>
                     </td>
                   </tr>

@@ -3,7 +3,7 @@ import { useDeleteTable } from "../../hooks/useTable";
 
 function DeleteModal({ modal, setModal, table }) {
   const tableId = table && table.id;
-  const { mutate: deleteTable } = useDeleteTable(tableId, () => {
+  const { mutate: deleteTable, isLoading: isDelete } = useDeleteTable(tableId, () => {
     setModal(false);
   });
   return (
@@ -40,6 +40,7 @@ function DeleteModal({ modal, setModal, table }) {
               type="button"
               className="btn btn-danger w-24"
               onClick={() => deleteTable()}
+              disabled={isDelete}
             >
               Delete
             </button>

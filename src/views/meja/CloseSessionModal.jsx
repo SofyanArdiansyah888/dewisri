@@ -10,7 +10,7 @@ const schema = yup.object({
   description: yup.string().required(),
 });
 export default function CloseSessionModal({ setModal, modal, sessionData }) {
-  const { mutate: createSession } = useCreateCloseSession(() => {
+  const { mutate: createSession, isLoading } = useCreateCloseSession(() => {
     reset();
     setModal(false);
   });
@@ -171,13 +171,15 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
           >
             Kembali
           </button>
-          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2">
+          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2"
+          disabled={isLoading}>
             Simpan
           </button>
           <button
             type="button"
             onClick={handleSubmit(handleSimpanPrintShift)}
             className="btn bg-yellow-200 btn-md flex-1 ml-2"
+            disabled={isLoading}
           >
             Simpan & Print Shift
           </button>

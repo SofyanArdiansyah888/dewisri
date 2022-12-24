@@ -25,7 +25,7 @@ function Main() {
   const [modal, showModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [supportModal, showsupportModal] = useState(false);
-  const { mutate } = useCreateOpnameStock(() => {
+  const { mutate, isLoading } = useCreateOpnameStock(() => {
     navigate("/inventori/stok-opname");
   });
 
@@ -87,7 +87,7 @@ function Main() {
       return;
     }
     data.material.map((material) => {
-      material.capital = material.capital.replace(/\D/g,'')
+      material.capital = material.capital.toString().replace(/\D/g,'')
       return material;
     })
     
@@ -164,7 +164,7 @@ function Main() {
                     </button>
                   </Link>
 
-                  <button type="submit" className="btn btn-primary w-24">
+                  <button type="submit" className="btn btn-primary w-24"  disabled={isLoading}>
                     Simpan
                   </button>
                 </div>
@@ -284,14 +284,14 @@ function Main() {
                           />
                         </td>
                         <td>
-                          <a
+                          <button
                             className="flex items-center text-danger"
-                            href="#"
                             onClick={() => remove(index)}
+                           
                           >
                             <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
                             Delete
-                          </a>
+                          </button>
                         </td>
                       </tr>
                     </>

@@ -60,7 +60,7 @@ function Main() {
                     <td className="table-report__action w-56">
                       <div className="flex justify-center items-center">
                         <div
-                          className="flex items-center mr-3"
+                          className="flex items-center mr-3 cursor-pointer"
                           onClick={() => handleEdit(tax)}
                         >
                           <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}

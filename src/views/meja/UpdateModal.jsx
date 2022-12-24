@@ -12,7 +12,7 @@ const schema = yup
   })
   .required();
 function UpdateModal({ modal, setModal, table }) {
-  const {mutate: updateTable} = useUpdateTables(() => {
+  const {mutate: updateTable, isLoading} = useUpdateTables(() => {
     reset(() => ({ name: "" }));
     setModal(false);
   });
@@ -79,7 +79,7 @@ function UpdateModal({ modal, setModal, table }) {
             >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary w-20">
+            <button type="submit" className="btn btn-primary w-20" disabled={isLoading}>
               Submit
             </button>
           </ModalFooter>

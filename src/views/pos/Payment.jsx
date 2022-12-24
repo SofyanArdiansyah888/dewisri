@@ -32,7 +32,7 @@ function Main() {
     else setDiscount(0);
   }, [location]);
 
-  const { mutate: createPayment } = useCreatePayment((data) => {
+  const { mutate: createPayment, isLoading } = useCreatePayment((data) => {
     navigate("/meja");
   });
 
@@ -123,7 +123,7 @@ function Main() {
 
         <button
           className="btn btn-primary"
-          disabled={sisa > 0}
+          disabled={sisa > 0 || isLoading}
           onClick={handleBayar}
         >
           Bayar

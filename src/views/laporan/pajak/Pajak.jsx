@@ -19,7 +19,7 @@ function Pajak() {
     type,
   });
 
-  const { mutate: exportLaporan } = useExportLaporanPajak((data) => {
+  const { mutate: exportLaporan, isLoading } = useExportLaporanPajak((data) => {
     const url = window.URL.createObjectURL(new Blob([data]));
     const link = document.createElement("a");
     link.href = url;
@@ -48,6 +48,7 @@ function Pajak() {
                   type,
                 });
               }}
+              disabled={isLoading}
             >
               <span className="w-5 h-5 mr-2 flex items-center justify-center">
                 <Lucide icon="Printer" className="w-4 h-4" />

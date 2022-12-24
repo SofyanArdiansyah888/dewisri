@@ -95,9 +95,9 @@ function Main() {
                       </div>
                     </td>
                     <td>
-                      <a href="" className="font-medium whitespace-nowrap">
+                      <div className="font-medium whitespace-nowrap">
                         {product.name}
-                      </a>
+                      </div>
                     </td>
                     <td className="text-center">{product.price}</td>
                     <td className="text-center">{product?.category?.name}</td>
@@ -128,13 +128,13 @@ function Main() {
                           </a>
                         </Link>
 
-                        <a
+                        <button
                           className="flex items-center text-danger"
                           onClick={() => handleDelete(product)}
                         >
                           <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
                           Delete
-                        </a>
+                        </button>
                       </div>
                     </td>
                   </tr>

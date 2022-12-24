@@ -21,7 +21,7 @@ const schema = yup.object({
 });
 export default function CashFlowModal({ setModal, modal }) {
   const [selectedType, setSelectedType] = useState("IN");
-  const { mutate: createCashFlow } = useCreateCashFlow(() => {
+  const { mutate: createCashFlow, isLoading } = useCreateCashFlow(() => {
     reset();
     setModal(false);
   });
@@ -121,7 +121,7 @@ export default function CashFlowModal({ setModal, modal }) {
           >
             Kembali
           </button>
-          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2">
+          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2" disabled={isLoading}>
             Simpan
           </button>
         </ModalFooter>

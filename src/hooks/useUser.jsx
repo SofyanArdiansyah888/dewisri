@@ -17,12 +17,26 @@ export function useUsers(onSuccess) {
   });
 }
 
-export function useAdmin(onSuccess) {
+export function useBackOffice(onSuccess) {
   const { setErrorMessage } = useError();
   function fetchUser() {
     return api.get(`users?role=noncashier`);
   }
   return useQuery(["users"], fetchUser, {
+    onSuccess,
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+    select: (data) => data.data,
+  });
+}
+
+export function useAdmin(onSuccess) {
+  const { setErrorMessage } = useError();
+  function fetchUser() {
+    return api.get(`users?role=admin`);
+  }
+  return useQuery(["user-admin"], fetchUser, {
     onSuccess,
     onError: (error) => {
       setErrorMessage(error.message);

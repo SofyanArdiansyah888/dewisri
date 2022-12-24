@@ -17,7 +17,7 @@ function PenjualanPerProduk() {
     type,
   });
   
-  const { mutate: exportLaporan } = useExportLaporanPenjualanProduct((data) => {
+  const { mutate: exportLaporan, isLoading } = useExportLaporanPenjualanProduct((data) => {
     const url = window.URL.createObjectURL(new Blob([data]));
     const link = document.createElement('a');
     link.href = url;
@@ -48,6 +48,7 @@ function PenjualanPerProduk() {
                   type,
                 });
               }}
+              disabled={isLoading}
             >
               <span className="w-5 h-5 mr-2 flex items-center justify-center">
                 <Lucide icon="Printer" className="w-4 h-4" />

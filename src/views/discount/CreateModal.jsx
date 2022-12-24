@@ -11,7 +11,7 @@ const schema = yup.object({
   amount: yup.string().required(),
 });
 function CreateModal({ modal, setModal }) {
-  const { mutate } = useCreateDiscount( () => {
+  const { mutate, isLoading } = useCreateDiscount( () => {
     reset(() => ({
       name: "",
       amount: "",
@@ -95,7 +95,7 @@ function CreateModal({ modal, setModal }) {
             >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary w-20">
+            <button type="submit" className="btn btn-primary w-20" disabled={isLoading}>
               Submit
             </button>
           </ModalFooter>

@@ -23,8 +23,8 @@ function TaxInfo({ taxes, selectedMenus, selectedDiscount }) {
           <div className="mr-auto mb-4">Total</div>
           <div className="font-medium">{formatRupiah (subtotal,"Rp.")}</div>
         </div>
-        {taxes?.map((tax) => (
-          <div className="flex">
+        {taxes?.map((tax,index) => (
+          <div className="flex" key={index}>
             <div className="mr-auto mb-4">{tax.name}</div>
             <div className="font-medium">{tax.amount} %</div>
           </div>

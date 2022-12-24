@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useAuth } from "../../../hooks/useAuth";
-import { useAdmin } from "../../../hooks/useUser";
+import { useBackOffice } from "../../../hooks/useUser";
 import { getUser } from "../../../services/database";
 const schema = yup.object({
   id: yup.number().required(),
@@ -16,7 +16,7 @@ const schema = yup.object({
 
 function Main() {
   const auth = useAuth();
-  const { data: users } = useAdmin();
+  const { data: users } = useBackOffice();
   
   const navigate = useNavigate();
   const {
