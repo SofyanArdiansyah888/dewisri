@@ -20,13 +20,14 @@ import { getUser } from "../../services/database";
 import { baseUrlImage } from "../../utils/constant";
 import { formatRupiah } from "../../utils/formatter";
 import CustomerInfo from "./CustomerInfo";
-import CustomerModal from "./CustomerModal";
+import CustomerModal from "../meja/CustomerModal";
 import DiscountInfo from "./DiscountInfo";
 import { MenuManual } from "./MenuManual";
 import MenuModal from "./MenuModal";
 import TaxInfo from "./TaxInfo";
 import VariantModal from "./VariantModal";
 import VoidModal from "./VoidModal";
+import { useTable } from "../../hooks/useTable";
 function Main() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -50,6 +51,8 @@ function Main() {
   const { data: categories } = useCategory();
   const { data: taxes } = useTaxes();
   const { data: discounts } = useDiscounts();
+  const { data: table } = useTable(id)
+
 
   const { mutate: createOrder, isLoading: isCreateOrder } = useCreateOrder();
   const { mutate: printOrder, isLoading: isPrintOrder } = usePrintOrder();
@@ -97,12 +100,12 @@ function Main() {
   };
 
   const handleSimpan = () => {
-    if (selectedCustomer?.id && selectedMenus.length > 0) {
+    if ( selectedMenus.length > 0) {
       const data = {
-        customer_id: selectedCustomer.id,
-        customer_name: selectedCustomer?.name,
-        customer_email: selectedCustomer?.email,
-        customer_phone: selectedCustomer?.phone,
+        // customer_id: selectedCustomer.id,
+        // customer_name: selectedCustomer?.name,
+        // customer_email: selectedCustomer?.email,
+        // customer_phone: selectedCustomer?.phone,
         table_id: id,
         total_item: 0,
         total_payment: 0,
@@ -247,20 +250,16 @@ function Main() {
 
         <div className="flex flex-col col-span-4 overflow-scroll h-[550px] pb-12 ">
           {/* CUSTOMER */}
-          {selectedCustomer ? (
+          {
+          // selectedCustomer ? (
             <CustomerInfo
-              customer={selectedCustomer}
+              // customer={selectedCustomer}
               setModalCustomer={setModalCustomer}
-              order={tableOrder}
+              // order={tableOrder}
+              table={table}
             />
-          ) : (
-            <button
-              className="btn btn-primary"
-              onClick={() => setModalCustomer(true)}
-            >
-              Pilih Customer
-            </button>
-          )}
+          // ) : ""
+          }
 
           {selectedMenus.length > 0 && (
             <div className="box p-2 mt-5">
@@ -381,12 +380,7 @@ function Main() {
           </div>
         </div>
       </div>
-      <CustomerModal
-        setModal={setModalCustomer}
-        modal={modalCustomer}
-        selectedCustomer={selectedCustomer}
-        setSelectedCustomer={setSelectedCustomer}
-      />
+    
       <VoidModal
         setModal={setVoidModal}
         modal={voidModal}

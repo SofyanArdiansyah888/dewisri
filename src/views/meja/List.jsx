@@ -22,6 +22,8 @@ import CashFlowModal from "./CashFlowModal";
 import OpenSessionModal from "./OpenSessionModal";
 import CloseSessionModal from "./CloseSessionModal";
 import dashboardUrl from "@/assets/images/dashboard.svg";
+import CustomerModal from "./CustomerModal";
+
 function Main() {
   const [modal, setModal] = useState(false);
   const [modalEdit, setmodalEdit] = useState(false);
@@ -30,10 +32,12 @@ function Main() {
   const [modalCashFlow, setModalCashFlow] = useState(false);
   const [modalOpenSession, setModalOpenSession] = useState(false);
   const [modalCloseSession, setModalCloseSession] = useState(false);
+  const [modalCustomer, setModalCustomer] = useState();
+  const [selectedCustomer, setSelectedCustomer] = useState();
+
   const [search, setSearch] = useState("");
 
-
-  const updateMutation = useUpdateTables();
+  const {mutate:updateMutation, isLoading:isUpdateLoading} = useUpdateTables();
 
   const { loading, data } = useTables(15000);
 
@@ -72,7 +76,7 @@ function Main() {
   };
 
   const handleUpdateStatus = (status, id) => {
-    updateMutation.mutate({
+    updateMutation({
       id,
       status,
     });
@@ -205,9 +209,11 @@ function Main() {
                               <DropdownContent>
                                 {table.status !== "OPEN" && (
                                   <DropdownItem
-                                    onClick={() =>
-                                      handleUpdateStatus("OPEN", table.id)
-                                    }
+                                    onClick={() => {
+                                      setSelectedTable(table);
+                                      setModalCustomer(true);
+                                      // handleUpdateStatus("OPEN", table.id)
+                                    }}
                                   >
                                     BUKA
                                   </DropdownItem>
@@ -301,6 +307,14 @@ function Main() {
             modal={modalDelete}
             setModal={setModalDelete}
             table={selectedTable}
+          />
+
+          <CustomerModal
+            setModal={setModalCustomer}
+            modal={modalCustomer}
+            selectedTable={selectedTable}
+            selectedCustomer={selectedCustomer}
+            setSelectedCustomer={setSelectedCustomer}
           />
         </div>
       </div>

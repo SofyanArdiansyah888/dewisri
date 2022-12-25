@@ -24,6 +24,20 @@ export function useTables(refetchInterval = null) {
   });
 }
 
+export function useTable(tableId, onSuccess) {
+  const { setErrorMessage } = useError();
+  function fetchTables({queryKey}) {
+    return api.get(`tables/${queryKey[1]}`);
+  }
+  return useQuery([`table-${tableId}`,tableId], fetchTables, {
+    onSuccess,
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+    select: (data) => data?.data,
+  });
+}
+
 export function useFreeTables() {
   const { setErrorMessage } = useError();
   function fetchTables() {
@@ -70,7 +84,7 @@ export function useUpdateTables(onSuccessCallback) {
   return useMutation(updateTable, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tables"] });
-      setSuccessMessage("Berhasil mengupdate data");
+      // setSuccessMessage("Berhasil mengupdate data");
       if (onSuccessCallback) onSuccessCallback(data);
     },
     onError: (error) => {

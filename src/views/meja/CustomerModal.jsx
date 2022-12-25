@@ -13,12 +13,14 @@ import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 import { useCreateCustomer, useCustomers } from "../../hooks/useCustomer";
+import { useUpdateTables } from "../../hooks/useTable";
 
 
 const schema = yup.object({
   name: yup.string().required().min(2),
-  email: yup.string().email(),
-  phone: yup.string(),
+  // email: yup.string().email(),
+  // phone: yup.string(),
+  pax: yup.number().required().min(1).typeError('Pax required')
 });
 
 function CustomerModal({
@@ -26,18 +28,18 @@ function CustomerModal({
   setModal,
   setSelectedCustomer,
   selectedCustomer,
+  selectedTable,
 }) {
   const { data, loading } = useCustomers();
   const queryClient = useQueryClient();
-  const { mutate, isLoading: isCreateCustomer } = useCreateCustomer((data) => {
-    queryClient.invalidateQueries(["customers"]);
-    
-    setModal(false);
-    setSelectedCustomer(data?.data);
-  });
+
 
   const [search, setSearch] = useState("");
 
+  const {mutate:updateTable, isLoading:isUpdateTable} = useUpdateTables(() => {
+    reset()
+    setModal(false);
+  });
 
   const {
     register,
@@ -61,7 +63,14 @@ function CustomerModal({
   };
 
   const handleCreate = (data) => {
-    mutate({ ...data });
+
+    updateTable({
+      ...data,
+      status: 'OPEN',
+      id: selectedTable.id
+    })
+
+    
   };
 
   return (
@@ -93,10 +102,10 @@ function CustomerModal({
             </div>
         </ModalHeader>
         <ModalBody className="bg-gray-50">
-          <div className="grid grid-cols-12 gap-6  max-h-[450px] overflow-y-auto ">
+          <div className="grid grid-cols-12 gap-6  max-h-[500px] overflow-y-auto ">
        
 
-            <div className="col-span-6 box h-auto max-h-[400px] p-8">
+            <div className="col-span-6 box h-auto max-h-[550px] p-8">
               <form
                 className="validate-form"
                 onSubmit={handleSubmit(handleCreate)}
@@ -167,7 +176,28 @@ function CustomerModal({
                 </div>
 
                 <div className="mt-4">
-                  <button className="btn btn-primary" disabled={isCreateCustomer}>Submit</button>
+                  <label htmlFor="pax" className="form-label">
+                    Pax
+                  </label>
+                  <input
+                    {...register("pax")}
+                    className={classNames({
+                      "form-control": true,
+                      "border-danger": errors.pax,
+                    })}
+                    name="pax"
+                    id="pax"
+                    type="number"
+                  />
+                  {errors.pax && (
+                    <div className="text-danger mt-2">
+                      {errors.pax.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4">
+                  <button className="btn btn-primary" disabled={isUpdateTable}>Submit</button>
                   
                 <a className="btn btn-secondary ml-2" onClick={() => setModal(false)}>Kembali</a>
                   
@@ -211,13 +241,12 @@ function CustomerModal({
                         <button
                           className="btn btn-primary py-1 px-2 mr-2"
                           onClick={() => {
-                            // setValue("customer_id", customer.id);
-                            // setValue("name", customer.name);
-                            // setValue("email", customer.email);
-                            // setValue("phone", customer.phone);
-                            // setValue("customer_id", customer.id);
+                            setValue("customer_id", customer.id);
+                            setValue("name", customer.name);
+                            setValue("email", customer.email);
+                            setValue("phone", customer.phone);
                             setSelectedCustomer(customer)
-                            setModal(false)
+                            // setModal(false)
                           }}
                         >
                           Pilih
