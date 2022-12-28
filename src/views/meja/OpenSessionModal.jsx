@@ -1,8 +1,10 @@
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/base-components";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useCreateOpenSession } from "../../hooks/useOpenSession";
+import { getUser } from "../../services/database";
 import { formatRupiah } from "../../utils/formatter";
 const schema = yup.object({
   opening_cash: yup.string().required(),
@@ -25,13 +27,20 @@ export default function OpenSessionModal({ setModal, modal }) {
     resolver: yupResolver(schema),
   });
 
+  useEffect(()=> {
+    let user = getUser();
+    setValue('opening_cash','Rp.0')
+    if(user) setValue('description',`Buka Session By ${user.name} `)
+    return () => modal
+    },[modal])
+
   return (
     <Modal show={modal} onHidden={() => setModal(false)} size="modal-lg">
       <form
         onSubmit={handleSubmit((data) => {
           const result = {
             ...data,
-            opening_cash: data.opening_cash.replace(/\D/g,''),
+            opening_cash: data.opening_cash.toString().replace(/\D/g,''),
             type: "OPEN",
           };
           createSession(result);

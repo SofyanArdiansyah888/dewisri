@@ -59,8 +59,12 @@ export default function VoidModal({
   }, [selectedVoid, tableOrder]);
 
   const onSubmit = (data) => {
+    let temp = {
+      ...data,
+      table_id: tableOrder.table_id
+    }
     
-    voidOrder(data);
+    voidOrder(temp);
   };
 
   return (

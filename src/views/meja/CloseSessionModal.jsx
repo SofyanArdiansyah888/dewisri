@@ -3,8 +3,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { useCreateCashFlow } from "../../hooks/useCashFlow";
 import { useCreateCloseSession } from "../../hooks/useCloseSession";
+import { getUser } from "../../services/database";
 import { formatRupiah } from "../../utils/formatter";
 const schema = yup.object({
   description: yup.string().required(),
@@ -20,10 +20,18 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    let user = getUser();
+    if (user) setValue("description", `Tutup Session By ${user.name} `);
+    return () => modal
+  },[modal]);
+
   const handleSimpan = (data) => {
     createSession({ ...data, action: "simpan" });
   };
@@ -153,7 +161,8 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
               <textarea
                 type="text"
                 {...register("description", { required: true })}
-                className="input input-bordered input-md w-full "
+                className="w-full bg-slate-50 "
+                readOnly
               />
               {errors.description && (
                 <span className="text-xs text-red-700 mt-1 font-semibold">
@@ -171,8 +180,11 @@ export default function CloseSessionModal({ setModal, modal, sessionData }) {
           >
             Kembali
           </button>
-          <button type="submit" className="btn btn-primary btn-md flex-1 ml-2"
-          disabled={isLoading}>
+          <button
+            type="submit"
+            className="btn btn-primary btn-md flex-1 ml-2"
+            disabled={isLoading}
+          >
             Simpan
           </button>
           <button

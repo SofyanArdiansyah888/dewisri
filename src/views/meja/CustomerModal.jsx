@@ -56,9 +56,9 @@ function CustomerModal({
   const filterData = () => {
     return data?.filter(
       (item) =>
-        item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
-        item.phone.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
-        item.email.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+        item?.name?.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
+        item?.phone?.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
+        item?.email?.toLocaleLowerCase().includes(search.toLocaleLowerCase())
     );
   };
 
@@ -102,12 +102,12 @@ function CustomerModal({
             </div>
         </ModalHeader>
         <ModalBody className="bg-gray-50">
-          <div className="grid grid-cols-12 gap-6  max-h-[500px] overflow-y-auto ">
+          <div className="grid grid-cols-12 gap-6  h-[500px] overflow-y-auto ">
        
 
-            <div className="col-span-6 box h-auto max-h-[550px] p-8">
+            <div className="col-span-5">
               <form
-                className="validate-form"
+                className="validate-form fixed box h-auto max-h-[550px] p-8"
                 onSubmit={handleSubmit(handleCreate)}
               >
                 <input type="hidden" {...register("customer_id")} />
@@ -205,7 +205,7 @@ function CustomerModal({
               </form>
             </div>
             {/* CUSTOMER */}
-            <div className="col-span-6">
+            <div className="col-span-7">
               {loading && (
                 <div className="col-span-12 mt-12  flex flex-col justify-end items-center">
                   <LoadingIcon icon="circles" className="w-16 h-16" />

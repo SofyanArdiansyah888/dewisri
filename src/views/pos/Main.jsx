@@ -60,7 +60,7 @@ function Main() {
 
   const handleGetData = (data) => {
     let temp = [];
-
+    
     data?.products?.map((item) => {
       temp.push({
         product_id: item.id,
@@ -77,10 +77,11 @@ function Main() {
     });
     setSelectedCustomer(data?.customer);
     setSelectedMenus([...temp]);
+  
   };
-
+  console.log(selectedMenus)
   const { data: tableOrder } = useOrderTable(id, handleGetData);
-
+  
   const [search, setSearch] = useState("");
 
   const filteredData = () => {
@@ -122,6 +123,7 @@ function Main() {
   const handlePrintBill = () => {
     printOrder({
       order_id: tableOrder?.id,
+      discount: Number(selectedDiscount)
     });
   };
 
@@ -354,7 +356,7 @@ function Main() {
               onClick={() => {
                 navigate(`/meja/${id}/order/${tableOrder?.id}/payment?discount=${selectedDiscount}`);
               }}
-              disabled={tableOrder?.length === 0}
+              disabled={tableOrder?.products?.length === 0}
             >
               Bayar
             </button>
@@ -364,7 +366,7 @@ function Main() {
               onClick={() => {
                 navigate(`/meja/${id}/order/${tableOrder?.id}/split-bill?discount=${selectedDiscount}`);
               }}
-              disabled={tableOrder?.length === 0}
+              disabled={tableOrder?.products?.length === 0}
             >
               Split Bill
             </button>
@@ -372,7 +374,7 @@ function Main() {
             <button
               className="btn rounded-lg bg-yellow-200 shadow-md w-full"
               onClick={handlePrintBill}
-              disabled={tableOrder?.length === 0 || isPrintOrder}
+              disabled={tableOrder?.products?.length === 0 || isPrintOrder}
             >
               Print Bill
             </button>
